@@ -1,0 +1,14 @@
+c:\src\Sud1\Sud1\bin\Debug\Sud1.exe.config
+c:\src\Sud1\Sud1\bin\Debug\Sud1.exe
+c:\src\Sud1\Sud1\bin\Debug\Sud1.pdb
+c:\src\Sud1\Sud1\obj\Debug\Sud1.csprojAssemblyReference.cache
+c:\src\Sud1\Sud1\obj\Debug\Sud1.Form1.resources
+c:\src\Sud1\Sud1\obj\Debug\Sud1.Properties.Resources.resources
+c:\src\Sud1\Sud1\obj\Debug\Sud1.csproj.GenerateResource.cache
+c:\src\Sud1\Sud1\obj\Debug\Sud1.csproj.CoreCompileInputs.cache
+c:\src\Sud1\Sud1\obj\Debug\Sud1.exe
+c:\src\Sud1\Sud1\obj\Debug\Sud1.pdb
+c:\src\Sud1\Sud1\bin\Debug\Newtonsoft.Json.dll
+c:\src\Sud1\Sud1\bin\Debug\Newtonsoft.Json.pdb
+c:\src\Sud1\Sud1\bin\Debug\Newtonsoft.Json.xml
+c:\src\Sud1\Sud1\obj\Debug\Sud1.csproj.CopyComplete

@@ -47,7 +47,6 @@
             this.button1.TabIndex = 0;
             this.button1.Text = "create cell";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
@@ -57,7 +56,6 @@
             this.button2.TabIndex = 2;
             this.button2.Text = "highlight cell";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // textBox1
             // 
@@ -78,7 +76,6 @@
             this.chkNotes.TabIndex = 4;
             this.chkNotes.Text = "Note Mode";
             this.chkNotes.UseVisualStyleBackColor = true;
-            this.chkNotes.CheckedChanged += new System.EventHandler(this.chkNotes_CheckedChanged);
             // 
             // button3
             // 
@@ -88,7 +85,6 @@
             this.button3.TabIndex = 6;
             this.button3.Text = "Set Note";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button4
             // 

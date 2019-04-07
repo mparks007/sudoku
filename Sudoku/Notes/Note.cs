@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Sudoku
 {
-    public class Note
+    public abstract class Note
     {
-        private int _candidate;
+        protected int _candidate;
 
         public int Candidate
         {
@@ -33,14 +33,6 @@ namespace Sudoku
         public NoteHighlightType HighlightType { get; set; }
         public bool IsSelected { get; set; }
 
-        public void Render(int row, int col, Bitmap boardImage)
-        {
-            using (Graphics gr = Graphics.FromImage(boardImage))
-            {
-                Rectangle rect = new Rectangle(row*25, col*25, 50, 90);
-
-                gr.DrawString("note", new Font("Tahoma", 10), Brushes.Black, rect);
-            }
-        }
+        public abstract void Render(int row, int col, Bitmap boardImage);
     }
 }

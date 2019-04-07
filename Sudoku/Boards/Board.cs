@@ -24,19 +24,20 @@ namespace Sudoku
 
         public Board()
         {
-            _cells = new Cell[9][];
-            for (int r = 0; r < 9; r++)
-            {
-                _cells[r] = new Cell[9];
-                for (int c = 0; c < 9; c++)
-                {
-                    int v = (r / 3);
-                    int h = (c / 3);
-                    int block = (3 * v) + h;
+            // not sure how to instantiate the right Cell type if doing this in base clase (moved to derived Boards) :/
+            //_cells = new Cell[9][];
+            //for (int r = 0; r < 9; r++)
+            //{
+            //    _cells[r] = new Cell[9];
+            //    for (int c = 0; c < 9; c++)
+            //    {
+            //        int v = (r / 3);
+            //        int h = (c / 3);
+            //        int block = (3 * v) + h;
 
-                    _cells[r][c] = new Cell(r + 1, c + 1, block + 1);
-                }
-            }
+            //        _cells[r][c] = new Cell(r + 1, c + 1, block + 1);
+            //    }
+            //}
         }
 
         public void SelectCellAtRowCol(int row, int col, bool deselectOthers)
@@ -72,26 +73,26 @@ namespace Sudoku
 
             switch (house)
             {
-                case HouseType.Row:
+                case HouseType.Column:
                     for (int r = 0; r < 9; r++)
                         for (int c = 0; c < 9; c++)
                         {
                             // if on the desired row
                             if (r + 1 == row)
-                                _cells[r][c].IsSelected = true;
+                                _cells[r][c].IsHouseSelected = true;
                             else if (deselectOthers)
-                                _cells[r][c].IsSelected = false;
+                                _cells[r][c].IsHouseSelected = false;
                         }
                     break;
-                case HouseType.Column:
+                case HouseType.Row:
                     for (int r = 0; r < 9; r++)
                         for (int c = 0; c < 9; c++)
                         {
                             // if on the desired column
                             if (c + 1 == col)
-                                _cells[r][c].IsSelected = true;
+                                _cells[r][c].IsHouseSelected = true;
                             else if (deselectOthers)
-                                _cells[r][c].IsSelected = false;
+                                _cells[r][c].IsHouseSelected = false;
                         }
                     break;
                 case HouseType.Block:
@@ -99,10 +100,10 @@ namespace Sudoku
                         for (int c = 0; c < 9; c++)
                         {
                             // if in the same block as the requested row/col
-                            if (_cells[r][c].Block == _cells[row][col].Block)
-                                _cells[r][c].IsSelected = true;
+                            if (_cells[r][c].Block == _cells[row-1][col-1].Block)
+                                _cells[r][c].IsHouseSelected = true;
                             else if (deselectOthers)
-                                _cells[r][c].IsSelected = false;
+                                _cells[r][c].IsHouseSelected = false;
                         }
                     break;
             }

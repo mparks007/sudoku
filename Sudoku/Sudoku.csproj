@@ -51,11 +51,12 @@
   <ItemGroup>
     <Compile Include="Boards\BitmapBoard.cs" />
     <Compile Include="Boards\Board.cs" />
+    <Compile Include="Cells\BitmapCell.cs" />
     <Compile Include="Enums\BoardType.cs" />
-    <Compile Include="Models\Cell.cs" />
-    <Compile Include="CellOld.cs" />
+    <Compile Include="Cells\Cell.cs" />
     <Compile Include="Enums\NoteHighlightType.cs" />
-    <Compile Include="Models\Note.cs" />
+    <Compile Include="Notes\BitmapNote.cs" />
+    <Compile Include="Notes\Note.cs" />
     <Compile Include="SudokuMainForm.cs">
       <SubType>Form</SubType>
     </Compile>

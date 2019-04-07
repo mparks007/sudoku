@@ -13,6 +13,18 @@ namespace Sudoku
     {
         private static Game _instance = null;
         private static Board _board;
+        private static int _cellSize;
+
+        public static int CellSize { get { return _cellSize; } }
+
+        public static Color BoardBorderColor { get; set; }
+        public static Color BoardHouseSelectColor { get; set; }
+        public static Color BoardCellSelectColor { get; set; }
+        public static Color CellBorderColor { get; set; }
+        public static Color CellBackGroundColor { get; set; }
+        public static Color CellHighlightColor { get; set; }
+        public static Color CellSelectColor { get; set; }
+        // and more colors and font stuff, but move to a struct?
 
         public static Board Board 
         {
@@ -25,22 +37,28 @@ namespace Sudoku
             }
         }
 
-        public static Game GetInstance(BoardType type)
+        public static Game GetInstance(BoardType type, int cellSize)
         {
+            if (cellSize % 3 != 0)
+                throw new ArgumentException(String.Format("Invalid cell size specified: {0} (must be a multiple of three)", cellSize));
+
+            if (cellSize < 30)
+                throw new ArgumentException(String.Format("Invalid cell size specified: {0} (must be a >= 30)", cellSize));
+
             if (_instance == null)
-            {
-                _instance = new Game(type);
-            }
+                _instance = new Game(type, cellSize);
 
             return _instance;
         }
 
-        private Game(BoardType type)
+        private Game(BoardType type, int cellSize)
         {
+            _cellSize = cellSize;
+
             switch (type)
             {
                 case BoardType.Bitmap:
-                    _board = new BitmapBoard(540);
+                    _board = new BitmapBoard(_cellSize);
                     break;
                 case BoardType.Html:
                     throw new ArgumentException("Html Board not supported at this time");

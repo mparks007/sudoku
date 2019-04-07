@@ -24,9 +24,23 @@ namespace Sudoku
             }
         }
 
-        public BitmapBoard(int size) : base()
+        public BitmapBoard(int cellSize) : base()
         {
-            _boardImage = new Bitmap(size, size);
+            _boardImage = new Bitmap(cellSize * 9, cellSize * 9);
+
+            _cells = new Cell[9][];
+            for (int r = 0; r < 9; r++)
+            {
+                _cells[r] = new Cell[9];
+                for (int c = 0; c < 9; c++)
+                {
+                    int v = (r / 3);
+                    int h = (c / 3);
+                    int block = (3 * v) + h;
+
+                    _cells[r][c] = new BitmapCell(r + 1, c + 1, block + 1);
+                }
+            }
         }
 
         // set state data based on which cell was clicked and which note-in-cell was clicked
@@ -45,12 +59,28 @@ namespace Sudoku
         // build a bitmap based on the board state
         public override void Render()
         {
-            // draw all the cells
+            // test code vvv
+            SelectHouseOfCellAtRowCol(3, 3, HouseType.Row, deselectOthers: true);
+            SelectHouseOfCellAtRowCol(3, 3, HouseType.Column, deselectOthers: false);
+            SelectHouseOfCellAtRowCol(3, 3, HouseType.Block, deselectOthers: false);
+            SelectCellAtRowCol(5, 5, deselectOthers: true);
+            _cells[6][3].SetNote(2, doSet: true);
+            _cells[2][5].SetNote(2, doSet: true);
+            HighlightCellsWithNote(2);
+            _cells[3][6].SetSolve(6, isGiven: false);
+            _cells[2][2].SetSolve(2, isGiven: true);
+            _cells[4][4].SetNote(8, doSet: true);
+            _cells[7][5].SetNote(7, doSet: true);
+            _cells[8][7].SetNote(1, doSet: true);
+            _cells[8][7].SetNote(2, doSet: true);
+            // test code ^^^
+
+            // render all the cells
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
                     _cells[r][c].Render(_boardImage);
 
-            // then board level things
+            // then render board-level aspects
             using (Graphics gr = Graphics.FromImage(_boardImage))
             {
                 // render board border

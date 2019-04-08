@@ -14,28 +14,56 @@ namespace Sudoku
         {
             using (Graphics gr = Graphics.FromImage(boardImage))
             {
-                int cellSize = boardImage.Width / 9;
-                int top = (row - 1) * cellSize;
-                int left = (col - 1) * cellSize;
-                Rectangle rect = new Rectangle(top, left, left + cellSize, top + cellSize);
-
-                // render cell color
-                if (IsSelected)
-                    gr.FillRectangle(new SolidBrush(Color.LightBlue), rect);
-                else if (IsHighlighted)
-                    gr.FillRectangle(new SolidBrush(Color.LightGreen), rect);
-                //else
-                //    gr.FillRectangle(new SolidBrush(Color.White), rect);
-
-                // if solved, render solved candidate
+                // if has a note, render it
                 if (_candidate != 0)
                 {
-                    // Draw the text onto the image
-                    Font f = new Font("Tahoma", cellSize / 3 / 2);
+                    int cellSize = boardImage.Width / 9;
 
-                    // try to calculate the right spot in the 1 through 9 note array in the cell for this note value
+                    // calculate offset of each note to find right rect by note position
+                    //   top: (row depth) + (inner-cell depth)
+                    //   left: (col offset) + (inner-cell offset)
+                    int top = ((row - 1) * cellSize) + ((Candidate - 1) / 3 * 20);
+                    int left = ((col - 1) * cellSize) + (0);
+                    Rectangle rect = new Rectangle(left, top, cellSize / 3, cellSize / 3);
+
+                    // render note area color
+                    if (IsSelected)
+                        gr.FillRectangle(new SolidBrush(Color.LightBlue), rect);
+                    else if (IsHighlighted)
+                        gr.FillRectangle(new SolidBrush(Color.LightBlue), rect);
+                    else
+                    {
+                        Color c = Color.Transparent;
+
+                        switch (HighlightType)
+                        {
+                            case NoteHighlightType.Info:
+                                c = Color.Lime;
+                                break;
+                            case NoteHighlightType.Bad:
+                                c = Color.Red;
+                                break;
+                            case NoteHighlightType.Strong:
+                                c = Color.DeepSkyBlue;
+                                break;
+                            case NoteHighlightType.Weak:
+                                c = Color.Yellow;
+                                break;
+                        }
+                        gr.FillRectangle(new SolidBrush(c), rect);
+                    }
+
+                    // Draw the text onto the image
+                    Font f = new Font("Arial", cellSize / 3 / 2);
                     SizeF fSize = gr.MeasureString(_candidate.ToString(), f);
-                    gr.DrawString(_candidate.ToString(), f, Brushes.DarkGray, top + (cellSize / 2) - (f.Height / 2), left + (cellSize / 2) - (fSize.Width / 2));
+
+                    StringFormat format = new StringFormat()
+                    {
+                        Alignment = StringAlignment.Center,
+                        LineAlignment = StringAlignment.Center
+                    };
+                    gr.DrawString(_candidate.ToString(), f, Brushes.Black, rect, format);
+                    gr.Flush();
                 }
             }
         }

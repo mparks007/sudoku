@@ -25,7 +25,7 @@ namespace Sudoku
                 int cellSize = boardImage.Width / 9;
                 int top = (Row - 1) * cellSize;
                 int left = (Column - 1) * cellSize;
-                Rectangle rect = new Rectangle(top, left, left + cellSize, top + cellSize);
+                Rectangle rect = new Rectangle(left, top, cellSize, cellSize);
 
                 // render cell color
                 if (IsSelected)
@@ -41,23 +41,21 @@ namespace Sudoku
                 if (_solvedFor != 0)
                 {
                     // Draw the text onto the image
-                    Font f = new Font("Tahoma", cellSize / 2);
+                    Font f = new Font("Arial Black", cellSize / 2);
                     SizeF fSize = gr.MeasureString(SolvedFor.ToString(), f);
+
                     Brush br;
                     if (IsGiven)
                         br = Brushes.Black;
                     else
                         br = Brushes.Blue;
-                    gr.DrawString(SolvedFor.ToString(), f, br, top+(cellSize / 2)-(f.Height / 2), left+(cellSize / 2)-(fSize.Width / 2));
 
-                    // HOW TO CENTER TEXT??????
-                    //StringFormat format = new StringFormat()
-                    //{
-                    //    Alignment = StringAlignment.Center,
-                    //    LineAlignment = StringAlignment.Center
-                    //};
-                    // this doesn't render the text at all.  why??
-                    //gr.DrawString(SolvedFor.ToString(), f, br, rect, format);
+                    StringFormat format = new StringFormat()
+                    {
+                        Alignment = StringAlignment.Center,
+                        LineAlignment = StringAlignment.Center
+                    };
+                    gr.DrawString(SolvedFor.ToString(), f, br, rect, format);
                 }
                 else
                 {
@@ -67,7 +65,7 @@ namespace Sudoku
                 }
 
                 // render cell border
-                gr.DrawRectangle(new Pen(Color.DarkGray, 1), top, left, left+cellSize, top+cellSize);
+                gr.DrawRectangle(new Pen(Color.DarkGray, 1), rect);
             }
         }
     }

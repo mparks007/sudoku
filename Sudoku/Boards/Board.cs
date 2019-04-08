@@ -17,7 +17,8 @@ namespace Sudoku
 {
     public abstract class Board
     {
-        protected Cell[][] _cells;
+        // TEMP>>>>MAKE THIS PROTECTED
+        public Cell[][] _cells;
         //private HouseType _houseSelectionType = HouseType.None;
         private Cell _selectedCell;
         private bool _isSolved;

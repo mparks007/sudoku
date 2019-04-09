@@ -11,8 +11,10 @@ namespace Sudoku
 {
     public class BitmapBoard : Board
     {
+//        public Graphics Graphics { get; set; }
+        public static Graphics Graphics;
         private Bitmap _boardImage;
-
+        
         public Bitmap Image
         {
             get
@@ -53,32 +55,34 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid point requested (x:{0}, y:{1})", x, y));
 
             // do stuff to calculate the cell loc
-            
+            // TODO
         }
 
         // build a bitmap based on the board state
         public override void Render()
         {
-            // then render board-level aspects
-            using (Graphics gr = Graphics.FromImage(_boardImage))
+            using (BitmapBoard.Graphics = Graphics.FromImage(_boardImage))
             {
+                int cellSize = _boardImage.Width / 9;
+
                 // render all the cells
                 for (int r = 0; r < 9; r++)
                     for (int c = 0; c < 9; c++)
-                        _cells[r][c].Render(_boardImage);
+                        _cells[r][c].Render(cellSize);
 
                 // render board border
-                gr.DrawRectangle(new Pen(Color.Black, 4), 0, 0, _boardImage.Width, _boardImage.Height);
+                BitmapBoard.Graphics.DrawRectangle(new Pen(Color.Black, 4), 0, 0, _boardImage.Width, _boardImage.Height);
 
                 // render block borders
                 Pen p = new Pen(Color.Black, 2);
                 int blockSize = _boardImage.Height / 3;
                 // horizontal
-                gr.DrawLine(p, 0, blockSize, _boardImage.Width, blockSize);
-                gr.DrawLine(p, 0, blockSize * 2, _boardImage.Width, blockSize * 2);
+                BitmapBoard.Graphics.DrawLine(p, 0, blockSize, _boardImage.Width, blockSize);
+                BitmapBoard.Graphics.DrawLine(p, 0, blockSize * 2, _boardImage.Width, blockSize * 2);
                 // vertical
-                gr.DrawLine(p, blockSize, 0, blockSize, _boardImage.Height);
-                gr.DrawLine(p, blockSize * 2, 0, blockSize * 2, _boardImage.Height);
+                BitmapBoard.Graphics.DrawLine(p, blockSize, 0, blockSize, _boardImage.Height);
+                BitmapBoard.Graphics.DrawLine(p, blockSize * 2, 0, blockSize * 2, _boardImage.Height);
+                BitmapBoard.Graphics.Flush();
             }
         }
     }

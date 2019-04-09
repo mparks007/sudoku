@@ -74,7 +74,7 @@ namespace Sudoku
 
             switch (house)
             {
-                case HouseType.Column:
+                case HouseType.Row:
                     for (int r = 0; r < 9; r++)
                         for (int c = 0; c < 9; c++)
                         {
@@ -85,7 +85,7 @@ namespace Sudoku
                                 _cells[r][c].IsHouseSelected = false;
                         }
                     break;
-                case HouseType.Row:
+                case HouseType.Column:
                     for (int r = 0; r < 9; r++)
                         for (int c = 0; c < 9; c++)
                         {

@@ -20,7 +20,9 @@ namespace Sudoku
 
         private void button4_Click(object sender, EventArgs e)
         {
-            Game game = Game.GetInstance(BoardType.Bitmap, 60);
+            pictureBox1.Image = null;
+
+            Game game = Game.GetInstance(BoardType.Bitmap, Convert.ToInt32(txtSize.Text));
 
             Game.Board.Render();
             pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
@@ -66,13 +68,88 @@ namespace Sudoku
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            textBox3.Text = String.Format("X:{0},Y:{1}", e.Location.X, e.Location.Y);
+            if (sender == pictureBox1)
+                txtCoords.Text = String.Format("X:{0},Y:{1}", e.Location.X, e.Location.Y);
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSelCell_Click(object sender, EventArgs e)
+        {
+            Game.Board.SelectCellAtRowCol(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text), deselectOthers:true);
+            Game.Board.Render();
+            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
+        }
+
+        private void btnHiCell_Click(object sender, EventArgs e)
+        {
+            //Game.Board.HighlightCellsWithNote(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text), deselectOthers: true);
+            //Game.Board.Render();
+            //pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
+        }
+
+        private void btnHiWithName_Click(object sender, EventArgs e)
         {
             Game.Board.HighlightCellsWithNote(Convert.ToInt32(txtNote.Text));
             Game.Board.Render();
+            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
+        }
+
+        private void btnSetNote_Click(object sender, EventArgs e)
+        {
+            Game.Board._cells[Convert.ToInt32(txtRow.Text)-1][Convert.ToInt32(txtCol.Text)-1].SetNote(Convert.ToInt32(txtNote.Text), doSet: true);
+            Game.Board.Render();
+            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
+        }
+
+        private void btnClearNote_Click(object sender, EventArgs e)
+        {
+            Game.Board._cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].SetNote(Convert.ToInt32(txtNote.Text), doSet: false);
+            Game.Board.Render();
+            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
+        }
+
+        private void btnSelHouse_Click(object sender, EventArgs e)
+        {
+            if (chkRow.Checked)
+            {
+                Game.Board.SelectHouseOfCellAtRowCol(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text), HouseType.Row, deselectOthers: false);
+            }
+            if (chkCol.Checked)
+            {
+                Game.Board.SelectHouseOfCellAtRowCol(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text), HouseType.Column, deselectOthers: false);
+            }
+            if (chkHouse.Checked)
+            {
+                Game.Board.SelectHouseOfCellAtRowCol(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text), HouseType.Block, deselectOthers: false);
+            }
+            Game.Board.Render();
+            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
+        }
+
+        private void btnAnswer_Click(object sender, EventArgs e)
+        {
+            Game.Board._cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].SetSolve(Convert.ToInt32(txtNum.Text), isGiven: chkGiven.Checked);
+            Game.Board.Render();
+            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
+        }
+
+        private void btnHiNote_Click(object sender, EventArgs e)
+        {
+            NoteHighlightType type = NoteHighlightType.None;
+
+            if (radHiNone.Checked)
+                type = NoteHighlightType.None;
+            else if (radHiInfo.Checked)
+                type = NoteHighlightType.Info;
+            else if (radHiBad.Checked)
+                type = NoteHighlightType.Bad;
+            else if (radHiStrong.Checked)
+                type = NoteHighlightType.Strong;
+            else if (radHiWeak.Checked)
+                type = NoteHighlightType.Weak;
+
+            Game.Board._cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].HighlightNote(Convert.ToInt32(txtNote.Text), type);
+            Game.Board.Render();
+            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
         }
     }
 }

@@ -33,6 +33,6 @@ namespace Sudoku
         public NoteHighlightType HighlightType { get; set; }
         public bool IsSelected { get; set; }
 
-        public abstract void Render(int row, int col, Bitmap boardImage);
+        public abstract void Render(int cellSize, int row, int col);
     }
 }

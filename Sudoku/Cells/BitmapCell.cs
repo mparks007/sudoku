@@ -17,56 +17,52 @@ namespace Sudoku
             for (int i = 0; i < 9; i++)
                 _notes[i] = new BitmapNote();
         }
-
-        public override void Render(Bitmap boardImage)
+        
+        public override void Render(int cellSize)
         {
-            using (Graphics gr = Graphics.FromImage(boardImage))
+            int top = (Row - 1) * cellSize;
+            int left = (Column - 1) * cellSize;
+            Rectangle rect = new Rectangle(left, top, cellSize, cellSize);
+
+            // render cell color
+            if (IsSelected)
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.LightBlue), rect);
+            else if (IsHighlighted)
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.LightGreen), rect);
+            else if (IsHouseSelected)
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.LightGray), rect);
+            else
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.White), rect);
+
+            // if solved, render solved candidate
+            if (_solvedFor != 0)
             {
-                int cellSize = boardImage.Width / 9;
-                int top = (Row - 1) * cellSize;
-                int left = (Column - 1) * cellSize;
-                Rectangle rect = new Rectangle(left, top, cellSize, cellSize);
+                // Draw the text onto the image
+                Font f = new Font("Arial Black", cellSize / 2);
+                SizeF fSize = BitmapBoard.Graphics.MeasureString(SolvedFor.ToString(), f);
 
-                // render cell color
-                if (IsSelected)
-                    gr.FillRectangle(new SolidBrush(Color.LightBlue), rect);
-                else if (IsHighlighted)
-                    gr.FillRectangle(new SolidBrush(Color.LightGreen), rect);
-                else if (IsHouseSelected)
-                    gr.FillRectangle(new SolidBrush(Color.LightGray), rect);
+                Brush br;
+                if (IsGiven)
+                    br = Brushes.Black;
                 else
-                    gr.FillRectangle(new SolidBrush(Color.White), rect);
+                    br = Brushes.Blue;
 
-                // if solved, render solved candidate
-                if (_solvedFor != 0)
+                StringFormat format = new StringFormat()
                 {
-                    // Draw the text onto the image
-                    Font f = new Font("Arial Black", cellSize / 2);
-                    SizeF fSize = gr.MeasureString(SolvedFor.ToString(), f);
-
-                    Brush br;
-                    if (IsGiven)
-                        br = Brushes.Black;
-                    else
-                        br = Brushes.Blue;
-
-                    StringFormat format = new StringFormat()
-                    {
-                        Alignment = StringAlignment.Center,
-                        LineAlignment = StringAlignment.Center
-                    };
-                    gr.DrawString(SolvedFor.ToString(), f, br, rect, format);
-                }
-                else
-                {
-                    // render notes
-                    for (int i = 0; i < 9; i++)
-                        _notes[i].Render(Row, Column, boardImage);
-                }
-
-                // render cell border
-                gr.DrawRectangle(new Pen(Color.DarkGray, 1), rect);
+                    Alignment = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center
+                };
+                BitmapBoard.Graphics.DrawString(SolvedFor.ToString(), f, br, rect, format);
             }
+            else
+            {
+                // render notes
+                for (int i = 0; i < 9; i++)
+                    _notes[i].Render(cellSize, Row, Column);
+            }
+
+            // render cell border
+            BitmapBoard.Graphics.DrawRectangle(new Pen(Color.DarkGray, 1), rect);
         }
     }
 }

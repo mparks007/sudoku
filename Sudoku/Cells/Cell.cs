@@ -50,11 +50,14 @@ namespace Sudoku
             if (note < 1 || note > 9)
                 throw new ArgumentException(String.Format("Invalid note being {0}: {1}", (doSet ? "set" : "unset"), note));
 
-            // if note is going away, clear potential highlight on it first
-            if (!doSet)
+            if (doSet)
+                _notes[note - 1].Candidate = note;
+            else
+            {
+                // if note is going away, clear potential highlight on it first
                 HighlightNote(note, NoteHighlightType.None);
-
-            _notes[note - 1].Candidate = note;
+                _notes[note - 1].Candidate = 0;
+            }
         }
 
         public void HighlightHavingNote(int note)
@@ -80,6 +83,6 @@ namespace Sudoku
                 _notes[note - 1].HighlightType = highlightType;
         }
 
-        public abstract void Render(Bitmap boardImage);
+        public abstract void Render(int cellSize);
     }
 }

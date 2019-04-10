@@ -12,13 +12,13 @@ namespace Sudoku
 {
     public abstract class Cell
     {
-        protected int _solvedFor;
+        protected int _number;
+        protected bool _isGiven;
+        protected bool _isHighlighted;
         protected Note[] _notes = new Note[9];
 
-        public int SolvedFor { get { return _solvedFor; } }
-        public bool IsGiven { get; set; }
-        public bool IsHighlighted { get; set; }
         public bool IsSelected { get; set; }
+        public bool IsInvalid { get; set; }
         public bool IsHouseSelected { get; set; }
         public int Row { get; set; }
         public int Column { get; set; }
@@ -26,23 +26,19 @@ namespace Sudoku
 
         public Cell(int row, int column, int block)
         {
-            // not sure how to instantiate the right Note type if doing this in base clase (moved to derived Cells) :/
-            //for (int i = 0; i < 9; i++)
-            //    _notes[i] = new Note();
-
             Row = row;
             Column = column;
             Block = block;
         }
 
         // num as 0 will mean clear the solve number
-        public void SetSolve(int num, bool isGiven)
+        public void SetNumber(int num, bool isGiven)
         {
             if (num < 0 || num > 9)
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
-            _solvedFor = num;
-            IsGiven = isGiven;
+            _number = num;
+            _isGiven = isGiven;
         }
 
         public void SetNote(int note, bool doSet)
@@ -54,24 +50,19 @@ namespace Sudoku
                 _notes[note - 1].Candidate = note;
             else
             {
-                // if note is going away, clear potential highlight on it first
+                // if note is going away, clear potential highlight on it too
                 HighlightNote(note, NoteHighlightType.None);
                 _notes[note - 1].Candidate = 0;
             }
         }
 
-        public void HighlightHavingNote(int note)
+        public void HighlightHavingNoteOrNumber(int value)
         {
-            if (note < 1 || note > 9)
-                throw new ArgumentException(String.Format("Invalid note requested for cell highlight: {0}", note));
+            if (value < 1 || value > 9)
+                throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
-            // if the cell has the note being asked for highlight
-            if (_notes[note - 1].IsNoted)
-                IsHighlighted = true;
-            else
-                IsHighlighted = false;
+            _isHighlighted = (_notes[value - 1].IsNoted || (_number == value));
         }
-
 
         public void HighlightNote(int note, NoteHighlightType highlightType)
         {

@@ -10,6 +10,7 @@ namespace Sudoku
     public abstract class Note
     {
         protected int _candidate;
+        protected bool _isHighlighted;
 
         public int Candidate
         {
@@ -24,14 +25,8 @@ namespace Sudoku
             }
         }
 
-        public bool IsNoted
-        {
-            get { return _candidate != 0; }
-        }
-
-        public bool IsHighlighted { get; set; }
+        public bool IsNoted { get { return _candidate != 0; } }
         public NoteHighlightType HighlightType { get; set; }
-        public bool IsSelected { get; set; }
 
         public abstract void Render(int cellSize, int row, int col);
     }

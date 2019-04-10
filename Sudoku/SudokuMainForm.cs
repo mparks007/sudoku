@@ -20,28 +20,24 @@ namespace Sudoku
 
         private void button4_Click(object sender, EventArgs e)
         {
+            int cellSize = Convert.ToInt32(txtSize.Text);
+
             pictureBox1.Image = null;
+            pictureBox1.Width = pictureBox1.Height = cellSize * 9;
 
-            Game game = Game.GetInstance(BoardType.Bitmap, Convert.ToInt32(txtSize.Text));
-
-            Game.Board.Render();
-            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
-            textBox2.Text = Game.Board.ToJson();
+            Game game = Game.GetInstance(BoardType.Bitmap, cellSize);
 
             // test code vvv
-            Game.Board.SelectHouseOfCellAtRowCol(3, 3, HouseType.Row, deselectOthers: true);
-            Game.Board.SelectHouseOfCellAtRowCol(3, 3, HouseType.Column, deselectOthers: false);
-            Game.Board.SelectHouseOfCellAtRowCol(3, 3, HouseType.Block, deselectOthers: false);
+            Game.Board.SelectHousesOfCellAtRowCol(3, 3);
             Game.Board.SelectCellAtRowCol(6, 6, deselectOthers: true);
             Game.Board._cells[6][3].SetNote(2, doSet: true);
             Game.Board._cells[2][5].SetNote(2, doSet: true);
 
-            Game.Board.HighlightCellsWithNote(2);
             Game.Board._cells[6][3].HighlightNote(2, NoteHighlightType.Info);
             Game.Board._cells[2][5].HighlightNote(2, NoteHighlightType.Info);
 
-            Game.Board._cells[3][6].SetSolve(6, isGiven: false);
-            Game.Board._cells[2][2].SetSolve(2, isGiven: true);
+            Game.Board._cells[3][6].SetNumber(6, isGiven: false);
+            Game.Board._cells[2][2].SetNumber(2, isGiven: true);
 
             Game.Board._cells[1][6].SetNote(8, doSet: true);
             Game.Board._cells[1][6].HighlightNote(8, NoteHighlightType.Weak);
@@ -52,7 +48,7 @@ namespace Sudoku
             Game.Board._cells[7][5].SetNote(7, doSet: true);
             Game.Board._cells[7][5].HighlightNote(7, NoteHighlightType.Info);
 
-            //_cells[8][7].SetNote(1, doSet: true);
+            Game.Board._cells[8][7].SetNote(1, doSet: true);
             Game.Board._cells[8][7].SetNote(2, doSet: true);
             Game.Board._cells[8][7].HighlightNote(2, NoteHighlightType.Bad);
 
@@ -62,8 +58,16 @@ namespace Sudoku
             Game.Board._cells[8][0].SetNote(6, doSet: true);
             Game.Board._cells[3][7].SetNote(9, doSet: true);
 
+            Game.Board.HighlightCellsWithNoteOrNumber(2);
+
             // test code ^^^
+            Render();
+        }
+
+        private void Render()
+        {
             Game.Board.Render();
+            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
@@ -75,61 +79,39 @@ namespace Sudoku
         private void btnSelCell_Click(object sender, EventArgs e)
         {
             Game.Board.SelectCellAtRowCol(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text), deselectOthers:true);
-            Game.Board.Render();
-            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
+            Game.Board.SelectHousesOfCellAtRowCol(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text));
+            Render();
         }
 
-        private void btnHiCell_Click(object sender, EventArgs e)
+        private void btnHiWithValue_Click(object sender, EventArgs e)
         {
-            //Game.Board.HighlightCellsWithNote(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text), deselectOthers: true);
-            //Game.Board.Render();
-            //pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
-        }
-
-        private void btnHiWithName_Click(object sender, EventArgs e)
-        {
-            Game.Board.HighlightCellsWithNote(Convert.ToInt32(txtNote.Text));
-            Game.Board.Render();
-            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
+            Game.Board.HighlightCellsWithNoteOrNumber(Convert.ToInt32(txtValue.Text));
+            Render();
         }
 
         private void btnSetNote_Click(object sender, EventArgs e)
         {
             Game.Board._cells[Convert.ToInt32(txtRow.Text)-1][Convert.ToInt32(txtCol.Text)-1].SetNote(Convert.ToInt32(txtNote.Text), doSet: true);
-            Game.Board.Render();
-            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
+            Render();
         }
 
         private void btnClearNote_Click(object sender, EventArgs e)
         {
             Game.Board._cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].SetNote(Convert.ToInt32(txtNote.Text), doSet: false);
-            Game.Board.Render();
-            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
+            Render();
         }
 
         private void btnSelHouse_Click(object sender, EventArgs e)
         {
-            if (chkRow.Checked)
-            {
-                Game.Board.SelectHouseOfCellAtRowCol(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text), HouseType.Row, deselectOthers: false);
-            }
-            if (chkCol.Checked)
-            {
-                Game.Board.SelectHouseOfCellAtRowCol(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text), HouseType.Column, deselectOthers: false);
-            }
-            if (chkHouse.Checked)
-            {
-                Game.Board.SelectHouseOfCellAtRowCol(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text), HouseType.Block, deselectOthers: false);
-            }
-            Game.Board.Render();
-            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
+            Game.Board.SelectHousesOfCellAtRowCol(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text));
+            Render();
         }
 
         private void btnAnswer_Click(object sender, EventArgs e)
         {
-            Game.Board._cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].SetSolve(Convert.ToInt32(txtNum.Text), isGiven: chkGiven.Checked);
-            Game.Board.Render();
-            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
+            Game.Board._cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].SetNumber(Convert.ToInt32(txtNum.Text), isGiven: radGiven.Checked);
+            Game.Board._cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].IsInvalid = radInvalid.Checked;
+            Render();
         }
 
         private void btnHiNote_Click(object sender, EventArgs e)
@@ -148,8 +130,7 @@ namespace Sudoku
                 type = NoteHighlightType.Weak;
 
             Game.Board._cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].HighlightNote(Convert.ToInt32(txtNote.Text), type);
-            Game.Board.Render();
-            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
+            Render();
         }
     }
 }

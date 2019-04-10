@@ -13,9 +13,9 @@ namespace Sudoku
     {
         private static Game _instance = null;
         private static Board _board;
-        private static int _cellSize;
+    //    private static int _cellSize;
 
-        public static int CellSize { get { return _cellSize; } }
+    //    public static int CellSize { get { return _cellSize; } }
 
         public static Color BoardBorderColor { get; set; }
         public static Color BoardHouseSelectColor { get; set; }
@@ -53,12 +53,12 @@ namespace Sudoku
 
         private Game(BoardType type, int cellSize)
         {
-            _cellSize = cellSize;
+          //  _cellSize = cellSize;
 
             switch (type)
             {
                 case BoardType.Bitmap:
-                    _board = new BitmapBoard(_cellSize);
+                    _board = new BitmapBoard(cellSize);
                     break;
                 case BoardType.Html:
                     throw new ArgumentException("Html Board not supported at this time");

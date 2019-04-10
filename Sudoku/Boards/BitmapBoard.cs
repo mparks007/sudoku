@@ -11,7 +11,6 @@ namespace Sudoku
 {
     public class BitmapBoard : Board
     {
-//        public Graphics Graphics { get; set; }
         public static Graphics Graphics;
         private Bitmap _boardImage;
         
@@ -26,7 +25,7 @@ namespace Sudoku
             }
         }
 
-        public BitmapBoard(int cellSize) : base()
+        public BitmapBoard(int cellSize)
         {
             _boardImage = new Bitmap(cellSize * 9, cellSize * 9);
 

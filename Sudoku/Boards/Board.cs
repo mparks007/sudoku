@@ -3,43 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-
-//9x9 cells
-// border (normal, highlighted)
-// color (normal, selected, highlighted)
-// 9x9 notes
-// font, number (or blank), color (n states? or just use outer color-picker?), 
-// border
-// blocks border
+//using Newtonsoft.Json;
 
 namespace Sudoku
 {
     public abstract class Board
     {
-        // TEMP>>>>MAKE THIS PROTECTED
+        // TEMP>>>>MAKE THIS PROTECTED with accessors when done quick testing
         public Cell[][] _cells;
-        //private HouseType _houseSelectionType = HouseType.None;
-        private Cell _selectedCell;
-        private bool _isSolved;
-
-        public Board()
-        {
-            // not sure how to instantiate the right Cell type if doing this in base clase (moved to derived Boards) :/
-            //_cells = new Cell[9][];
-            //for (int r = 0; r < 9; r++)
-            //{
-            //    _cells[r] = new Cell[9];
-            //    for (int c = 0; c < 9; c++)
-            //    {
-            //        int v = (r / 3);
-            //        int h = (c / 3);
-            //        int block = (3 * v) + h;
-
-            //        _cells[r][c] = new Cell(r + 1, c + 1, block + 1);
-            //    }
-            //}
-        }
+        //private Cell _selectedCell;
+        //private bool _isSolved;
 
         public void SelectCellAtRowCol(int row, int col, bool deselectOthers)
         {
@@ -61,10 +34,10 @@ namespace Sudoku
                 }
 
             // maybe will use this field later
-            _selectedCell = _cells[row-1][col-1];
+            //_selectedCell = _cells[row-1][col-1];
         }
 
-        public void SelectHouseOfCellAtRowCol(int row, int col, HouseType house, bool deselectOthers)
+        public void SelectHousesOfCellAtRowCol(int row, int col)
         {
             if (row < 1 || row > 9)
                 throw new ArgumentException(String.Format("Invalid cell row requested for house selection: {0}", row));
@@ -72,62 +45,37 @@ namespace Sudoku
             if (col < 1 || col > 9)
                 throw new ArgumentException(String.Format("Invalid cell column requested for house selection: {0}", col));
 
-            switch (house)
-            {
-                case HouseType.Row:
-                    for (int r = 0; r < 9; r++)
-                        for (int c = 0; c < 9; c++)
-                        {
-                            // if on the desired row
-                            if (r + 1 == row)
-                                _cells[r][c].IsHouseSelected = true;
-                            else if (deselectOthers)
-                                _cells[r][c].IsHouseSelected = false;
-                        }
-                    break;
-                case HouseType.Column:
-                    for (int r = 0; r < 9; r++)
-                        for (int c = 0; c < 9; c++)
-                        {
-                            // if on the desired column
-                            if (c + 1 == col)
-                                _cells[r][c].IsHouseSelected = true;
-                            else if (deselectOthers)
-                                _cells[r][c].IsHouseSelected = false;
-                        }
-                    break;
-                case HouseType.Block:
-                    for (int r = 0; r < 9; r++)
-                        for (int c = 0; c < 9; c++)
-                        {
-                            // if in the same block as the requested row/col
-                            if (_cells[r][c].Block == _cells[row-1][col-1].Block)
-                                _cells[r][c].IsHouseSelected = true;
-                            else if (deselectOthers)
-                                _cells[r][c].IsHouseSelected = false;
-                        }
-                    break;
-            }
+            for (int r = 0; r < 9; r++)
+                for (int c = 0; c < 9; c++)
+                {
+                    // if in the same row, column, or block as the requested row/col
+                    if ((_cells[r][c].Row == _cells[row-1][col-1].Row) ||
+                        (_cells[r][c].Column == _cells[row - 1][col - 1].Column) ||
+                        (_cells[r][c].Block == _cells[row - 1][col - 1].Block))
+                        _cells[r][c].IsHouseSelected = true;
+                    else
+                        _cells[r][c].IsHouseSelected = false;
+                }
             // maybe use this field later
             // _houseSelectionType = house;
             // update all cell highlight states to hightlight only the house of the selected cell
         }
 
-        public void HighlightCellsWithNote(int note)
+        public void HighlightCellsWithNoteOrNumber(int value)
         {
-            if (note < 1 || note > 9)
-                throw new ArgumentException(String.Format("Invalid note requested for cell highlight: {0}", note));
+            if (value < 1 || value > 9)
+                throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
-                    _cells[r][c].HighlightHavingNote(note);
+                    _cells[r][c].HighlightHavingNoteOrNumber(value);
         }
 
-        public string ToJson()
-        {
-            // how to deserialize the base class?
-            return JsonConvert.SerializeObject(this);
-        }
+        //public string ToJson()
+        //{
+        //    how to deserialize the base class?
+        //    return JsonConvert.SerializeObject(this);
+        //}
 
         public abstract void Render();
     }

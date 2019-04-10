@@ -27,32 +27,35 @@ namespace Sudoku
             // render cell color
             if (IsSelected)
                 BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.LightBlue), rect);
-            else if (IsHighlighted)
+            else if (_isHighlighted)
                 BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.LightGreen), rect);
             else if (IsHouseSelected)
-                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.LightGray), rect);
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.WhiteSmoke), rect);
             else
                 BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.White), rect);
 
             // if solved, render solved candidate
-            if (_solvedFor != 0)
+            if (_number != 0)
             {
-                // Draw the text onto the image
+                string num = _number.ToString();
+
                 Font f = new Font("Arial Black", cellSize / 2);
-                SizeF fSize = BitmapBoard.Graphics.MeasureString(SolvedFor.ToString(), f);
+                SizeF fSize = BitmapBoard.Graphics.MeasureString(num, f);
 
                 Brush br;
-                if (IsGiven)
+                if (_isGiven)
                     br = Brushes.Black;
+                else if (IsInvalid)
+                    br = Brushes.Red;
                 else
-                    br = Brushes.Blue;
+                    br =Brushes.Blue;
 
                 StringFormat format = new StringFormat()
                 {
                     Alignment = StringAlignment.Center,
                     LineAlignment = StringAlignment.Center
                 };
-                BitmapBoard.Graphics.DrawString(SolvedFor.ToString(), f, br, rect, format);
+                BitmapBoard.Graphics.DrawString(num, f, br, rect, format);
             }
             else
             {

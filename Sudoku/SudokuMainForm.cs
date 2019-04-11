@@ -10,12 +10,13 @@ using System.Windows.Forms;
 
 namespace Sudoku
 {
-    public partial class Form1 : Form
+    public partial class frmMain : Form
     {
 
-        public Form1()
+        public frmMain()
         {
             InitializeComponent();
+            button4_Click(this, new EventArgs());
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -109,8 +110,12 @@ namespace Sudoku
 
         private void btnAnswer_Click(object sender, EventArgs e)
         {
-            Game.Board._cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].SetNumber(Convert.ToInt32(txtNum.Text), isGiven: radGiven.Checked);
-            Game.Board._cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].IsInvalid = radInvalid.Checked;
+            if (radSetNone.Checked)
+                Game.Board._cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].SetNumber(0, isGiven: false);
+            else
+                Game.Board._cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].SetNumber(Convert.ToInt32(txtNum.Text), isGiven: radSetGiven.Checked);
+
+            Game.Board._cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].IsInvalid = radSetInvalid.Checked;
             Render();
         }
 
@@ -131,6 +136,59 @@ namespace Sudoku
 
             Game.Board._cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].HighlightNote(Convert.ToInt32(txtNote.Text), type);
             Render();
+        }
+
+        private void frmMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            UserInput input = UserInput.None;
+
+            switch (e.KeyCode)
+            {
+                case Keys.Up:
+                    input = UserInput.UpArrow;
+                    break;
+                case Keys.Down:
+                    input = UserInput.DownArrow;
+                    break;
+                case Keys.Left:
+                    input = UserInput.LeftArrow;
+                    break;
+                case Keys.Right:
+                    input = UserInput.RightArrow;
+                    break;
+                case Keys.Home:
+                    if (e.Alt)
+                        input = UserInput.AltHome;
+                    else if (e.Control)
+                        input = UserInput.CtrlHome;
+                    else
+                        input = UserInput.Home;
+                    break;
+                case Keys.End:
+                    if (e.Alt)
+                        input = UserInput.AltEnd;
+                    else if (e.Control)
+                        input = UserInput.CtrlEnd;
+                    else
+                        input = UserInput.End;
+                    break;
+                case Keys.Tab:
+                    input = (e.Shift ? UserInput.ShiftTab : UserInput.Tab);
+                    break;
+            }
+            Game.Board.HandleKeyUserInput(input);
+            Render();
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            Game.Board.HandleMouseUserInput(UserInput.LeftClick, ((MouseEventArgs)e).X, ((MouseEventArgs)e).Y);
+        }
+
+        private void pictureBox1_DoubleClick(object sender, EventArgs e)
+        {
+            // how do I hit this vs. click always happening even when I double click??
+            Game.Board.HandleMouseUserInput(UserInput.DoubleClick, ((MouseEventArgs)e).X, ((MouseEventArgs)e).Y);
         }
     }
 }

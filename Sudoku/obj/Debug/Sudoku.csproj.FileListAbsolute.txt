@@ -19,10 +19,10 @@ C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\Newtonsoft.Json.dll
 C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\Newtonsoft.Json.pdb
 C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\Newtonsoft.Json.xml
 C:\src\github.com\mparks007\sudoku\Sudoku\obj\Debug\Sudoku.csprojAssemblyReference.cache
-C:\src\github.com\mparks007\sudoku\Sudoku\obj\Debug\Sudoku.Form1.resources
 C:\src\github.com\mparks007\sudoku\Sudoku\obj\Debug\Sudoku.Properties.Resources.resources
 C:\src\github.com\mparks007\sudoku\Sudoku\obj\Debug\Sudoku.csproj.GenerateResource.cache
 C:\src\github.com\mparks007\sudoku\Sudoku\obj\Debug\Sudoku.csproj.CoreCompileInputs.cache
 C:\src\github.com\mparks007\sudoku\Sudoku\obj\Debug\Sudoku.csproj.CopyComplete
 C:\src\github.com\mparks007\sudoku\Sudoku\obj\Debug\Sudoku.exe
 C:\src\github.com\mparks007\sudoku\Sudoku\obj\Debug\Sudoku.pdb
+C:\src\github.com\mparks007\sudoku\Sudoku\obj\Debug\Sudoku.frmMain.resources

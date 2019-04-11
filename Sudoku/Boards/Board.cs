@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//using Newtonsoft.Json;
 
 namespace Sudoku
 {
     public abstract class Board
     {
+        private Cell _selectedCell;
         // TEMP>>>>MAKE THIS PROTECTED with accessors when done quick testing
         public Cell[][] _cells;
-        //private Cell _selectedCell;
-        //private bool _isSolved;
+        public Cell SelectedCell { get { return _selectedCell; } }
 
         public void SelectCellAtRowCol(int row, int col, bool deselectOthers)
         {
@@ -33,8 +32,7 @@ namespace Sudoku
                         _cells[r][c].IsSelected = false;
                 }
 
-            // maybe will use this field later
-            //_selectedCell = _cells[row-1][col-1];
+            _selectedCell = _cells[row-1][col-1];
         }
 
         public void SelectHousesOfCellAtRowCol(int row, int col)
@@ -56,9 +54,6 @@ namespace Sudoku
                     else
                         _cells[r][c].IsHouseSelected = false;
                 }
-            // maybe use this field later
-            // _houseSelectionType = house;
-            // update all cell highlight states to hightlight only the house of the selected cell
         }
 
         public void HighlightCellsWithNoteOrNumber(int value)
@@ -71,11 +66,89 @@ namespace Sudoku
                     _cells[r][c].HighlightHavingNoteOrNumber(value);
         }
 
-        //public string ToJson()
-        //{
-        //    how to deserialize the base class?
-        //    return JsonConvert.SerializeObject(this);
-        //}
+        public void HandleKeyUserInput(UserInput input)
+        {
+            int currentRow = _selectedCell.Row;
+            int currentColumn = _selectedCell.Column;
+            int currentBlock = _selectedCell.Block;
+
+            switch (input)
+            {
+                case UserInput.UpArrow:
+                    if (--currentRow < 1)
+                        currentRow = 9;
+                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    break;
+                case UserInput.DownArrow:
+                    if (++currentRow > 9)
+                        currentRow = 1;
+                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    break;
+                case UserInput.LeftArrow:
+                    if (--currentColumn < 1)
+                        currentColumn = 9;
+                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    break;
+                case UserInput.RightArrow:
+                    if (++currentColumn > 9)
+                        currentColumn = 1;
+                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    break;
+                case UserInput.Home:
+                    if (currentColumn != 1)
+                        currentColumn = 1;
+                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    break;
+                case UserInput.End:
+                    if (currentColumn != 9)
+                        currentColumn = 9;
+                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    break;
+                case UserInput.AltHome:
+                    if (currentRow != 1)
+                        currentRow = 1;
+                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    break;
+                case UserInput.AltEnd:
+                    if (currentRow != 9)
+                        currentRow = 9;
+                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    break;
+                case UserInput.CtrlHome:
+                    if ((currentRow != 1) || (currentColumn != 1))
+                    {
+                        currentRow = 1;
+                        currentColumn = 1;
+                    }
+                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    break;
+                case UserInput.CtrlEnd:
+                    if ((currentRow != 9) || (currentColumn != 9))
+                    {
+                        currentRow = 9;
+                        currentColumn = 9;
+                    }
+                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    break;
+                case UserInput.Tab:
+                    currentColumn += 3;
+                    if (currentColumn > 9)
+                        currentColumn = currentColumn - 9;
+                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    break;
+                case UserInput.ShiftTab:
+                    currentColumn -= 3;
+                    if (currentColumn < 1) 
+                        currentColumn = 10 - -currentColumn;
+                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    break;
+            }
+        }
+
+        public void HandleMouseUserInput(UserInput input, int x, int y)
+        {
+
+        }
 
         public abstract void Render();
     }

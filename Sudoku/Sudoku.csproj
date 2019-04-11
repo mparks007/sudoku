@@ -64,7 +64,7 @@
       <DependentUpon>SudokuMainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Game.cs" />
-    <Compile Include="Enums\HouseType.cs" />
+    <Compile Include="Enums\UserInput.cs" />
     <Compile Include="Boards\HtmlBoard.cs" />
     <Compile Include="Sudoku.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

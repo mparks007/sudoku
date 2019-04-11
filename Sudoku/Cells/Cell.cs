@@ -61,7 +61,13 @@ namespace Sudoku
             if (value < 1 || value > 9)
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
-            _isHighlighted = (_notes[value - 1].IsNoted || (_number == value));
+            // if set number is the one to highlight
+            if (_number == value)
+                _isHighlighted = true;
+            else if (_number == 0) // or notes are visible
+                _isHighlighted = _notes[value - 1].IsNoted; // and one of the notes is the desired value
+            else
+                _isHighlighted = false;
         }
 
         public void HighlightNote(int note, NoteHighlightType highlightType)

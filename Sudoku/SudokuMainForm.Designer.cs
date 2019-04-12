@@ -28,11 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnCreate = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.txtCoords = new System.Windows.Forms.TextBox();
-            this.txtSize = new System.Windows.Forms.TextBox();
-            this.lblSize = new System.Windows.Forms.Label();
             this.lblCol = new System.Windows.Forms.Label();
             this.txtCol = new System.Windows.Forms.TextBox();
             this.btnSelCell = new System.Windows.Forms.Button();
@@ -51,7 +46,6 @@
             this.radHiStrong = new System.Windows.Forms.RadioButton();
             this.radHiWeak = new System.Windows.Forms.RadioButton();
             this.btnHiNote = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.radSetInvalid = new System.Windows.Forms.RadioButton();
             this.radSetGuess = new System.Windows.Forms.RadioButton();
             this.radSetGiven = new System.Windows.Forms.RadioButton();
@@ -61,65 +55,9 @@
             this.btnHiWithValue = new System.Windows.Forms.Button();
             this.lblValue = new System.Windows.Forms.Label();
             this.txtValue = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // btnCreate
-            // 
-            this.btnCreate.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.btnCreate.Location = new System.Drawing.Point(682, 466);
-            this.btnCreate.Name = "btnCreate";
-            this.btnCreate.Size = new System.Drawing.Size(131, 23);
-            this.btnCreate.TabIndex = 7;
-            this.btnCreate.TabStop = false;
-            this.btnCreate.Text = "Create Board";
-            this.btnCreate.UseVisualStyleBackColor = false;
-            this.btnCreate.Visible = false;
-            this.btnCreate.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.pictureBox1.Location = new System.Drawing.Point(3, 3);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(540, 540);
-            this.pictureBox1.TabIndex = 8;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
-            this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
-            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
-            // 
-            // txtCoords
-            // 
-            this.txtCoords.Location = new System.Drawing.Point(576, 535);
-            this.txtCoords.Name = "txtCoords";
-            this.txtCoords.ReadOnly = true;
-            this.txtCoords.Size = new System.Drawing.Size(69, 20);
-            this.txtCoords.TabIndex = 10;
-            this.txtCoords.TabStop = false;
-            // 
-            // txtSize
-            // 
-            this.txtSize.HideSelection = false;
-            this.txtSize.Location = new System.Drawing.Point(645, 466);
-            this.txtSize.MaxLength = 3;
-            this.txtSize.Name = "txtSize";
-            this.txtSize.Size = new System.Drawing.Size(25, 20);
-            this.txtSize.TabIndex = 11;
-            this.txtSize.TabStop = false;
-            this.txtSize.Text = "60";
-            // 
-            // lblSize
-            // 
-            this.lblSize.AutoSize = true;
-            this.lblSize.Location = new System.Drawing.Point(592, 471);
-            this.lblSize.Name = "lblSize";
-            this.lblSize.Size = new System.Drawing.Size(47, 13);
-            this.lblSize.TabIndex = 12;
-            this.lblSize.Text = "Cell Size";
             // 
             // lblCol
             // 
@@ -216,7 +154,7 @@
             // 
             // btnAnswer
             // 
-            this.btnAnswer.Location = new System.Drawing.Point(682, 362);
+            this.btnAnswer.Location = new System.Drawing.Point(682, 387);
             this.btnAnswer.Name = "btnAnswer";
             this.btnAnswer.Size = new System.Drawing.Size(131, 23);
             this.btnAnswer.TabIndex = 28;
@@ -273,6 +211,7 @@
             this.radHiNone.Name = "radHiNone";
             this.radHiNone.Size = new System.Drawing.Size(51, 17);
             this.radHiNone.TabIndex = 31;
+            this.radHiNone.TabStop = true;
             this.radHiNone.Text = "None";
             this.radHiNone.UseVisualStyleBackColor = true;
             // 
@@ -298,7 +237,7 @@
             // 
             // btnHiNote
             // 
-            this.btnHiNote.Location = new System.Drawing.Point(682, 55);
+            this.btnHiNote.Location = new System.Drawing.Point(682, 99);
             this.btnHiNote.Name = "btnHiNote";
             this.btnHiNote.Size = new System.Drawing.Size(131, 23);
             this.btnHiNote.TabIndex = 36;
@@ -306,17 +245,6 @@
             this.btnHiNote.Text = "Hightlight Note";
             this.btnHiNote.UseVisualStyleBackColor = true;
             this.btnHiNote.Click += new System.EventHandler(this.btnHiNote_Click);
-            // 
-            // panel1
-            // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.panel1.AutoScroll = true;
-            this.panel1.Controls.Add(this.pictureBox1);
-            this.panel1.Location = new System.Drawing.Point(24, 12);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(546, 545);
-            this.panel1.TabIndex = 37;
             // 
             // radSetInvalid
             // 
@@ -346,6 +274,7 @@
             this.radSetGiven.Name = "radSetGiven";
             this.radSetGiven.Size = new System.Drawing.Size(53, 17);
             this.radSetGiven.TabIndex = 38;
+            this.radSetGiven.TabStop = true;
             this.radSetGiven.Text = "Given";
             this.radSetGiven.UseVisualStyleBackColor = true;
             // 
@@ -356,7 +285,7 @@
             this.groupBox1.Controls.Add(this.radHiInfo);
             this.groupBox1.Controls.Add(this.radHiBad);
             this.groupBox1.Controls.Add(this.radHiStrong);
-            this.groupBox1.Location = new System.Drawing.Point(610, 12);
+            this.groupBox1.Location = new System.Drawing.Point(610, 56);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(66, 103);
             this.groupBox1.TabIndex = 0;
@@ -386,7 +315,7 @@
             // 
             // btnHiWithValue
             // 
-            this.btnHiWithValue.Location = new System.Drawing.Point(682, 309);
+            this.btnHiWithValue.Location = new System.Drawing.Point(682, 316);
             this.btnHiWithValue.Name = "btnHiWithValue";
             this.btnHiWithValue.Size = new System.Drawing.Size(131, 23);
             this.btnHiWithValue.TabIndex = 6;
@@ -398,7 +327,7 @@
             // lblValue
             // 
             this.lblValue.AutoSize = true;
-            this.lblValue.Location = new System.Drawing.Point(600, 312);
+            this.lblValue.Location = new System.Drawing.Point(600, 319);
             this.lblValue.Name = "lblValue";
             this.lblValue.Size = new System.Drawing.Size(34, 13);
             this.lblValue.TabIndex = 44;
@@ -407,7 +336,7 @@
             // txtValue
             // 
             this.txtValue.HideSelection = false;
-            this.txtValue.Location = new System.Drawing.Point(639, 309);
+            this.txtValue.Location = new System.Drawing.Point(639, 316);
             this.txtValue.MaxLength = 1;
             this.txtValue.Name = "txtValue";
             this.txtValue.Size = new System.Drawing.Size(25, 20);
@@ -420,12 +349,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.ClientSize = new System.Drawing.Size(880, 572);
+            this.ClientSize = new System.Drawing.Size(880, 577);
             this.Controls.Add(this.lblValue);
             this.Controls.Add(this.txtValue);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.btnHiNote);
             this.Controls.Add(this.lblRow);
             this.Controls.Add(this.txtRow);
@@ -439,22 +367,18 @@
             this.Controls.Add(this.btnSelCell);
             this.Controls.Add(this.lblCol);
             this.Controls.Add(this.txtCol);
-            this.Controls.Add(this.lblSize);
-            this.Controls.Add(this.txtSize);
-            this.Controls.Add(this.txtCoords);
-            this.Controls.Add(this.btnCreate);
             this.Controls.Add(this.btnHiWithValue);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.KeyPreview = true;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(900, 615);
-            this.MinimumSize = new System.Drawing.Size(900, 615);
+            this.MaximumSize = new System.Drawing.Size(900, 620);
+            this.MinimumSize = new System.Drawing.Size(900, 620);
             this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Woofus Sudoku";
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.frmMain_Paint);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmMain_KeyDown);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.panel1.ResumeLayout(false);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseDown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -465,11 +389,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button btnCreate;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.TextBox txtCoords;
-        private System.Windows.Forms.TextBox txtSize;
-        private System.Windows.Forms.Label lblSize;
         private System.Windows.Forms.Label lblCol;
         private System.Windows.Forms.TextBox txtCol;
         private System.Windows.Forms.Button btnSelCell;
@@ -488,7 +407,6 @@
         private System.Windows.Forms.RadioButton radHiStrong;
         private System.Windows.Forms.RadioButton radHiWeak;
         private System.Windows.Forms.Button btnHiNote;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.RadioButton radSetInvalid;
         private System.Windows.Forms.RadioButton radSetGuess;
         private System.Windows.Forms.RadioButton radSetGiven;

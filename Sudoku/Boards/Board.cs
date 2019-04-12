@@ -8,6 +8,7 @@ namespace Sudoku
 {
     public abstract class Board
     {
+        protected int boardSize;
         private Cell _selectedCell;
         // TEMP>>>>MAKE THIS PROTECTED with accessors when done quick testing
         public Cell[][] _cells;
@@ -33,6 +34,8 @@ namespace Sudoku
                 }
 
             _selectedCell = _cells[row-1][col-1];
+
+            SelectHousesOfCellAtRowCol(row, col);
         }
 
         public void SelectHousesOfCellAtRowCol(int row, int col)
@@ -147,7 +150,16 @@ namespace Sudoku
 
         public void HandleMouseUserInput(UserInput input, int x, int y)
         {
-
+            // if just basic cell select
+            if (input == UserInput.LeftClick)
+            {
+                SelectCellAtRowCol(1, 1, true);
+            } 
+            else
+            {
+                // convert double-clicked note (if was note) to solvedFor
+                SelectCellAtRowCol(9, 9, true);
+            }
         }
 
         public abstract void Render();

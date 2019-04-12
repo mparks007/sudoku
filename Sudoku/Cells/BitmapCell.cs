@@ -24,10 +24,7 @@ namespace Sudoku
             int left = (Column - 1) * cellSize;
             Rectangle rect = new Rectangle(left, top, cellSize, cellSize);
 
-            // render cell color
-            if (IsSelected)
-                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.LightBlue), rect);
-            else if (_isHighlighted)
+            if (_isHighlighted)
                 BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.LightGreen), rect);
             else if (IsHouseSelected)
                 BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.WhiteSmoke), rect);
@@ -63,6 +60,9 @@ namespace Sudoku
                 for (int i = 0; i < 9; i++)
                     _notes[i].Render(cellSize, Row, Column);
             }
+
+            if (IsSelected)
+                BitmapBoard.Graphics.DrawRectangle(new Pen(Color.Coral, 3), rect.X+2, rect.Y+2, rect.Width-4, rect.Height-4);
 
             // render cell border
             BitmapBoard.Graphics.DrawRectangle(new Pen(Color.DarkGray, 1), rect);

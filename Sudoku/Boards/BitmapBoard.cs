@@ -28,6 +28,7 @@ namespace Sudoku
         public BitmapBoard(int cellSize)
         {
             _boardImage = new Bitmap(cellSize * 9, cellSize * 9);
+            boardSize = _boardImage.Width;
 
             _cells = new Cell[9][];
             for (int r = 0; r < 9; r++)

@@ -12,21 +12,23 @@ namespace Sudoku
 {
     public partial class frmMain : Form
     {
+        private Graphics gr;
+        private Timer doubleClickTimer = new Timer();
+        private bool isFirstClick = true;
+        private bool isDoubleClick;
+        private int milliseconds;
+        private int clickX;
+        private int clickY;
 
         public frmMain()
         {
             InitializeComponent();
-            button4_Click(this, new EventArgs());
-        }
+            gr = this.CreateGraphics();
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            int cellSize = Convert.ToInt32(txtSize.Text);
+            doubleClickTimer.Interval = 30;
+            doubleClickTimer.Tick += new EventHandler(doubleClickTimer_Tick);
 
-            pictureBox1.Image = null;
-            pictureBox1.Width = pictureBox1.Height = cellSize * 9;
-
-            Game game = Game.GetInstance(BoardType.Bitmap, cellSize);
+            Game game = Game.GetInstance(BoardType.Bitmap, cellSize: 60);
 
             // test code vvv
             Game.Board.SelectHousesOfCellAtRowCol(3, 3);
@@ -68,13 +70,8 @@ namespace Sudoku
         private void Render()
         {
             Game.Board.Render();
-            pictureBox1.Image = ((BitmapBoard)Game.Board).Image;
-        }
-
-        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (sender == pictureBox1)
-                txtCoords.Text = String.Format("X:{0},Y:{1}", e.Location.X, e.Location.Y);
+            PaintEventArgs e = new PaintEventArgs(gr, new Rectangle(0, 0, this.Width, this.Height));
+            e.Graphics.DrawImageUnscaled(((BitmapBoard)Game.Board).Image, 20, 20);
         }
 
         private void btnSelCell_Click(object sender, EventArgs e)
@@ -173,22 +170,63 @@ namespace Sudoku
                         input = UserInput.End;
                     break;
                 case Keys.Tab:
+                    // how to capture this?
                     input = (e.Shift ? UserInput.ShiftTab : UserInput.Tab);
                     break;
             }
             Game.Board.HandleKeyUserInput(input);
             Render();
+
+            txtRow.Text = Game.Board.SelectedCell.Row.ToString();
+            txtCol.Text = Game.Board.SelectedCell.Column.ToString();
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
+        private void frmMain_Paint(object sender, PaintEventArgs e)
         {
-            Game.Board.HandleMouseUserInput(UserInput.LeftClick, ((MouseEventArgs)e).X, ((MouseEventArgs)e).Y);
+            Render();
         }
 
-        private void pictureBox1_DoubleClick(object sender, EventArgs e)
+        private void frmMain_MouseDown(object sender, MouseEventArgs e)
         {
-            // how do I hit this vs. click always happening even when I double click??
-            Game.Board.HandleMouseUserInput(UserInput.DoubleClick, ((MouseEventArgs)e).X, ((MouseEventArgs)e).Y);
+            if (isFirstClick)
+            {
+                isFirstClick = false;
+                clickX = ((MouseEventArgs)e).X;
+                clickY = ((MouseEventArgs)e).Y;
+                doubleClickTimer.Start();
+            }
+            else
+            {
+                if (milliseconds < SystemInformation.DoubleClickTime)
+                    isDoubleClick = true;
+            }
+        }
+
+        void doubleClickTimer_Tick(object sender, EventArgs e)
+        {
+            milliseconds += 100;
+
+            // The timer has reached the double click time limit.
+            if (milliseconds >= SystemInformation.DoubleClickTime)
+            {
+                doubleClickTimer.Stop();
+
+                if (isDoubleClick)
+                {
+                    Game.Board.HandleMouseUserInput(UserInput.DoubleClick, clickX, clickY);
+                }
+                else
+                {
+                    Game.Board.HandleMouseUserInput(UserInput.LeftClick, clickX, clickY);
+                }
+
+                // Allow the MouseDown event handler to process clicks again.
+                isFirstClick = true;
+                isDoubleClick = false;
+                milliseconds = 0;
+
+                Render();
+            }
         }
     }
 }

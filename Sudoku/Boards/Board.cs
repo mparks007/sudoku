@@ -8,28 +8,31 @@ namespace Sudoku
 {
     public abstract class Board
     {
-        protected int boardSize;
         private Cell _selectedCell;
-        // TEMP>>>>MAKE THIS PROTECTED with accessors when done quick testing
-        public Cell[][] _cells;
-        public Cell SelectedCell { get { return _selectedCell; } }
+        protected int _boardSize;
+        protected Cell[][] _cells;
 
-        public void SelectCellAtRowCol(int row, int col, bool deselectOthers)
+        public Cell[][] Cells { get { return _cells; } }
+        public Cell SelectedCell { get { return _selectedCell; } }
+        
+        public void SelectCellAtRowCol(int row, int col)
         {
+            if ((_selectedCell != null) && ((_selectedCell.Row == row) && (_selectedCell.Column == col)))
+                return;
+
             if (row < 1 || row > 9)
                 throw new ArgumentException(String.Format("Invalid cell row requested for selection: {0}", row));
 
             if (col < 1 || col > 9)
                 throw new ArgumentException(String.Format("Invalid cell column requested for selection: {0}", col));
 
-            // select the requested cell and maybe unselect the rest
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
                 {
                     // if found the desired cell
                     if ((r + 1 == row) && (c + 1 == col))
                         _cells[r][c].IsSelected = true;
-                    else if (deselectOthers)
+                    else
                         _cells[r][c].IsSelected = false;
                 }
 
@@ -69,7 +72,7 @@ namespace Sudoku
                     _cells[r][c].HighlightHavingNoteOrNumber(value);
         }
 
-        public void HandleKeyUserInput(UserInput input)
+        public void HandleKeyUserInput(UserInput input, ModifierKey modifierKey)
         {
             int currentRow = _selectedCell.Row;
             int currentColumn = _selectedCell.Column;
@@ -77,73 +80,89 @@ namespace Sudoku
 
             switch (input)
             {
+                case UserInput.One:
+                case UserInput.Two:
+                case UserInput.Three:
+                case UserInput.Four:
+                case UserInput.Five:
+                case UserInput.Six:
+                case UserInput.Seven:
+                case UserInput.Eight:
+                case UserInput.Nine:
+                    if (!_selectedCell.IsGiven)
+                    {
+                        // if Alt-num 
+                        if ((modifierKey & ModifierKey.Alt) != 0)
+                        {
+                            // and the cell doesn't already have an answer number assigned
+                            if (!_selectedCell.HasNumberSet)
+                                _selectedCell.SetNote((int)input);
+                        }
+                        else
+                            _selectedCell.SetNumber((int)input, isGiven: false);
+                    }
+                    break;
                 case UserInput.UpArrow:
                     if (--currentRow < 1)
                         currentRow = 9;
-                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    SelectCellAtRowCol(currentRow, currentColumn);
                     break;
                 case UserInput.DownArrow:
                     if (++currentRow > 9)
                         currentRow = 1;
-                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    SelectCellAtRowCol(currentRow, currentColumn);
                     break;
                 case UserInput.LeftArrow:
                     if (--currentColumn < 1)
                         currentColumn = 9;
-                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    SelectCellAtRowCol(currentRow, currentColumn);
                     break;
                 case UserInput.RightArrow:
                     if (++currentColumn > 9)
                         currentColumn = 1;
-                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    SelectCellAtRowCol(currentRow, currentColumn);
                     break;
                 case UserInput.Home:
-                    if (currentColumn != 1)
+                    if (((modifierKey & ModifierKey.Alt) != 0) && (currentRow != 1))
+                        currentRow = 1;
+                    else if (((modifierKey & ModifierKey.Control) != 0) && ((currentRow != 1) || (currentColumn != 1)))
+                    {
+                        currentRow = 1;
                         currentColumn = 1;
-                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    }
+                    else if (currentColumn != 1)
+                        currentColumn = 1;
+
+                    SelectCellAtRowCol(currentRow, currentColumn);
                     break;
                 case UserInput.End:
-                    if (currentColumn != 9)
-                        currentColumn = 9;
-                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
-                    break;
-                case UserInput.AltHome:
-                    if (currentRow != 1)
-                        currentRow = 1;
-                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
-                    break;
-                case UserInput.AltEnd:
-                    if (currentRow != 9)
+                    if (((modifierKey & ModifierKey.Alt) != 0) && (currentRow != 9))
                         currentRow = 9;
-                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
-                    break;
-                case UserInput.CtrlHome:
-                    if ((currentRow != 1) || (currentColumn != 1))
-                    {
-                        currentRow = 1;
-                        currentColumn = 1;
-                    }
-                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
-                    break;
-                case UserInput.CtrlEnd:
-                    if ((currentRow != 9) || (currentColumn != 9))
+                    else if (((modifierKey & ModifierKey.Control) != 0) && ((currentRow != 9) || (currentColumn != 9)))
                     {
                         currentRow = 9;
                         currentColumn = 9;
                     }
-                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                    else if (currentColumn != 9)
+                        currentColumn = 9;
+
+                    SelectCellAtRowCol(currentRow, currentColumn);
                     break;
-                case UserInput.Tab:
-                    currentColumn += 3;
-                    if (currentColumn > 9)
-                        currentColumn = currentColumn - 9;
-                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
-                    break;
-                case UserInput.ShiftTab:
-                    currentColumn -= 3;
-                    if (currentColumn < 1) 
-                        currentColumn = 10 - -currentColumn;
-                    SelectCellAtRowCol(currentRow, currentColumn, deselectOthers: true);
+                //case UserInput.Tab:
+                //    currentColumn += 3;
+                //    if (currentColumn > 9)
+                //        currentColumn = currentColumn - 9;
+                //    SelectCellAtRowCol(currentRow, currentColumn);
+                //    break;
+                //case UserInput.ShiftTab:
+                //    currentColumn -= 3;
+                //    if (currentColumn < 1) 
+                //        currentColumn = 10 - -currentColumn;
+                //    SelectCellAtRowCol(currentRow, currentColumn);
+                //    break;
+                case UserInput.Delete:
+                    if (_selectedCell.HasNumberSet && !_selectedCell.IsGiven)
+                        _selectedCell.SetNumber(0, isGiven: false);
                     break;
             }
         }
@@ -153,12 +172,12 @@ namespace Sudoku
             // if just basic cell select
             if (input == UserInput.LeftClick)
             {
-                SelectCellAtRowCol(1, 1, true);
+                SelectCellAtRowCol(1, 1);
             } 
             else
             {
-                // convert double-clicked note (if was note) to solvedFor
-                SelectCellAtRowCol(9, 9, true);
+                // convert double-clicked note (if had note) to solvedFor value
+                SelectCellAtRowCol(9, 9);
             }
         }
 

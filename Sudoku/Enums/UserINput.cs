@@ -8,7 +8,16 @@ namespace Sudoku
 {
     public enum UserInput
     {
-        None = 0,
+        None,
+        One,
+        Two,
+        Three,
+        Four,
+        Five,
+        Six,
+        Seven,
+        Eight,
+        Nine,
         UpArrow,
         DownArrow,
         LeftArrow,
@@ -21,6 +30,7 @@ namespace Sudoku
         CtrlEnd,
         Tab,
         ShiftTab,
+        Delete,
         LeftClick,
         RightClick,
         DoubleClick

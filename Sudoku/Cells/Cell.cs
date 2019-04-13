@@ -13,10 +13,11 @@ namespace Sudoku
     public abstract class Cell
     {
         protected int _number;
-        protected bool _isGiven;
         protected bool _isHighlighted;
         protected Note[] _notes = new Note[9];
 
+        // can some of these go to protected?
+        public bool IsGiven { get; set; }
         public bool IsSelected { get; set; }
         public bool IsInvalid { get; set; }
         public bool IsHouseSelected { get; set; }
@@ -31,6 +32,11 @@ namespace Sudoku
             Block = block;
         }
 
+        public bool HasNumberSet
+        {
+            get { return _number != 0; }
+        }
+
         // num as 0 will mean clear the solve number
         public void SetNumber(int num, bool isGiven)
         {
@@ -38,22 +44,25 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
             _number = num;
-            _isGiven = isGiven;
+            IsGiven = isGiven;
+
+            if (_number == 0)
+                _isHighlighted = false;
         }
 
-        public void SetNote(int note, bool doSet)
+        public void SetNote(int note)
         {
             if (note < 1 || note > 9)
-                throw new ArgumentException(String.Format("Invalid note being {0}: {1}", (doSet ? "set" : "unset"), note));
+                throw new ArgumentException(String.Format("Invalid note being set/unset: {0}", note));
 
-            if (doSet)
-                _notes[note - 1].Candidate = note;
-            else
-            {
+            if (_notes[note - 1].Candidate == note)
+            { 
                 // if note is going away, clear potential highlight on it too
                 HighlightNote(note, NoteHighlightType.None);
                 _notes[note - 1].Candidate = 0;
             }
+            else
+                _notes[note - 1].Candidate = note;
         }
 
         public void HighlightHavingNoteOrNumber(int value)
@@ -65,7 +74,7 @@ namespace Sudoku
             if (_number == value)
                 _isHighlighted = true;
             else if (_number == 0) // or notes are visible
-                _isHighlighted = _notes[value - 1].IsNoted; // and one of the notes is the desired value
+                _isHighlighted = _notes[value - 1].IsNoted; // and the requested note is present
             else
                 _isHighlighted = false;
         }

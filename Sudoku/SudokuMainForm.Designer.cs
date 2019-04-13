@@ -33,7 +33,6 @@
             this.btnSelCell = new System.Windows.Forms.Button();
             this.btnSetNote = new System.Windows.Forms.Button();
             this.txtNote = new System.Windows.Forms.TextBox();
-            this.btnClearNote = new System.Windows.Forms.Button();
             this.lblNote = new System.Windows.Forms.Label();
             this.lblNum = new System.Windows.Forms.Label();
             this.txtNum = new System.Windows.Forms.TextBox();
@@ -55,8 +54,14 @@
             this.btnHiWithValue = new System.Windows.Forms.Button();
             this.lblValue = new System.Windows.Forms.Label();
             this.txtValue = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.chkNotesMode = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblCol
@@ -97,7 +102,7 @@
             this.btnSetNote.Size = new System.Drawing.Size(131, 23);
             this.btnSetNote.TabIndex = 18;
             this.btnSetNote.TabStop = false;
-            this.btnSetNote.Text = "Set Note";
+            this.btnSetNote.Text = "Set/Clear Note";
             this.btnSetNote.UseVisualStyleBackColor = true;
             this.btnSetNote.Click += new System.EventHandler(this.btnSetNote_Click);
             // 
@@ -111,17 +116,6 @@
             this.txtNote.TabIndex = 19;
             this.txtNote.TabStop = false;
             this.txtNote.Text = "1";
-            // 
-            // btnClearNote
-            // 
-            this.btnClearNote.Location = new System.Drawing.Point(682, 260);
-            this.btnClearNote.Name = "btnClearNote";
-            this.btnClearNote.Size = new System.Drawing.Size(131, 23);
-            this.btnClearNote.TabIndex = 20;
-            this.btnClearNote.TabStop = false;
-            this.btnClearNote.Text = "Clear Note";
-            this.btnClearNote.UseVisualStyleBackColor = true;
-            this.btnClearNote.Click += new System.EventHandler(this.btnClearNote_Click);
             // 
             // lblNote
             // 
@@ -344,12 +338,75 @@
             this.txtValue.TabStop = false;
             this.txtValue.Text = "1";
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.radioButton3);
+            this.panel1.Controls.Add(this.radioButton2);
+            this.panel1.Controls.Add(this.radioButton1);
+            this.panel1.Location = new System.Drawing.Point(633, 469);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(212, 43);
+            this.panel1.TabIndex = 47;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton1.Checked = true;
+            this.radioButton1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.radioButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.radioButton1.Location = new System.Drawing.Point(6, 3);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(25, 37);
+            this.radioButton1.TabIndex = 0;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "1";
+            this.radioButton1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.radioButton2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.radioButton2.Location = new System.Drawing.Point(37, 3);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(25, 37);
+            this.radioButton2.TabIndex = 1;
+            this.radioButton2.Text = "2";
+            this.radioButton2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.radioButton3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.radioButton3.Location = new System.Drawing.Point(68, 3);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(25, 37);
+            this.radioButton3.TabIndex = 2;
+            this.radioButton3.Text = "3";
+            this.radioButton3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.radioButton3.UseVisualStyleBackColor = true;
+            // 
+            // chkNotesMode
+            // 
+            this.chkNotesMode.AutoSize = true;
+            this.chkNotesMode.Location = new System.Drawing.Point(686, 33);
+            this.chkNotesMode.Name = "chkNotesMode";
+            this.chkNotesMode.Size = new System.Drawing.Size(84, 17);
+            this.chkNotesMode.TabIndex = 48;
+            this.chkNotesMode.Text = "Notes Mode";
+            this.chkNotesMode.UseVisualStyleBackColor = true;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(880, 577);
+            this.Controls.Add(this.chkNotesMode);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.lblValue);
             this.Controls.Add(this.txtValue);
             this.Controls.Add(this.groupBox2);
@@ -361,7 +418,6 @@
             this.Controls.Add(this.lblNum);
             this.Controls.Add(this.txtNum);
             this.Controls.Add(this.lblNote);
-            this.Controls.Add(this.btnClearNote);
             this.Controls.Add(this.txtNote);
             this.Controls.Add(this.btnSetNote);
             this.Controls.Add(this.btnSelCell);
@@ -383,6 +439,7 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -394,7 +451,6 @@
         private System.Windows.Forms.Button btnSelCell;
         private System.Windows.Forms.Button btnSetNote;
         private System.Windows.Forms.TextBox txtNote;
-        private System.Windows.Forms.Button btnClearNote;
         private System.Windows.Forms.Label lblNote;
         private System.Windows.Forms.Label lblNum;
         private System.Windows.Forms.TextBox txtNum;
@@ -416,6 +472,11 @@
         private System.Windows.Forms.Label lblValue;
         private System.Windows.Forms.TextBox txtValue;
         private System.Windows.Forms.RadioButton radSetNone;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.CheckBox chkNotesMode;
     }
 }
 

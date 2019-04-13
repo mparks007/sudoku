@@ -18,8 +18,8 @@ namespace Sudoku
                 // calculate offset of each note to find right rect by note position
                 //   top: (row depth) + (inner-cell depth)
                 //   left: (col offset) + (inner-cell offset)
-                int top = ((row - 1) * cellSize) + ((Candidate - 1) / 3 * (cellSize / 3));
-                int left = ((col - 1) * cellSize) + ((Candidate - 1) % 3 * (cellSize / 3));
+                int top = ((row - 1) * cellSize) + ((_candidate - 1) / 3 * (cellSize / 3));
+                int left = ((col - 1) * cellSize) + ((_candidate - 1) % 3 * (cellSize / 3));
                 Rectangle rect = new Rectangle(left, top, cellSize / 3, cellSize / 3);
 
                 Color c = Color.Transparent;
@@ -43,7 +43,7 @@ namespace Sudoku
 
                 string candidate = _candidate.ToString();
 
-                // Draw the text onto the image
+                // prep for drawing the text onto the image
                 Font f = new Font("Arial", cellSize / 3 / 2);
                 SizeF fSize = BitmapBoard.Graphics.MeasureString(candidate, f);
                 StringFormat format = new StringFormat()
@@ -52,6 +52,7 @@ namespace Sudoku
                     LineAlignment = StringAlignment.Center
                 };
 
+                // draw the string, but use different (lighter) color if on red background  (but this will have to change if I have custom colors)
                 BitmapBoard.Graphics.DrawString(candidate, f, (HighlightType == NoteHighlightType.Bad ? Brushes.Silver : Brushes.DarkSlateGray), rect, format);
             }
         }

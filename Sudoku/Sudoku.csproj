@@ -54,6 +54,7 @@
     <Compile Include="Cells\BitmapCell.cs" />
     <Compile Include="Enums\BoardType.cs" />
     <Compile Include="Cells\Cell.cs" />
+    <Compile Include="Enums\ModifierKey.cs" />
     <Compile Include="Enums\NoteHighlightType.cs" />
     <Compile Include="Notes\BitmapNote.cs" />
     <Compile Include="Notes\Note.cs" />

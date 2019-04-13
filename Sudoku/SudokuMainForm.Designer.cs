@@ -28,17 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lblCol = new System.Windows.Forms.Label();
-            this.txtCol = new System.Windows.Forms.TextBox();
-            this.btnSelCell = new System.Windows.Forms.Button();
             this.btnSetNote = new System.Windows.Forms.Button();
-            this.txtNote = new System.Windows.Forms.TextBox();
-            this.lblNote = new System.Windows.Forms.Label();
-            this.lblNum = new System.Windows.Forms.Label();
-            this.txtNum = new System.Windows.Forms.TextBox();
             this.btnAnswer = new System.Windows.Forms.Button();
-            this.lblRow = new System.Windows.Forms.Label();
-            this.txtRow = new System.Windows.Forms.TextBox();
             this.radHiBad = new System.Windows.Forms.RadioButton();
             this.radHiInfo = new System.Windows.Forms.RadioButton();
             this.radHiNone = new System.Windows.Forms.RadioButton();
@@ -52,48 +43,21 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radSetNone = new System.Windows.Forms.RadioButton();
             this.btnHiWithValue = new System.Windows.Forms.Button();
-            this.lblValue = new System.Windows.Forms.Label();
-            this.txtValue = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.rad3 = new System.Windows.Forms.RadioButton();
+            this.rad2 = new System.Windows.Forms.RadioButton();
+            this.rad1 = new System.Windows.Forms.RadioButton();
             this.chkNotesMode = new System.Windows.Forms.CheckBox();
+            this.rad5 = new System.Windows.Forms.RadioButton();
+            this.rad4 = new System.Windows.Forms.RadioButton();
+            this.rad7 = new System.Windows.Forms.RadioButton();
+            this.rad6 = new System.Windows.Forms.RadioButton();
+            this.rad9 = new System.Windows.Forms.RadioButton();
+            this.rad8 = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // lblCol
-            // 
-            this.lblCol.AutoSize = true;
-            this.lblCol.Location = new System.Drawing.Point(604, 218);
-            this.lblCol.Name = "lblCol";
-            this.lblCol.Size = new System.Drawing.Size(22, 13);
-            this.lblCol.TabIndex = 14;
-            this.lblCol.Text = "Col";
-            // 
-            // txtCol
-            // 
-            this.txtCol.HideSelection = false;
-            this.txtCol.Location = new System.Drawing.Point(639, 215);
-            this.txtCol.MaxLength = 1;
-            this.txtCol.Name = "txtCol";
-            this.txtCol.Size = new System.Drawing.Size(25, 20);
-            this.txtCol.TabIndex = 13;
-            this.txtCol.TabStop = false;
-            this.txtCol.Text = "1";
-            // 
-            // btnSelCell
-            // 
-            this.btnSelCell.Location = new System.Drawing.Point(682, 202);
-            this.btnSelCell.Name = "btnSelCell";
-            this.btnSelCell.Size = new System.Drawing.Size(131, 23);
-            this.btnSelCell.TabIndex = 15;
-            this.btnSelCell.TabStop = false;
-            this.btnSelCell.Text = "Select Cell";
-            this.btnSelCell.UseVisualStyleBackColor = true;
-            this.btnSelCell.Click += new System.EventHandler(this.btnSelCell_Click);
             // 
             // btnSetNote
             // 
@@ -106,46 +70,6 @@
             this.btnSetNote.UseVisualStyleBackColor = true;
             this.btnSetNote.Click += new System.EventHandler(this.btnSetNote_Click);
             // 
-            // txtNote
-            // 
-            this.txtNote.HideSelection = false;
-            this.txtNote.Location = new System.Drawing.Point(639, 242);
-            this.txtNote.MaxLength = 1;
-            this.txtNote.Name = "txtNote";
-            this.txtNote.Size = new System.Drawing.Size(25, 20);
-            this.txtNote.TabIndex = 19;
-            this.txtNote.TabStop = false;
-            this.txtNote.Text = "1";
-            // 
-            // lblNote
-            // 
-            this.lblNote.AutoSize = true;
-            this.lblNote.Location = new System.Drawing.Point(600, 244);
-            this.lblNote.Name = "lblNote";
-            this.lblNote.Size = new System.Drawing.Size(30, 13);
-            this.lblNote.TabIndex = 21;
-            this.lblNote.Text = "Note";
-            // 
-            // lblNum
-            // 
-            this.lblNum.AutoSize = true;
-            this.lblNum.Location = new System.Drawing.Point(600, 273);
-            this.lblNum.Name = "lblNum";
-            this.lblNum.Size = new System.Drawing.Size(29, 13);
-            this.lblNum.TabIndex = 26;
-            this.lblNum.Text = "Num";
-            // 
-            // txtNum
-            // 
-            this.txtNum.HideSelection = false;
-            this.txtNum.Location = new System.Drawing.Point(639, 270);
-            this.txtNum.MaxLength = 1;
-            this.txtNum.Name = "txtNum";
-            this.txtNum.Size = new System.Drawing.Size(25, 20);
-            this.txtNum.TabIndex = 25;
-            this.txtNum.TabStop = false;
-            this.txtNum.Text = "1";
-            // 
             // btnAnswer
             // 
             this.btnAnswer.Location = new System.Drawing.Point(682, 387);
@@ -156,26 +80,6 @@
             this.btnAnswer.Text = "Set Answer";
             this.btnAnswer.UseVisualStyleBackColor = true;
             this.btnAnswer.Click += new System.EventHandler(this.btnAnswer_Click);
-            // 
-            // lblRow
-            // 
-            this.lblRow.AutoSize = true;
-            this.lblRow.Location = new System.Drawing.Point(604, 191);
-            this.lblRow.Name = "lblRow";
-            this.lblRow.Size = new System.Drawing.Size(29, 13);
-            this.lblRow.TabIndex = 30;
-            this.lblRow.Text = "Row";
-            // 
-            // txtRow
-            // 
-            this.txtRow.HideSelection = false;
-            this.txtRow.Location = new System.Drawing.Point(639, 188);
-            this.txtRow.MaxLength = 1;
-            this.txtRow.Name = "txtRow";
-            this.txtRow.Size = new System.Drawing.Size(25, 20);
-            this.txtRow.TabIndex = 29;
-            this.txtRow.TabStop = false;
-            this.txtRow.Text = "1";
             // 
             // radHiBad
             // 
@@ -318,76 +222,71 @@
             this.btnHiWithValue.UseVisualStyleBackColor = true;
             this.btnHiWithValue.Click += new System.EventHandler(this.btnHiWithValue_Click);
             // 
-            // lblValue
-            // 
-            this.lblValue.AutoSize = true;
-            this.lblValue.Location = new System.Drawing.Point(600, 319);
-            this.lblValue.Name = "lblValue";
-            this.lblValue.Size = new System.Drawing.Size(34, 13);
-            this.lblValue.TabIndex = 44;
-            this.lblValue.Text = "Value";
-            // 
-            // txtValue
-            // 
-            this.txtValue.HideSelection = false;
-            this.txtValue.Location = new System.Drawing.Point(639, 316);
-            this.txtValue.MaxLength = 1;
-            this.txtValue.Name = "txtValue";
-            this.txtValue.Size = new System.Drawing.Size(25, 20);
-            this.txtValue.TabIndex = 43;
-            this.txtValue.TabStop = false;
-            this.txtValue.Text = "1";
-            // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.radioButton3);
-            this.panel1.Controls.Add(this.radioButton2);
-            this.panel1.Controls.Add(this.radioButton1);
-            this.panel1.Location = new System.Drawing.Point(633, 469);
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.Controls.Add(this.rad9);
+            this.panel1.Controls.Add(this.rad8);
+            this.panel1.Controls.Add(this.rad7);
+            this.panel1.Controls.Add(this.rad6);
+            this.panel1.Controls.Add(this.rad5);
+            this.panel1.Controls.Add(this.rad4);
+            this.panel1.Controls.Add(this.rad3);
+            this.panel1.Controls.Add(this.rad2);
+            this.panel1.Controls.Add(this.rad1);
+            this.panel1.Location = new System.Drawing.Point(594, 469);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(212, 43);
+            this.panel1.Size = new System.Drawing.Size(239, 43);
             this.panel1.TabIndex = 47;
             // 
-            // radioButton1
+            // rad3
             // 
-            this.radioButton1.Appearance = System.Windows.Forms.Appearance.Button;
-            this.radioButton1.Checked = true;
-            this.radioButton1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.radioButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radioButton1.Location = new System.Drawing.Point(6, 3);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(25, 37);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "1";
-            this.radioButton1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.rad3.Appearance = System.Windows.Forms.Appearance.Button;
+            this.rad3.BackColor = System.Drawing.SystemColors.Highlight;
+            this.rad3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.rad3.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rad3.Location = new System.Drawing.Point(53, 1);
+            this.rad3.Name = "rad3";
+            this.rad3.Size = new System.Drawing.Size(25, 37);
+            this.rad3.TabIndex = 2;
+            this.rad3.Tag = "3";
+            this.rad3.Text = "3";
+            this.rad3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.rad3.UseVisualStyleBackColor = false;
+            this.rad3.Click += new System.EventHandler(this.btnNumbers_Click);
             // 
-            // radioButton2
+            // rad2
             // 
-            this.radioButton2.Appearance = System.Windows.Forms.Appearance.Button;
-            this.radioButton2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.radioButton2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radioButton2.Location = new System.Drawing.Point(37, 3);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(25, 37);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.Text = "2";
-            this.radioButton2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.rad2.Appearance = System.Windows.Forms.Appearance.Button;
+            this.rad2.BackColor = System.Drawing.SystemColors.Highlight;
+            this.rad2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.rad2.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rad2.Location = new System.Drawing.Point(27, 1);
+            this.rad2.Name = "rad2";
+            this.rad2.Size = new System.Drawing.Size(25, 37);
+            this.rad2.TabIndex = 1;
+            this.rad2.Tag = "2";
+            this.rad2.Text = "2";
+            this.rad2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.rad2.UseVisualStyleBackColor = false;
+            this.rad2.Click += new System.EventHandler(this.btnNumbers_Click);
             // 
-            // radioButton3
+            // rad1
             // 
-            this.radioButton3.Appearance = System.Windows.Forms.Appearance.Button;
-            this.radioButton3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.radioButton3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radioButton3.Location = new System.Drawing.Point(68, 3);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(25, 37);
-            this.radioButton3.TabIndex = 2;
-            this.radioButton3.Text = "3";
-            this.radioButton3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.radioButton3.UseVisualStyleBackColor = true;
+            this.rad1.Appearance = System.Windows.Forms.Appearance.Button;
+            this.rad1.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.rad1.Checked = true;
+            this.rad1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.rad1.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rad1.Location = new System.Drawing.Point(1, 1);
+            this.rad1.Name = "rad1";
+            this.rad1.Size = new System.Drawing.Size(25, 37);
+            this.rad1.TabIndex = 0;
+            this.rad1.Tag = "1";
+            this.rad1.Text = "1";
+            this.rad1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.rad1.UseVisualStyleBackColor = false;
+            this.rad1.Click += new System.EventHandler(this.btnNumbers_Click);
             // 
             // chkNotesMode
             // 
@@ -399,6 +298,102 @@
             this.chkNotesMode.Text = "Notes Mode";
             this.chkNotesMode.UseVisualStyleBackColor = true;
             // 
+            // rad5
+            // 
+            this.rad5.Appearance = System.Windows.Forms.Appearance.Button;
+            this.rad5.BackColor = System.Drawing.SystemColors.Highlight;
+            this.rad5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.rad5.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rad5.Location = new System.Drawing.Point(105, 1);
+            this.rad5.Name = "rad5";
+            this.rad5.Size = new System.Drawing.Size(25, 37);
+            this.rad5.TabIndex = 4;
+            this.rad5.Tag = "5";
+            this.rad5.Text = "5";
+            this.rad5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.rad5.UseVisualStyleBackColor = false;
+            this.rad5.Click += new System.EventHandler(this.btnNumbers_Click);
+            // 
+            // rad4
+            // 
+            this.rad4.Appearance = System.Windows.Forms.Appearance.Button;
+            this.rad4.BackColor = System.Drawing.SystemColors.Highlight;
+            this.rad4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.rad4.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rad4.Location = new System.Drawing.Point(79, 1);
+            this.rad4.Name = "rad4";
+            this.rad4.Size = new System.Drawing.Size(25, 37);
+            this.rad4.TabIndex = 3;
+            this.rad4.Tag = "4";
+            this.rad4.Text = "4";
+            this.rad4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.rad4.UseVisualStyleBackColor = false;
+            this.rad4.Click += new System.EventHandler(this.btnNumbers_Click);
+            // 
+            // rad7
+            // 
+            this.rad7.Appearance = System.Windows.Forms.Appearance.Button;
+            this.rad7.BackColor = System.Drawing.SystemColors.Highlight;
+            this.rad7.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.rad7.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rad7.Location = new System.Drawing.Point(157, 1);
+            this.rad7.Name = "rad7";
+            this.rad7.Size = new System.Drawing.Size(25, 37);
+            this.rad7.TabIndex = 6;
+            this.rad7.Tag = "7";
+            this.rad7.Text = "7";
+            this.rad7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.rad7.UseVisualStyleBackColor = false;
+            this.rad7.Click += new System.EventHandler(this.btnNumbers_Click);
+            // 
+            // rad6
+            // 
+            this.rad6.Appearance = System.Windows.Forms.Appearance.Button;
+            this.rad6.BackColor = System.Drawing.SystemColors.Highlight;
+            this.rad6.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.rad6.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rad6.Location = new System.Drawing.Point(131, 1);
+            this.rad6.Name = "rad6";
+            this.rad6.Size = new System.Drawing.Size(25, 37);
+            this.rad6.TabIndex = 5;
+            this.rad6.Tag = "6";
+            this.rad6.Text = "6";
+            this.rad6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.rad6.UseVisualStyleBackColor = false;
+            this.rad6.Click += new System.EventHandler(this.btnNumbers_Click);
+            // 
+            // rad9
+            // 
+            this.rad9.Appearance = System.Windows.Forms.Appearance.Button;
+            this.rad9.BackColor = System.Drawing.SystemColors.Highlight;
+            this.rad9.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.rad9.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rad9.Location = new System.Drawing.Point(209, 1);
+            this.rad9.Name = "rad9";
+            this.rad9.Size = new System.Drawing.Size(25, 37);
+            this.rad9.TabIndex = 8;
+            this.rad9.Tag = "9";
+            this.rad9.Text = "9";
+            this.rad9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.rad9.UseVisualStyleBackColor = false;
+            this.rad9.Click += new System.EventHandler(this.btnNumbers_Click);
+            // 
+            // rad8
+            // 
+            this.rad8.Appearance = System.Windows.Forms.Appearance.Button;
+            this.rad8.BackColor = System.Drawing.SystemColors.Highlight;
+            this.rad8.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.rad8.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rad8.Location = new System.Drawing.Point(183, 1);
+            this.rad8.Name = "rad8";
+            this.rad8.Size = new System.Drawing.Size(25, 37);
+            this.rad8.TabIndex = 7;
+            this.rad8.Tag = "8";
+            this.rad8.Text = "8";
+            this.rad8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.rad8.UseVisualStyleBackColor = false;
+            this.rad8.Click += new System.EventHandler(this.btnNumbers_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -407,22 +402,11 @@
             this.ClientSize = new System.Drawing.Size(880, 577);
             this.Controls.Add(this.chkNotesMode);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.lblValue);
-            this.Controls.Add(this.txtValue);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnHiNote);
-            this.Controls.Add(this.lblRow);
-            this.Controls.Add(this.txtRow);
             this.Controls.Add(this.btnAnswer);
-            this.Controls.Add(this.lblNum);
-            this.Controls.Add(this.txtNum);
-            this.Controls.Add(this.lblNote);
-            this.Controls.Add(this.txtNote);
             this.Controls.Add(this.btnSetNote);
-            this.Controls.Add(this.btnSelCell);
-            this.Controls.Add(this.lblCol);
-            this.Controls.Add(this.txtCol);
             this.Controls.Add(this.btnHiWithValue);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.KeyPreview = true;
@@ -446,17 +430,8 @@
         }
 
         #endregion
-        private System.Windows.Forms.Label lblCol;
-        private System.Windows.Forms.TextBox txtCol;
-        private System.Windows.Forms.Button btnSelCell;
         private System.Windows.Forms.Button btnSetNote;
-        private System.Windows.Forms.TextBox txtNote;
-        private System.Windows.Forms.Label lblNote;
-        private System.Windows.Forms.Label lblNum;
-        private System.Windows.Forms.TextBox txtNum;
         private System.Windows.Forms.Button btnAnswer;
-        private System.Windows.Forms.Label lblRow;
-        private System.Windows.Forms.TextBox txtRow;
         private System.Windows.Forms.RadioButton radHiBad;
         private System.Windows.Forms.RadioButton radHiInfo;
         private System.Windows.Forms.RadioButton radHiNone;
@@ -469,14 +444,18 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnHiWithValue;
-        private System.Windows.Forms.Label lblValue;
-        private System.Windows.Forms.TextBox txtValue;
         private System.Windows.Forms.RadioButton radSetNone;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton rad3;
+        private System.Windows.Forms.RadioButton rad2;
+        private System.Windows.Forms.RadioButton rad1;
         private System.Windows.Forms.CheckBox chkNotesMode;
+        private System.Windows.Forms.RadioButton rad9;
+        private System.Windows.Forms.RadioButton rad8;
+        private System.Windows.Forms.RadioButton rad7;
+        private System.Windows.Forms.RadioButton rad6;
+        private System.Windows.Forms.RadioButton rad5;
+        private System.Windows.Forms.RadioButton rad4;
     }
 }
 

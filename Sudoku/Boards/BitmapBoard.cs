@@ -40,6 +40,7 @@ namespace Sudoku
                     int h = (c / 3);
                     int block = (3 * v) + h;
 
+                    // making as derived class here vs. just Board
                     _cells[r][c] = new BitmapCell(r + 1, c + 1, block + 1);
                 }
             }
@@ -61,11 +62,12 @@ namespace Sudoku
         // build a bitmap based on the board state
         public override void Render()
         {
+            // will share this same Graphics object down into cell and note rendering
             using (BitmapBoard.Graphics = Graphics.FromImage(_boardImage))
             {
                 int cellSize = _boardImage.Width / 9;
 
-                // render all the cells
+                // render all the cells (which will render their own notes)
                 for (int r = 0; r < 9; r++)
                     for (int c = 0; c < 9; c++)
                         _cells[r][c].Render(cellSize);
@@ -76,10 +78,10 @@ namespace Sudoku
                 // render block borders
                 Pen p = new Pen(Color.Black, 2);
                 int blockSize = _boardImage.Height / 3;
-                // horizontal
+                // horizontal bars
                 BitmapBoard.Graphics.DrawLine(p, 0, blockSize, _boardImage.Width, blockSize);
                 BitmapBoard.Graphics.DrawLine(p, 0, blockSize * 2, _boardImage.Width, blockSize * 2);
-                // vertical
+                // vertical bars
                 BitmapBoard.Graphics.DrawLine(p, blockSize, 0, blockSize, _boardImage.Height);
                 BitmapBoard.Graphics.DrawLine(p, blockSize * 2, 0, blockSize * 2, _boardImage.Height);
                 BitmapBoard.Graphics.Flush();

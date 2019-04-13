@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sudoku
 {
+    // flags attribute lets this enum be treated as bit flags
     [Flags]
     public enum ModifierKey
     {

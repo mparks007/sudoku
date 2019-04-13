@@ -19,10 +19,13 @@ namespace Sudoku
         private int milliseconds;
         private int clickX;
         private int clickY;
+        private int _activeNumber = 1;
+        private RadioButton priorNumber;
 
         public frmMain()
         {
             InitializeComponent();
+            priorNumber = this.rad1;
             gr = this.CreateGraphics();
 
             doubleClickTimer.Interval = 35;
@@ -32,7 +35,7 @@ namespace Sudoku
 
             // test code vvv
             Game.Board.SelectHousesOfCellAtRowCol(3, 3);
-            Game.Board.SelectCellAtRowCol(6, 6);
+            Game.Board.SelectCellAtRowCol(1, 1);
             Game.Board.Cells[6][3].SetNote(2);
             Game.Board.Cells[2][5].SetNote(2);
 
@@ -74,39 +77,28 @@ namespace Sudoku
             e.Graphics.DrawImageUnscaled(((BitmapBoard)Game.Board).Image, 20, 20);
         }
 
-        private void btnSelCell_Click(object sender, EventArgs e)
-        {
-            Game.Board.SelectCellAtRowCol(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text));
-            Game.Board.SelectHousesOfCellAtRowCol(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text));
-            Render();
-        }
 
         private void btnHiWithValue_Click(object sender, EventArgs e)
         {
-            Game.Board.HighlightCellsWithNoteOrNumber(Convert.ToInt32(txtValue.Text));
+            Game.Board.HighlightCellsWithNoteOrNumber(_activeNumber);
             Render();
         }
 
         private void btnSetNote_Click(object sender, EventArgs e)
         {
-            Game.Board.Cells[Convert.ToInt32(txtRow.Text)-1][Convert.ToInt32(txtCol.Text)-1].SetNote(Convert.ToInt32(txtNote.Text));
+            Game.Board.Cells[Game.Board.SelectedCell.Row-1][Game.Board.SelectedCell.Column-1].SetNote(_activeNumber);
             Render();
         }
 
-        private void btnSelHouse_Click(object sender, EventArgs e)
-        {
-            Game.Board.SelectHousesOfCellAtRowCol(Convert.ToInt32(txtRow.Text), Convert.ToInt32(txtCol.Text));
-            Render();
-        }
 
         private void btnAnswer_Click(object sender, EventArgs e)
         {
             if (radSetNone.Checked)
-                Game.Board.Cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].SetNumber(0, isGiven: false);
+                Game.Board.Cells[Game.Board.SelectedCell.Row-1][Game.Board.SelectedCell.Column-1].SetNumber(0, isGiven: false);
             else
-                Game.Board.Cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].SetNumber(Convert.ToInt32(txtNum.Text), isGiven: radSetGiven.Checked);
+                Game.Board.Cells[Game.Board.SelectedCell.Row-1][Game.Board.SelectedCell.Column-1].SetNumber(_activeNumber, isGiven: radSetGiven.Checked);
 
-            Game.Board.Cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].IsInvalid = radSetInvalid.Checked;
+            Game.Board.Cells[Game.Board.SelectedCell.Row-1][Game.Board.SelectedCell.Column-1].IsInvalid = radSetInvalid.Checked;
             Render();
         }
 
@@ -125,8 +117,25 @@ namespace Sudoku
             else if (radHiWeak.Checked)
                 type = NoteHighlightType.Weak;
 
-            Game.Board.Cells[Convert.ToInt32(txtRow.Text) - 1][Convert.ToInt32(txtCol.Text) - 1].HighlightNote(Convert.ToInt32(txtNote.Text), type);
+            Game.Board.Cells[Game.Board.SelectedCell.Row-1][Game.Board.SelectedCell.Column-1].HighlightNote(_activeNumber, type);
             Render();
+        }
+
+        // Arrow keys act funky on Forms and move through various controls so I am trapping them early, pretending was KeyDown, then eating the key to avoid further form processing
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.Up:
+                case Keys.Down:
+                case Keys.Left:
+                case Keys.Right:
+                    frmMain_KeyDown(this, new KeyEventArgs(keyData));
+                    return true;
+            }
+
+            // otherwise, process as normal (which will get other keys over to KeyDown automatically)
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         private void frmMain_KeyDown(object sender, KeyEventArgs e)
@@ -162,9 +171,6 @@ namespace Sudoku
                     case Keys.End:
                         input = UserInput.End;
                         break;
-                    case Keys.Tab:
-                        input = UserInput.Tab;
-                        break;
                     case Keys.Delete:
                         input = UserInput.Delete;
                         break;
@@ -185,9 +191,6 @@ namespace Sudoku
 
                 Game.Board.HandleKeyUserInput(input, modifierKey);
                 Render();
-
-                txtRow.Text = Game.Board.SelectedCell.Row.ToString();
-                txtCol.Text = Game.Board.SelectedCell.Column.ToString();
             }
         }
 
@@ -237,6 +240,17 @@ namespace Sudoku
 
                 Render();
             }
+        }
+
+        private void btnNumbers_Click(object sender, EventArgs e)
+        {
+            RadioButton rad = (RadioButton)sender;
+
+            priorNumber.BackColor = SystemColors.Highlight;
+            rad.BackColor = SystemColors.GradientActiveCaption;
+            priorNumber = rad;
+
+            _activeNumber = Int32.Parse(rad.Tag.ToString());
         }
     }
 }

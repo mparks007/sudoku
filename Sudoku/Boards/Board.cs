@@ -17,6 +17,7 @@ namespace Sudoku
         
         public void SelectCellAtRowCol(int row, int col)
         {
+            // if no change, bail
             if ((_selectedCell != null) && ((_selectedCell.Row == row) && (_selectedCell.Column == col)))
                 return;
 
@@ -26,6 +27,7 @@ namespace Sudoku
             if (col < 1 || col > 9)
                 throw new ArgumentException(String.Format("Invalid cell column requested for selection: {0}", col));
 
+            // paw through all cells
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
                 {
@@ -38,6 +40,7 @@ namespace Sudoku
 
             _selectedCell = _cells[row-1][col-1];
 
+            // cell selection changed, so house would have too
             SelectHousesOfCellAtRowCol(row, col);
         }
 
@@ -49,6 +52,7 @@ namespace Sudoku
             if (col < 1 || col > 9)
                 throw new ArgumentException(String.Format("Invalid cell column requested for house selection: {0}", col));
 
+            // paw through all cells
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
                 {
@@ -67,6 +71,7 @@ namespace Sudoku
             if (value < 1 || value > 9)
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
+            // paw through all cells
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
                     _cells[r][c].HighlightHavingNoteOrNumber(value);
@@ -98,7 +103,7 @@ namespace Sudoku
                             if (!_selectedCell.HasNumberSet)
                                 _selectedCell.SetNote((int)input);
                         }
-                        else
+                        else if (modifierKey == 0) // if not shift or ctrl, etc.
                             _selectedCell.SetNumber((int)input, isGiven: false);
                     }
                     break;
@@ -123,44 +128,21 @@ namespace Sudoku
                     SelectCellAtRowCol(currentRow, currentColumn);
                     break;
                 case UserInput.Home:
-                    if (((modifierKey & ModifierKey.Alt) != 0) && (currentRow != 1))
-                        currentRow = 1;
-                    else if (((modifierKey & ModifierKey.Control) != 0) && ((currentRow != 1) || (currentColumn != 1)))
+                    if (currentColumn != 1)
                     {
-                        currentRow = 1;
                         currentColumn = 1;
+                        SelectCellAtRowCol(currentRow, currentColumn);
                     }
-                    else if (currentColumn != 1)
-                        currentColumn = 1;
-
-                    SelectCellAtRowCol(currentRow, currentColumn);
                     break;
                 case UserInput.End:
-                    if (((modifierKey & ModifierKey.Alt) != 0) && (currentRow != 9))
-                        currentRow = 9;
-                    else if (((modifierKey & ModifierKey.Control) != 0) && ((currentRow != 9) || (currentColumn != 9)))
+                    if (currentColumn != 9)
                     {
-                        currentRow = 9;
                         currentColumn = 9;
+                        SelectCellAtRowCol(currentRow, currentColumn);
                     }
-                    else if (currentColumn != 9)
-                        currentColumn = 9;
-
-                    SelectCellAtRowCol(currentRow, currentColumn);
                     break;
-                //case UserInput.Tab:
-                //    currentColumn += 3;
-                //    if (currentColumn > 9)
-                //        currentColumn = currentColumn - 9;
-                //    SelectCellAtRowCol(currentRow, currentColumn);
-                //    break;
-                //case UserInput.ShiftTab:
-                //    currentColumn -= 3;
-                //    if (currentColumn < 1) 
-                //        currentColumn = 10 - -currentColumn;
-                //    SelectCellAtRowCol(currentRow, currentColumn);
-                //    break;
                 case UserInput.Delete:
+                    // has number, BUT isn't a number that was given at the beginning
                     if (_selectedCell.HasNumberSet && !_selectedCell.IsGiven)
                         _selectedCell.SetNumber(0, isGiven: false);
                     break;
@@ -172,10 +154,12 @@ namespace Sudoku
             // if just basic cell select
             if (input == UserInput.LeftClick)
             {
+                // TODO
                 SelectCellAtRowCol(1, 1);
             } 
             else
             {
+                // TODO
                 // convert double-clicked note (if had note) to solvedFor value
                 SelectCellAtRowCol(9, 9);
             }

@@ -12,7 +12,7 @@ namespace Sudoku
 {
     public abstract class Cell
     {
-        protected int _number;
+        protected int _bigNumber;
         protected bool _isHighlighted;
         protected Note[] _notes = new Note[9];
 
@@ -34,7 +34,7 @@ namespace Sudoku
 
         public bool HasNumberSet
         {
-            get { return _number != 0; }
+            get { return _bigNumber != 0; }
         }
 
         // num as 0 will mean clear the solve number
@@ -43,10 +43,11 @@ namespace Sudoku
             if (num < 0 || num > 9)
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
-            _number = num;
+            _bigNumber = num;
             IsGiven = isGiven;
 
-            if (_number == 0)
+            // remove hightlight if the solved number is going away
+            if (_bigNumber == 0)
                 _isHighlighted = false;
         }
 
@@ -55,6 +56,7 @@ namespace Sudoku
             if (note < 1 || note > 9)
                 throw new ArgumentException(String.Format("Invalid note being set/unset: {0}", note));
 
+            // if already has this note (means remove it then)
             if (_notes[note - 1].Candidate == note)
             { 
                 // if note is going away, clear potential highlight on it too
@@ -71,9 +73,9 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
             // if set number is the one to highlight
-            if (_number == value)
+            if (_bigNumber == value)
                 _isHighlighted = true;
-            else if (_number == 0) // or notes are visible
+            else if (_bigNumber == 0) // or notes are visible
                 _isHighlighted = _notes[value - 1].IsNoted; // and the requested note is present
             else
                 _isHighlighted = false;

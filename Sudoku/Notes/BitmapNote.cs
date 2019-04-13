@@ -27,7 +27,7 @@ namespace Sudoku
                 switch (HighlightType)
                 {
                     case NoteHighlightType.Info:
-                        c = Color.Lime;
+                        c = Color.LightSeaGreen;
                         break;
                     case NoteHighlightType.Bad:
                         c = Color.Red;

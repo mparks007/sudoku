@@ -46,8 +46,8 @@ namespace Sudoku
             }
         }
 
-        // set state data based on which cell was clicked and which note-in-cell was clicked
-        public void HandleXYClick(int x, int y)
+        // set state data based on which cell was clicked
+        public void HandleXYClick(UserInput input, ModifierKey modifierKey, int x, int y)
         {
             if (_boardImage == null)
                 throw new InvalidOperationException("No board exists");
@@ -55,8 +55,12 @@ namespace Sudoku
             if (x < 0 || x > _boardImage.Height || y < 0 || y > _boardImage.Width)
                 throw new ArgumentException(String.Format("Invalid point requested (x:{0}, y:{1})", x, y));
 
-            // do stuff to calculate the cell loc
-            // TODO
+            int row = y / (_boardSize / 9);
+            int col = x / (_boardSize / 9);
+
+            SelectCellAtRowCol(row + 1, col + 1);
+
+            ((BitmapCell)Game.Board.SelectedCell).HandleXYClick(input, modifierKey, x, y);
         }
 
         // build a bitmap based on the board state

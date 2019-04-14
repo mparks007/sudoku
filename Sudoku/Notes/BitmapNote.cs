@@ -33,7 +33,7 @@ namespace Sudoku
                         c = Color.Red;
                         break;
                     case NoteHighlightType.Strong:
-                        c = Color.DeepSkyBlue;
+                        c = Color.RoyalBlue;
                         break;
                     case NoteHighlightType.Weak:
                         c = Color.Yellow;
@@ -53,7 +53,7 @@ namespace Sudoku
                 };
 
                 // draw the string, but use different (lighter) color if on red background  (but this will have to change if I have custom colors)
-                BitmapBoard.Graphics.DrawString(candidate, f, (HighlightType == NoteHighlightType.Bad ? Brushes.Silver : Brushes.DarkSlateGray), rect, format);
+                BitmapBoard.Graphics.DrawString(candidate, f, ((HighlightType == NoteHighlightType.Bad || HighlightType == NoteHighlightType.Strong) ? Brushes.LightGray : Brushes.DarkSlateGray), rect, format);
             }
         }
     }

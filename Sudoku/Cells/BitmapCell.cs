@@ -69,5 +69,22 @@ namespace Sudoku
             // render cell border
             BitmapBoard.Graphics.DrawRectangle(new Pen(Color.DarkGray, 1), rect);
         }
+
+        public void HandleXYClick(UserInput input, ModifierKey modifierKey, int x, int y)
+        {
+
+            //if (x < 0 || x > _boardImage.Height || y < 0 || y > _boardImage.Width)
+            //    throw new ArgumentException(String.Format("Invalid point requested (x:{0}, y:{1})", x, y));
+
+            //int row = y / (_boardSize / 9);
+            //int col = x / (_boardSize / 9);
+
+
+            if (input == UserInput.DoubleClick)
+            {
+                // convert double-clicked note (if had note) to solvedFor value
+
+            }
+        }
     }
 }

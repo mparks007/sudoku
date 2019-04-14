@@ -14,6 +14,7 @@ namespace Sudoku
 
         public Cell[][] Cells { get { return _cells; } }
         public Cell SelectedCell { get { return _selectedCell; } }
+        public int BoardSize {  get { return _boardSize; } }
         
         public void SelectCellAtRowCol(int row, int col)
         {
@@ -97,7 +98,7 @@ namespace Sudoku
                     if (!_selectedCell.IsGiven)
                     {
                         // if Alt-num 
-                        if ((modifierKey & ModifierKey.Alt) != 0)
+                        if ((modifierKey & ModifierKey.Shift) != 0)
                         {
                             // and the cell doesn't already have an answer number assigned
                             if (!_selectedCell.HasNumberSet)
@@ -146,22 +147,6 @@ namespace Sudoku
                     if (_selectedCell.HasNumberSet && !_selectedCell.IsGiven)
                         _selectedCell.SetNumber(0, isGiven: false);
                     break;
-            }
-        }
-
-        public void HandleMouseUserInput(UserInput input, int x, int y)
-        {
-            // if just basic cell select
-            if (input == UserInput.LeftClick)
-            {
-                // TODO
-                SelectCellAtRowCol(1, 1);
-            } 
-            else
-            {
-                // TODO
-                // convert double-clicked note (if had note) to solvedFor value
-                SelectCellAtRowCol(9, 9);
             }
         }
 

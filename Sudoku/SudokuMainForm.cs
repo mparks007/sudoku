@@ -12,24 +12,28 @@ namespace Sudoku
 {
     public partial class frmMain : Form
     {
-        private Graphics gr;
-        private Timer doubleClickTimer = new Timer();
-        private bool isFirstClick = true;
-        private bool isDoubleClick;
-        private int milliseconds;
-        private int clickX;
-        private int clickY;
+        private Graphics _gr;
+        private Timer _doubleClickTimer = new Timer();
+        private bool _isFirstClick = true;
+        private bool _isRightClick;
+        private bool _isDoubleClick;
+        private int _milliseconds;
+        private int _clickX;
+        private int _clickY;
         private int _activeNumber = 1;
-        private RadioButton priorNumber;
+        private RadioButton _priorFocusNumber;
+        private int xOffset = 20;
+        private int yOffset = 20;
+        private ModifierKey _modifierKey = ModifierKey.None;
 
         public frmMain()
         {
             InitializeComponent();
-            priorNumber = this.rad1;
-            gr = this.CreateGraphics();
+            _priorFocusNumber = this.rad1;
+            _gr = this.CreateGraphics();
 
-            doubleClickTimer.Interval = 35;
-            doubleClickTimer.Tick += new EventHandler(doubleClickTimer_Tick);
+            _doubleClickTimer.Interval = 35;
+            _doubleClickTimer.Tick += new EventHandler(doubleClickTimer_Tick);
 
             Game game = Game.GetInstance(BoardType.Bitmap, cellSize: 60);
 
@@ -73,8 +77,8 @@ namespace Sudoku
         private void Render()
         {
             Game.Board.Render();
-            PaintEventArgs e = new PaintEventArgs(gr, new Rectangle(0, 0, this.Width, this.Height));
-            e.Graphics.DrawImageUnscaled(((BitmapBoard)Game.Board).Image, 20, 20);
+            PaintEventArgs e = new PaintEventArgs(_gr, new Rectangle(0, 0, this.Width, this.Height));
+            e.Graphics.DrawImageUnscaled(((BitmapBoard)Game.Board).Image, xOffset, yOffset);
         }
 
 
@@ -122,8 +126,11 @@ namespace Sudoku
         }
 
         // Arrow keys act funky on Forms and move through various controls so I am trapping them early, pretending was KeyDown, then eating the key to avoid further form processing
+        // Also needing to trap the modifiers keys to pass them down to mouse click events
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            _modifierKey = ModifierKey.None;
+
             switch (keyData)
             {
                 case Keys.Up:
@@ -132,6 +139,15 @@ namespace Sudoku
                 case Keys.Right:
                     frmMain_KeyDown(this, new KeyEventArgs(keyData));
                     return true;
+                case (Keys.Shift | Keys.ShiftKey):
+                    _modifierKey |= ModifierKey.Shift;
+                    break;
+                case (Keys.Alt | Keys.Menu):
+                    _modifierKey |= ModifierKey.Alt;
+                    break;
+                case (Keys.Control | Keys.ControlKey):
+                    _modifierKey |= ModifierKey.Control;
+                    break;
             }
 
             // otherwise, process as normal (which will get other keys over to KeyDown automatically)
@@ -181,15 +197,15 @@ namespace Sudoku
             if (input != UserInput.None)
             {
                 // trap the modifier keys too
-                var modifierKey = ModifierKey.None;
-                if (e.Shift)
-                    modifierKey |= ModifierKey.Shift;
-                if (e.Alt || chkNotesMode.Checked)
-                    modifierKey |= ModifierKey.Alt;
+                _modifierKey = ModifierKey.None;
+                if (e.Shift || chkNotesMode.Checked)
+                    _modifierKey |= ModifierKey.Shift;
+                if (e.Alt)
+                    _modifierKey |= ModifierKey.Alt;
                 if (e.Control)
-                    modifierKey |= ModifierKey.Control;
+                    _modifierKey |= ModifierKey.Control;
 
-                Game.Board.HandleKeyUserInput(input, modifierKey);
+                Game.Board.HandleKeyUserInput(input, _modifierKey);
                 Render();
             }
         }
@@ -201,42 +217,50 @@ namespace Sudoku
 
         private void frmMain_MouseDown(object sender, MouseEventArgs e)
         {
-            if (isFirstClick)
+            _isRightClick = (e.Button == MouseButtons.Right);
+
+            if (_isFirstClick)
             {
-                isFirstClick = false;
-                clickX = ((MouseEventArgs)e).X;
-                clickY = ((MouseEventArgs)e).Y;
-                doubleClickTimer.Start();
+                _isFirstClick = false;
+                    
+                // offset since the args x/y are form based and I want the board area instead
+                _clickX = ((MouseEventArgs)e).X - xOffset;
+                _clickY = ((MouseEventArgs)e).Y - yOffset;
+                _doubleClickTimer.Start();
             }
             else
             {
-                if (milliseconds < SystemInformation.DoubleClickTime)
-                    isDoubleClick = true;
+                if (_milliseconds < SystemInformation.DoubleClickTime)
+                    _isDoubleClick = true;
             }
         }
 
         void doubleClickTimer_Tick(object sender, EventArgs e)
         {
-            milliseconds += 150;
+            _milliseconds += 150;
 
             // The timer has reached the double click time limit.
-            if (milliseconds >= SystemInformation.DoubleClickTime)
+            if (_milliseconds >= SystemInformation.DoubleClickTime)
             {
-                doubleClickTimer.Stop();
+                _doubleClickTimer.Stop();
 
-                if (isDoubleClick)
+                BitmapBoard board = (BitmapBoard)Game.Board;
+
+                // if clicked in the board area of the form
+                if (_clickX >= 0 && _clickX <= board.BoardSize && _clickY >= 0 && _clickY <= board.BoardSize)
                 {
-                    Game.Board.HandleMouseUserInput(UserInput.DoubleClick, clickX, clickY);
-                }
-                else
-                {
-                    Game.Board.HandleMouseUserInput(UserInput.LeftClick, clickX, clickY);
+                    if (_isDoubleClick)
+                        ((BitmapBoard)Game.Board).HandleXYClick(UserInput.DoubleClick, _modifierKey, _clickX, _clickY);
+                    else if (_isRightClick)
+                        ((BitmapBoard)Game.Board).HandleXYClick(UserInput.RightClick, _modifierKey, _clickX, _clickY);
+                    else
+                        ((BitmapBoard)Game.Board).HandleXYClick(UserInput.LeftClick, _modifierKey, _clickX, _clickY);
                 }
 
                 // Allow the MouseDown event handler to process clicks again.
-                isFirstClick = true;
-                isDoubleClick = false;
-                milliseconds = 0;
+                _isFirstClick = true;
+                _isDoubleClick = false;
+                _milliseconds = 0;
 
                 Render();
             }
@@ -246,9 +270,9 @@ namespace Sudoku
         {
             RadioButton rad = (RadioButton)sender;
 
-            priorNumber.BackColor = SystemColors.Highlight;
+            _priorFocusNumber.BackColor = SystemColors.Highlight;
             rad.BackColor = SystemColors.GradientActiveCaption;
-            priorNumber = rad;
+            _priorFocusNumber = rad;
 
             _activeNumber = Int32.Parse(rad.Tag.ToString());
         }

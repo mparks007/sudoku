@@ -95,17 +95,17 @@ namespace Sudoku
                 case UserInput.Seven:
                 case UserInput.Eight:
                 case UserInput.Nine:
-                    if (!_selectedCell.IsGiven)
+                    if (!_selectedCell.IsGiven.HasValue || (_selectedCell.IsGiven.HasValue && !_selectedCell.IsGiven.Value))
                     {
                         // if Alt-num 
                         if ((modifierKey & ModifierKey.Shift) != 0)
                         {
                             // and the cell doesn't already have an answer number assigned
                             if (!_selectedCell.HasNumberSet)
-                                _selectedCell.SetNote((int)input);
+                                _selectedCell.ToggleNote((int)input);
                         }
                         else if (modifierKey == 0) // if not shift or ctrl, etc.
-                            _selectedCell.SetNumber((int)input, isGiven: false);
+                            _selectedCell.SetGuess((int)input);
                     }
                     break;
                 case UserInput.UpArrow:
@@ -144,8 +144,8 @@ namespace Sudoku
                     break;
                 case UserInput.Delete:
                     // has number, BUT isn't a number that was given at the beginning
-                    if (_selectedCell.HasNumberSet && !_selectedCell.IsGiven)
-                        _selectedCell.SetNumber(0, isGiven: false);
+                    if (_selectedCell.HasNumberSet && _selectedCell.IsGiven.HasValue && !_selectedCell.IsGiven.Value)
+                        _selectedCell.SetGuess(0);
                     break;
             }
         }

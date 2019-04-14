@@ -28,6 +28,6 @@ namespace Sudoku
         public bool IsNoted { get { return _candidate != 0; } }
         public NoteHighlightType HighlightType { get; set; }
 
-        public abstract void Render(int cellSize, int row, int col);
+        public abstract void Render(int row, int col);
     }
 }

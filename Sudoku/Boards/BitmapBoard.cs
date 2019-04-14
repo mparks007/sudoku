@@ -41,7 +41,7 @@ namespace Sudoku
                     int block = (3 * v) + h;
 
                     // making as derived class here vs. just Board
-                    _cells[r][c] = new BitmapCell(r + 1, c + 1, block + 1);
+                    _cells[r][c] = new BitmapCell(cellSize, r + 1, c + 1, block + 1);
                 }
             }
         }
@@ -55,10 +55,10 @@ namespace Sudoku
             if (x < 0 || x > _boardImage.Height || y < 0 || y > _boardImage.Width)
                 throw new ArgumentException(String.Format("Invalid point requested (x:{0}, y:{1})", x, y));
 
-            int row = y / (_boardSize / 9);
-            int col = x / (_boardSize / 9);
+            int row = y / (_boardSize / 9) + 1;
+            int col = x / (_boardSize / 9) + 1;
 
-            SelectCellAtRowCol(row + 1, col + 1);
+            SelectCellAtRowCol(row, col);
 
             ((BitmapCell)Game.Board.SelectedCell).HandleXYClick(input, modifierKey, x, y);
         }
@@ -74,7 +74,7 @@ namespace Sudoku
                 // render all the cells (which will render their own notes)
                 for (int r = 0; r < 9; r++)
                     for (int c = 0; c < 9; c++)
-                        _cells[r][c].Render(cellSize);
+                        _cells[r][c].Render();
 
                 // render board border
                 BitmapBoard.Graphics.DrawRectangle(new Pen(Color.Black, 4), 0, 0, _boardImage.Width, _boardImage.Height);

@@ -17,7 +17,7 @@ namespace Sudoku
         protected Note[] _notes = new Note[9];
 
         // can some of these go to protected?
-        public bool IsGiven { get; set; }
+        public bool? IsGiven { get; set; }
         public bool IsSelected { get; set; }
         public bool IsInvalid { get; set; }
         public bool IsHouseSelected { get; set; }
@@ -37,21 +37,39 @@ namespace Sudoku
             get { return _bigNumber != 0; }
         }
 
-        // num as 0 will mean clear the solve number
-        public void SetNumber(int num, bool isGiven)
+        public void SetGuess(int num)
         {
+            if (_bigNumber == num)
+                return;
+
             if (num < 0 || num > 9)
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
-            _bigNumber = num;
-            IsGiven = isGiven;
+            if (IsGiven.HasValue && IsGiven.Value)
+                return;
 
-            // remove hightlight if the solved number is going away
-            if (_bigNumber == 0)
-                _isHighlighted = false;
+            _bigNumber = num;
+            _isHighlighted = false;
+            IsGiven = false;
         }
 
-        public void SetNote(int note)
+        public void SetGiven(int num)
+        {
+            if (_bigNumber == num)
+                return;
+
+            if (num < 1 || num > 9)
+                throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
+
+            if (IsGiven.HasValue && !IsGiven.Value)
+                return;
+
+            _bigNumber = num;
+            _isHighlighted = false;
+            IsGiven = true;
+        }
+
+        public void ToggleNote(int note)
         {
             if (note < 1 || note > 9)
                 throw new ArgumentException(String.Format("Invalid note being set/unset: {0}", note));
@@ -91,6 +109,6 @@ namespace Sudoku
                 _notes[note - 1].HighlightType = highlightType;
         }
 
-        public abstract void Render(int cellSize);
+        public abstract void Render();
     }
 }

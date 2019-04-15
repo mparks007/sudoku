@@ -12,25 +12,34 @@ namespace Sudoku
     {
         private int _cellSize;
 
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="cellSize">Render needs to know the parent cell size for calculations</param>
         public BitmapNote(int cellSize)
         {
             _cellSize = cellSize;
         }
 
+        /// <summary>
+        /// Render the note
+        /// </summary>
+        /// <param name="parentCellRow">Board row of the parent cell (used for render calculations)</param>
+        /// <param name="parentCellColumn">Board column of the parent cell (used for render calculations)</param>
         public override void Render(int parentCellRow, int parentCellColumn)
         {
             // if has a note, render it
             if (_candidate != 0)
             {
-                // calculate offset of each note to find right rect by note position
+                // calculate offset of each note to find right rect by note position in the overall board image
                 //   top: (row depth) + (inner-cell depth)
                 //   left: (col offset) + (inner-cell offset)
                 int top = ((parentCellRow - 1) * _cellSize) + ((_candidate - 1) / 3 * (_cellSize / 3));
                 int left = ((parentCellColumn - 1) * _cellSize) + ((_candidate - 1) % 3 * (_cellSize / 3));
                 Rectangle rect = new Rectangle(left, top, _cellSize / 3, _cellSize / 3);
 
+                // render the note's background
                 Color c = Color.Transparent;
-
                 switch (HighlightType)
                 {
                     case NoteHighlightType.Info:

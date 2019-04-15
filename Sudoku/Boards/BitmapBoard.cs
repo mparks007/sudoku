@@ -25,11 +25,16 @@ namespace Sudoku
             }
         }
 
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="cellSize">Pixel size of each cell (used in render calculations)</param>
         public BitmapBoard(int cellSize)
         {
             _boardImage = new Bitmap(cellSize * 9, cellSize * 9);
             _boardSize = _boardImage.Width;
 
+            // create all the child cells as two-dimensional array
             _cells = new Cell[9][];
             for (int r = 0; r < 9; r++)
             {
@@ -46,24 +51,35 @@ namespace Sudoku
             }
         }
 
-        // set state data based on which cell was clicked
+        /// <summary>
+        /// Set state data based on which cell in the board was clicked 
+        /// </summary>
+        /// <param name="input">Type of click (right, left, double)</param>
+        /// <param name="modifierKey">Key modifier (shift, alt, control)</param>
+        /// <param name="x">X pixel location clicked in the main board</param>
+        /// <param name="y">Y pixel location clicked in the main board</param>
         public void HandleXYClick(UserInput input, ModifierKey modifierKey, int x, int y)
         {
             if (_boardImage == null)
                 throw new InvalidOperationException("No board exists");
 
+            // make sure didn't click outside the board
             if (x < 0 || x > _boardImage.Height || y < 0 || y > _boardImage.Width)
                 throw new ArgumentException(String.Format("Invalid point requested (x:{0}, y:{1})", x, y));
 
+            // convert clicked pixels to specific row/col in main board
             int row = y / (_boardSize / 9) + 1;
             int col = x / (_boardSize / 9) + 1;
 
             SelectCellAtRowCol(row, col);
 
+            // trigger special cell-level events
             ((BitmapCell)Game.Board.SelectedCell).HandleXYClick(input, modifierKey, x, y);
         }
 
-        // build a bitmap based on the board state
+        /// <summary>
+        /// Render a bitmap based on the board state
+        /// </summary>
         public override void Render()
         {
             // will share this same Graphics object down into cell and note rendering

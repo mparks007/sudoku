@@ -9,9 +9,9 @@ namespace Sudoku
     public enum NoteHighlightType
     {
         None = 0,
+        Info,
         Strong,
         Weak,
-        Info,
         Bad
     }
 }

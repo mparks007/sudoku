@@ -12,6 +12,9 @@ namespace Sudoku
         protected int _candidate;
         protected bool _isHighlighted;
 
+        /// <summary>
+        /// The number on this note (if one was assinged)
+        /// </summary>
         public int Candidate
         {
             get { return _candidate; }
@@ -28,6 +31,11 @@ namespace Sudoku
         public bool IsNoted { get { return _candidate != 0; } }
         public NoteHighlightType HighlightType { get; set; }
 
-        public abstract void Render(int row, int col);
+        /// <summary>
+        /// Render (work done in derived classes)
+        /// </summary>
+        /// <param name="parentCellRow">Board row of the parent cell (used for render calculations)</param>
+        /// <param name="parentCellColumn">Board column of the parent cell (used for render calculations)</param>
+        public abstract void Render(int parentCellRow, int parentCellColumn);
     }
 }

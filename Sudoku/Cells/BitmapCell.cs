@@ -14,6 +14,13 @@ namespace Sudoku
     {
         private int _cellSize;
 
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="cellSize">Size of each cell (used for render calculations)</param>
+        /// <param name="row">Row of the cell in the overall board (used for render calculations)</param>
+        /// <param name="column">Column of the cell in the overall board (used for render calculations)</param>
+        /// <param name="block">Block of the cell in the overall board (used for render calculations)</param>
         public BitmapCell(int cellSize, int row, int column, int block) : base(row, column, block)
         {
             _cellSize = cellSize;
@@ -23,8 +30,12 @@ namespace Sudoku
                 _notes[i] = new BitmapNote(_cellSize);
         }
         
+        /// <summary>
+        /// Render the cell
+        /// </summary>
         public override void Render()
-        {
+        {   
+            // calc the top/left of the cells location in the overall board image
             int top = (Row - 1) * _cellSize;
             int left = (Column - 1) * _cellSize;
             Rectangle rect = new Rectangle(left, top, _cellSize, _cellSize);
@@ -36,7 +47,7 @@ namespace Sudoku
             else
                 BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.White), rect);
 
-            // if solved, render solved candidate
+            // if solved, render solved number
             if (_bigNumber != 0)
             {
                 string num = _bigNumber.ToString();
@@ -74,6 +85,13 @@ namespace Sudoku
             BitmapBoard.Graphics.DrawRectangle(new Pen(Color.DarkGray, 1), rect);
         }
 
+        /// <summary>
+        /// Take the X and Y pixel coordinate where clicked in the main board and determine what action to take a the note level
+        /// </summary>
+        /// <param name="input">Type of click (right, left, double)</param>
+        /// <param name="modifierKey">Key modifier (shift, alt, control)</param>
+        /// <param name="x">X pixel location clicked in the main board</param>
+        /// <param name="y">Y pixel location clicked in the main board</param>
         public void HandleXYClick(UserInput input, ModifierKey modifierKey, int x, int y)
         {
 
@@ -91,15 +109,35 @@ namespace Sudoku
             int block = (3 * v) + h;
             int b2 = noteRow * noteCol;
 
-//            int noteNum = (noteRow - 1) % 3 + 1;
+            //            int noteNum = (noteRow - 1) % 3 + 1;
             //int noteCol = (noteCol - 1) % 3 + 1;
 
-            if (input == UserInput.DoubleClick)
+            if ((modifierKey & ModifierKey.Control) != 0)
             {
-                // convert double-clicked note (if had note) to solvedFor value (dummy code for now)
-                if (!HasNumberSet &&  _notes[1].IsNoted)
-                    SetGuess(2);
+                if (input == UserInput.LeftClick)
+                {
+                    // TODO!!! First, Determine which note was actually clicked!
+                    if (!HasNumberSet && _notes[1].IsNoted)
+                        HighlightNote(2, NoteHighlightType.Strong);
+                }
+                else if (input == UserInput.RightClick)
+                {
+                    // TODO!!! First, Determine which note was actually clicked!
+                    if (!HasNumberSet && _notes[1].IsNoted)
+                        HighlightNote(2, NoteHighlightType.Weak);
+                }
+            }
+            else
+            {
+                // if double-clicked note (if had note) convert to solvedFor value
+                if (input == UserInput.DoubleClick)
+                {
+                    
+                    // TODO!!! First, Determine which note was actually clicked!
+                    if (!HasNumberSet && _notes[1].IsNoted)
+                        SetGuess(2);
 
+                }
             }
         }
     }

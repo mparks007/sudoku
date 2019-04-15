@@ -334,7 +334,7 @@
             this.radHiBad.Text = "Bad";
             this.radHiBad.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.radHiBad.UseVisualStyleBackColor = false;
-            this.radHiBad.Click += new System.EventHandler(this.radHiClick);
+            this.radHiBad.Click += new System.EventHandler(this.radHighlightNoteClick);
             // 
             // radHiWeak
             // 
@@ -351,7 +351,7 @@
             this.radHiWeak.Text = "Weak";
             this.radHiWeak.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.radHiWeak.UseVisualStyleBackColor = false;
-            this.radHiWeak.Click += new System.EventHandler(this.radHiClick);
+            this.radHiWeak.Click += new System.EventHandler(this.radHighlightNoteClick);
             // 
             // radHiStrong
             // 
@@ -368,7 +368,7 @@
             this.radHiStrong.Text = "Strong";
             this.radHiStrong.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.radHiStrong.UseVisualStyleBackColor = false;
-            this.radHiStrong.Click += new System.EventHandler(this.radHiClick);
+            this.radHiStrong.Click += new System.EventHandler(this.radHighlightNoteClick);
             // 
             // radHiInfo
             // 
@@ -385,7 +385,7 @@
             this.radHiInfo.Text = "Info";
             this.radHiInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.radHiInfo.UseVisualStyleBackColor = false;
-            this.radHiInfo.Click += new System.EventHandler(this.radHiClick);
+            this.radHiInfo.Click += new System.EventHandler(this.radHighlightNoteClick);
             // 
             // radHiNone
             // 
@@ -404,7 +404,7 @@
             this.radHiNone.Text = "X";
             this.radHiNone.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.radHiNone.UseVisualStyleBackColor = false;
-            this.radHiNone.Click += new System.EventHandler(this.radHiClick);
+            this.radHiNone.Click += new System.EventHandler(this.radHighlightNoteClick);
             // 
             // pnlHiNoteOuter
             // 

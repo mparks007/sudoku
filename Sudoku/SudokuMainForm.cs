@@ -35,41 +35,42 @@ namespace Sudoku
             _doubleClickTimer.Interval = 35;
             _doubleClickTimer.Tick += new EventHandler(doubleClickTimer_Tick);
 
-            Game game = Game.GetInstance(BoardType.Bitmap, cellSize: 60);
-
-            // test code start vvv
-            Game.Board.SelectHousesOfCellAtRowCol(3, 3);
+            Game.CreateInstance(BoardType.Bitmap, cellSize: 60);
             Game.Board.SelectCellAtRowCol(1, 1);
-            Game.Board.Cells[6][3].ToggleNote(2);
-            Game.Board.Cells[2][5].ToggleNote(2);
 
-            Game.Board.Cells[6][3].HighlightNote(2, NoteHighlightType.Info);
-            Game.Board.Cells[2][5].HighlightNote(2, NoteHighlightType.Info);
+            //// test code start vvv
+            //Game.Board.SelectHousesOfCellAtRowCol(3, 3);
+            //Game.Board.SelectCellAtRowCol(1, 1);
+            //Game.Board.Cells[6][3].ToggleNote(2);
+            //Game.Board.Cells[2][5].ToggleNote(2);
 
-            Game.Board.Cells[3][6].SetGuess(6);
-            Game.Board.Cells[2][2].SetGiven(2);
+            //Game.Board.Cells[6][3].HighlightNote(2, NoteHighlightType.Info);
+            //Game.Board.Cells[2][5].HighlightNote(2, NoteHighlightType.Info);
 
-            Game.Board.Cells[1][6].ToggleNote(8);
-            Game.Board.Cells[1][6].HighlightNote(8, NoteHighlightType.Weak);
+            //Game.Board.Cells[3][6].SetGuess(6);
+            //Game.Board.Cells[2][2].SetGiven(2);
 
-            Game.Board.Cells[4][4].ToggleNote(3);
-            Game.Board.Cells[4][4].HighlightNote(3, NoteHighlightType.Strong);
+            //Game.Board.Cells[1][6].ToggleNote(8);
+            //Game.Board.Cells[1][6].HighlightNote(8, NoteHighlightType.Weak);
 
-            Game.Board.Cells[7][5].ToggleNote(7);
-            Game.Board.Cells[7][5].HighlightNote(7, NoteHighlightType.Info);
+            //Game.Board.Cells[4][4].ToggleNote(3);
+            //Game.Board.Cells[4][4].HighlightNote(3, NoteHighlightType.Strong);
 
-            Game.Board.Cells[8][7].ToggleNote(1);
-            Game.Board.Cells[8][7].ToggleNote(2);
-            Game.Board.Cells[8][7].HighlightNote(2, NoteHighlightType.Bad);
+            //Game.Board.Cells[7][5].ToggleNote(7);
+            //Game.Board.Cells[7][5].HighlightNote(7, NoteHighlightType.Info);
 
-            Game.Board.Cells[0][0].ToggleNote(1);
-            Game.Board.Cells[8][8].ToggleNote(4);
-            Game.Board.Cells[0][7].ToggleNote(5);
-            Game.Board.Cells[8][0].ToggleNote(6);
-            Game.Board.Cells[3][7].ToggleNote(9);
+            //Game.Board.Cells[8][7].ToggleNote(1);
+            //Game.Board.Cells[8][7].ToggleNote(2);
+            //Game.Board.Cells[8][7].HighlightNote(2, NoteHighlightType.Bad);
 
-            Game.Board.HighlightCellsWithNoteOrNumber(2);
-            // test code end ^^^
+            //Game.Board.Cells[0][0].ToggleNote(1);
+            //Game.Board.Cells[8][8].ToggleNote(4);
+            //Game.Board.Cells[0][7].ToggleNote(5);
+            //Game.Board.Cells[8][0].ToggleNote(6);
+            //Game.Board.Cells[3][7].ToggleNote(9);
+
+            //Game.Board.HighlightCellsWithNoteOrNumber(2);
+            //// test code end ^^^
 
             Render();
         }
@@ -83,7 +84,7 @@ namespace Sudoku
 
             // now paint the board directly on the Form
             PaintEventArgs e = new PaintEventArgs(_gr, new Rectangle(0, 0, this.Width, this.Height));
-            e.Graphics.DrawImageUnscaled(((BitmapBoard)Game.Board).Image, xOffset, yOffset);  // Offset params to prevent board from being in the far upper left (0,0)
+            e.Graphics.DrawImageUnscaled(((BitmapBoard)Game.Board).Image, xOffset, yOffset);  // Offset x/y to prevent board from being in the far upper left (0,0) of the form 
         }
 
         /// <summary>
@@ -98,13 +99,13 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Add or Remove a Note for the currently selected number
+        /// Add or Remove a Note of the currently selected number
         /// </summary>
         /// <param name="sender">Standard WinForms sender</param>
         /// <param name="e">Standard WinForms click-event args</param>
         private void btnToggleNote_Click(object sender, EventArgs e)
         {
-            Game.Board.Cells[Game.Board.SelectedCell.Row-1][Game.Board.SelectedCell.Column-1].ToggleNote(_activeNumber);
+            Game.Board.ToggleNote(_activeNumber);
             Render();
         }
 
@@ -113,7 +114,7 @@ namespace Sudoku
         /// </summary>
         /// <param name="sender">Standard WinForms sender</param>
         /// <param name="e">Standard WinForms radiocheck-event args</param>
-        private void radHiClick(object sender, EventArgs e)
+        private void radHighlightNoteClick(object sender, EventArgs e)
         {
             pnlHiNoteOuter.BackColor = ((RadioButton)sender).BackColor;
 
@@ -130,7 +131,29 @@ namespace Sudoku
             else if (radHiWeak.Checked)
                 type = NoteHighlightType.Weak;
 
-            Game.Board.Cells[Game.Board.SelectedCell.Row - 1][Game.Board.SelectedCell.Column - 1].HighlightNote(_activeNumber, type);
+            Game.Board.HighlightNote(_activeNumber, type);
+            Render();
+        }
+
+        /// <summary>
+        /// Set the current cell to the selected number (as a solution guess)
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void btnSetGuess_Click(object sender, EventArgs e)
+        {
+            Game.Board.SetGuess(_activeNumber);
+            Render();
+        }
+
+        /// <summary>
+        /// Set the current cell to the selected number (as a Given)
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void btnSetGiven_Click(object sender, EventArgs e)
+        {
+            Game.Board.SetGiven(_activeNumber);
             Render();
         }
 
@@ -153,28 +176,6 @@ namespace Sudoku
             _priorFocusNumber = rad;
 
             _activeNumber = Int32.Parse(rad.Tag.ToString());
-        }
-
-        /// <summary>
-        /// Set the current cell to the selected number (as a solution guess)
-        /// </summary>
-        /// <param name="sender">Standard WinForms sender</param>
-        /// <param name="e">Standard WinForms click-event args</param>
-        private void btnSetGuess_Click(object sender, EventArgs e)
-        {
-            Game.Board.Cells[Game.Board.SelectedCell.Row - 1][Game.Board.SelectedCell.Column - 1].SetGuess(_activeNumber);
-            Render();
-        }
-
-        /// <summary>
-        /// Set the current cell to the selected number (as a Given)
-        /// </summary>
-        /// <param name="sender">Standard WinForms sender</param>
-        /// <param name="e">Standard WinForms click-event args</param>
-        private void btnSetGiven_Click(object sender, EventArgs e)
-        {
-            Game.Board.Cells[Game.Board.SelectedCell.Row - 1][Game.Board.SelectedCell.Column - 1].SetGiven(_activeNumber);
-            Render();
         }
 
         /// <summary>
@@ -235,6 +236,7 @@ namespace Sudoku
             // if a non-zero number key (any better way to do this check?)
             if (int.TryParse(((char)e.KeyValue).ToString(), out numPressed) && numPressed != 0)
             {
+                // convert to my custom number enum
                 UserInput[] possibleNums = { UserInput.One, UserInput.Two, UserInput.Three, UserInput.Four, UserInput.Five, UserInput.Six, UserInput.Seven, UserInput.Eight, UserInput.Nine };
                 input = possibleNums[numPressed - 1];
             }
@@ -276,7 +278,19 @@ namespace Sudoku
                 if (e.Alt)
                     _modifierKey |= ModifierKey.Alt;
                 if (e.Control)
+                {
                     _modifierKey |= ModifierKey.Control;
+
+                    // Contrl-#, pretend the user selected that # as focus number
+                    if (input >= UserInput.One && input <= UserInput.Nine)
+                    {
+                        RadioButton[] numButtons = { rad1, rad2, rad3, rad4, rad5, rad6, rad7, rad8, rad9 };
+                        btnNumbers_Click(numButtons[(int)input-1], new EventArgs());
+
+                        // but don't pass the key press down to cells since don't want ctrl-# to be cell based, just this outer form number selector
+                        return;
+                    }
+                }
 
                 Game.Board.HandleKeyUserInput(input, _modifierKey);
                 Render();

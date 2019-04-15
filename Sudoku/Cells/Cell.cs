@@ -16,6 +16,7 @@ namespace Sudoku
         protected bool _isHighlighted;
         protected Note[] _notes = new Note[9];
 
+        public int BigNumber { get { return _bigNumber; } }
         public bool? IsGiven { get; set; }
         public bool IsSelected { get; set; }
         public bool IsInvalid { get; set; }
@@ -58,8 +59,8 @@ namespace Sudoku
             if (num < 0 || num > 9)
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
-            // if is trying to convert a given to a guess, don't waste your time
-            if (IsGiven.HasValue && IsGiven.Value)
+            // if is trying to convert a given to a guess (unless the guess is 0 for "delete"), don't waste your time
+            if (IsGiven.HasValue && IsGiven.Value && (num != 0))
                 return;
 
             _bigNumber = num;
@@ -81,8 +82,8 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
 
             // if is trying to convert a guess to a given, don't waste your time
-            if (IsGiven.HasValue && !IsGiven.Value)
-                return;
+        //    if (IsGiven.HasValue && !IsGiven.Value)
+          //      return;
 
             _bigNumber = num;
             _isHighlighted = false;

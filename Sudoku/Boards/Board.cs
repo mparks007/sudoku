@@ -99,7 +99,6 @@ namespace Sudoku
 
             _selectedCell.SetGiven(num);
         }
-
         /// <summary>
         /// For all cells in the board, highlight cells that have either an answer number or a note based on the passed in value
         /// </summary>
@@ -181,7 +180,7 @@ namespace Sudoku
                                 _selectedCell.ToggleNote((int)input);
                         }
                         else if (modifierKey == 0) // if not shift or ctrl, etc.
-                            _selectedCell.SetGuess((int)input);
+                            SetGuess((int)input);
                     }
                     break;
                 case UserInput.UpArrow:
@@ -219,9 +218,9 @@ namespace Sudoku
                     }
                     break;
                 case UserInput.Delete:
-                    // has number, BUT isn't a number that was given at the beginning
-                    if (_selectedCell.HasNumberSet && _selectedCell.IsGiven.HasValue && !_selectedCell.IsGiven.Value)
-                        _selectedCell.SetGuess(0);
+                    // has number, BUT isn't a number that was given at the beginning (NOTE: For now, allowing Delete of Givens)
+                    if (_selectedCell.HasNumberSet)// && _selectedCell.IsGiven.HasValue && !_selectedCell.IsGiven.Value)
+                        SetGuess(0);
                     break;
                 case UserInput.Space:
                     // tbd

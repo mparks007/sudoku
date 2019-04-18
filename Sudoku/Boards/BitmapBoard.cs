@@ -20,19 +20,20 @@ namespace Sudoku
             // light
             public static Color BoardBorder = Color.Black;
             public static Color BlockBorder = Color.Black;
-            public static Color BlockAltShade = Color.Snow;
+            public static Color BlockAltShade = Color.GhostWhite;
             public static Color CellBorder = Color.DarkGray;
             public static Color CellBlank = Color.White;
-            public static Color CellHouseSelect = Color.WhiteSmoke;
+            public static Color CellHouseSelect = Color.LavenderBlush;
             public static Color CellSelectFrame = Color.Coral;
             public static Color CellHighlightValue = Color.Lime;
-            public static Color CellHighlightPattern = Color.LimeGreen;
-            public static Color CellHighlightPivot = Color.DarkSeaGreen;
+            public static Color CellHighlightSpecial = Color.MediumSeaGreen;
+            public static Color CellHighlightPivot = Color.LightSeaGreen;
+            public static Color CellHighlightPincer = Color.Aquamarine;
             public static Brush AnswerGiven = Brushes.Black;
             public static Brush AnswerGuess = Brushes.Blue;
             public static Brush AnswerInvalid = Brushes.Red;
             public static Brush NoteOnEmpty = Brushes.DarkSlateGray;
-            public static Color NoteHighlightInfo = Color.LightSeaGreen;
+            public static Color NoteHighlightInfo = Color.Plum;
             public static Color NoteHighlightBad = Color.Red;
             public static Color NoteHighlightStrong = Color.RoyalBlue;
             public static Color NoteHighlightWeak = Color.Yellow;
@@ -56,8 +57,9 @@ namespace Sudoku
             public static Color CellHouseSelect = DefaultColors.CellHouseSelect;
             public static Color CellSelectFrame = DefaultColors.CellSelectFrame;
             public static Color CellHighlightValue = DefaultColors.CellHighlightValue;
-            public static Color CellHighlightPattern = DefaultColors.CellHighlightPattern;
+            public static Color CellHighlightSpecial = DefaultColors.CellHighlightSpecial;
             public static Color CellHighlightPivot = DefaultColors.CellHighlightPivot;
+            public static Color CellHighlightPincer = DefaultColors.CellHighlightPincer;
             public static Brush AnswerGiven = DefaultColors.AnswerGiven;
             public static Brush AnswerGuess = DefaultColors.AnswerGuess;
             public static Brush AnswerInvalid = DefaultColors.AnswerInvalid;
@@ -148,8 +150,9 @@ namespace Sudoku
 
             SelectCellAtRowCol(row, col);
 
-            // trigger special cell-level events
-            ((BitmapCell)Game.Board.SelectedCell).HandleXYClick(input, modifierKey, x, y);
+            // trigger special cell-level events (not click check), if notes are visible (no answer set)
+            if (!((BitmapCell)Game.Board.SelectedCell).HasAnswer)
+                ((BitmapCell)Game.Board.SelectedCell).HandleXYClick(input, modifierKey, x, y);
         }
 
         /// <summary>

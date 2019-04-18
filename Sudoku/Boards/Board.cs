@@ -79,25 +79,35 @@ namespace Sudoku
         /// <summary>
         /// Places an answer/guess/solve main number in the selected cell
         /// </summary>
+        /// <param name="row">Row to update</param>
+        /// <param name="col">Column to update</param>
         /// <param name="num">Number to try and set</param>
-        public void SetGuess(int num)
+        public void SetGuess(int row, int col, int num)
         {
+            if (row < 1 || row > 9 || col < 1 || col > 9)
+                throw new ArgumentException(String.Format("Invalid value row/column requested for setting Guess: {0}/{1}", row, col));
+
             if (num < 0 || num > 9)
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
-            _selectedCell.SetGuess(num);
+            _cells[row - 1][col - 1].SetGuess(num);
         }
 
         /// <summary>
         /// Places a starter/given main number in the selected cell
         /// </summary>
+        /// <param name="row">Row to update</param>
+        /// <param name="col">Column to update</param>
         /// <param name="num">Number to try and set</param>
-        public void SetGiven(int num)
+        public void SetGiven(int row, int col, int num)
         {
+            if (row < 1 || row > 9 || col < 1 || col > 9)
+                throw new ArgumentException(String.Format("Invalid value row/column requested for setting Given: {0}/{1}", row, col));
+
             if (num < 1 || num > 9)
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
-            _selectedCell.SetGiven(num);
+            _cells[row - 1][col - 1].SetGiven(num);
         }
         /// <summary>
         /// For all cells in the board, highlight cells that have either an answer number or a note based on the passed in value
@@ -105,7 +115,7 @@ namespace Sudoku
         /// <param name="value">Number or note to check against and highlight</param>
         public void HighlightCellsWithNoteOrNumber(int value)
         {
-            if (value < 1 || value > 9)
+            if (value < 0 || value > 9)
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
             // paw through all cells
@@ -114,6 +124,12 @@ namespace Sudoku
                     _cells[r][c].HighlightHavingNoteOrNumber(value);
         }
 
+        /// <summary>
+        /// Highlight the cell at row/col with the specified type of hightlight
+        /// </summary>
+        /// <param name="row">Row to update</param>
+        /// <param name="col">Column to update</param>
+        /// <param name="highlightType">Type of cell highlight</param>
         public void HighlightCell(int row, int col, CellHighlightType highlightType)
         {
             if (row < 1 || row > 9 || col < 1 || col > 9)
@@ -128,7 +144,7 @@ namespace Sudoku
         /// <param name="row">Row of cell to toggle note</param>
         /// <param name="col">Column of cell to toggle note</param>
         /// <param name="note">Note number to toggle</param>
-        public void ToggleNote(int note)
+        public void ToggleNote(int row, int col, int note)
         {
             if (note < 1 || note > 9)
                 throw new ArgumentException(String.Format("Invalid note being set/unset: {0}", note));
@@ -136,15 +152,17 @@ namespace Sudoku
             if (_selectedCell == null)
                 throw new ArgumentException(String.Format("No cell is selected for note toggle", note));
 
-            _selectedCell.ToggleNote(note);
+            _cells[row - 1][col - 1].ToggleNote(note);
         }
 
         /// <summary>
         /// Set the specific note to the specified hightlight level for the selected cell
         /// </summary>
+        /// <param name="row">Row to update</param>
+        /// <param name="col">Column to update</param>
         /// <param name="note">Which note to hightlight</param>
         /// <param name="highlightType">How to highlight it</param>
-        public void HighlightNote(int note, NoteHighlightType highlightType)
+        public void HighlightNote(int row, int col, int note, NoteHighlightType highlightType)
         {
             if (note < 1 || note > 9)
                 throw new ArgumentException(String.Format("Invalid note being set/unset: {0}", note));
@@ -152,7 +170,7 @@ namespace Sudoku
             if (_selectedCell == null)
                 throw new ArgumentException(String.Format("No cell is selected for note toggle", note));
 
-            _selectedCell.HighlightNote(note, highlightType);
+            _cells[row - 1][col - 1].HighlightNote(note, highlightType);
         }
 
         /// <summary>
@@ -188,7 +206,7 @@ namespace Sudoku
                                 _selectedCell.ToggleNote((int)input);
                         }
                         else if (modifierKey == 0) // if not shift or ctrl, etc.
-                            SetGuess((int)input);
+                            SetGuess(_selectedCell.Row, _selectedCell.Column, (int)input);
                     }
                     break;
                 case UserInput.UpArrow:
@@ -228,7 +246,7 @@ namespace Sudoku
                 case UserInput.Delete:
                     // has number, BUT isn't a number that was given at the beginning (NOTE: For now, allowing Delete of Givens)
                     if (_selectedCell.HasAnswer)// && _selectedCell.IsGiven.HasValue && !_selectedCell.IsGiven.Value)
-                        SetGuess(0);
+                        SetGuess(_selectedCell.Row, _selectedCell.Column, 0);
                     break;
                 case UserInput.Space:
                     // tbd

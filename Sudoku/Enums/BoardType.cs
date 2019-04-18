@@ -8,7 +8,7 @@ namespace Sudoku
 {
     public enum BoardType
     {
-        Bitmap = 0,
+        Bitmap,
         Html
     }
 }

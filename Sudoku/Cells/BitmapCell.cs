@@ -42,8 +42,10 @@ namespace Sudoku
 
             if (HighlightType == CellHighlightType.Pivot)
                 BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.CellHighlightPivot), rect);
-            else if (HighlightType == CellHighlightType.Pattern)
-                BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.CellHighlightPattern), rect);
+            else if (HighlightType == CellHighlightType.Pincer)
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.CellHighlightPincer), rect);
+            else if (HighlightType == CellHighlightType.Special)
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.CellHighlightSpecial), rect);
             else if (HighlightType == CellHighlightType.Value)
                 BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.CellHighlightValue), rect);
             else if (IsHouseSelected)
@@ -117,6 +119,9 @@ namespace Sudoku
             int h = (noteCol / 3);
             int block = (3 * v) + h;
             int b2 = noteRow * noteCol;
+
+            // pretend clicked a Note 2
+            _selectedNote = _notes[1];
 
             //            int noteNum = (noteRow - 1) % 3 + 1;
             //int noteCol = (noteCol - 1) % 3 + 1;

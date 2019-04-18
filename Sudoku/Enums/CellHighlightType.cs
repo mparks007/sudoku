@@ -10,7 +10,8 @@ namespace Sudoku
     {
         None,
         Value,
-        Pattern,
-        Pivot
+        Special,
+        Pivot,
+        Pincer
     }
 }

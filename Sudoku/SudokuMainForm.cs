@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -7,11 +8,16 @@ namespace Sudoku
     public partial class frmMain : Form
     {
         private Graphics _gr;                   // to snag the Form's graphics object for use in Render call vs. snagging it every time Render is called
-        private int _activeNumber = 1;          // the starting selected number
-        private RadioButton _priorFocusNumber;  // the number selected before selecting a new number (to toggle UI look back to unselected)
+        private int _activeSetNumber = 1;       // the starting selected Set number
+        private RadioButton _priorSetNumber;    // the Set number selected before selecting a new number (to toggle UI look back to unselected)
+        private int _activeHiNumber = 1;        // the starting selected Highlight number
+        private RadioButton _priorHiNumber;     // the Highlight number selected before selecting a new number (to toggle UI look back to unselected)
+        private RadioButton _priorHiNoteType;   // the Highlight type selected for notes before selecting a new number (to toggle UI look back to unselected)
+        private RadioButton _priorHiCellType;   // the Highlight type selected for cells before selecting a new number (to toggle UI look back to unselected)
         private int xOffset = 20;               // how far over from Form's left edge to start painting the board
         private int yOffset = 20;               // how far down from Form's top edge to start painting the board
-        private ModifierKey _modifierKey = ModifierKey.None;    // keeping track of atl, shift, ctrl state at the time of early key trapping and normal keypress events
+        private ModifierKey _modifierKey = ModifierKey.None;                        // keeping track of atl, shift, ctrl state at the time of early key trapping and normal keypress events
+        private HighlightClickMode _highlightClickMode = HighlightClickMode.Manual; // if on manual, cell, or note mode for highlight buttons
 
         // components for click/doubleclick hack code :(
         private Timer _doubleClickTimer = new Timer();
@@ -28,118 +34,100 @@ namespace Sudoku
         public frmMain()
         {
             InitializeComponent();
-            _priorFocusNumber = this.rad1;
-            _gr = this.CreateGraphics();
+
+            LoadPatternList();
+            cbxPatterns.SelectedIndex = 0;
+
+            _priorSetNumber = radSet1;
+            _priorHiNumber = radHi1;
+            _priorHiNoteType = radHiNoteNone;
+            _priorHiCellType = radHiCellNone;
+            _gr = CreateGraphics();
 
             // setup time for click/doubleclick hack code :(
             _doubleClickTimer.Interval = 35;
             _doubleClickTimer.Tick += new EventHandler(doubleClickTimer_Tick);
 
             Game.CreateInstance(BoardType.Bitmap, cellSize: 60);
-            Game.Board.SelectCellAtRowCol(1, 1);
-
-            //// test code start vvv
-            Game.Board.SelectHousesOfCellAtRowCol(3, 3);
-            Game.Board.SelectCellAtRowCol(7, 4);
-            Game.Board.ToggleNote(2);
-            Game.Board.HighlightNote(2, NoteHighlightType.Info);
-
-            // change this to not need select, but pass in row/col to board funcs
-            // change this to not need select, but pass in row/col to board funcs
-            // change this to not need select, but pass in row/col to board funcs
-            Game.Board.SelectCellAtRowCol(3, 6);
-            Game.Board.ToggleNote(2);
-            Game.Board.HighlightNote(2, NoteHighlightType.Info);
-
-            Game.Board.SelectCellAtRowCol(4, 7);
-            Game.Board.SetGuess(6);
-
-            Game.Board.SelectCellAtRowCol(3, 3);
-            Game.Board.SetGiven(3);
-
-            Game.Board.SelectCellAtRowCol(2, 7);
-            Game.Board.ToggleNote(8);
-            Game.Board.HighlightNote(8, NoteHighlightType.Weak);
-
             Game.Board.SelectCellAtRowCol(5, 5);
-            Game.Board.ToggleNote(3);
-            Game.Board.HighlightNote(3, NoteHighlightType.Strong);
+            
+            SetTestState();
+            Render();
+        }
 
-            Game.Board.SelectCellAtRowCol(8, 6);
-            Game.Board.ToggleNote(7);
-            Game.Board.HighlightNote(7, NoteHighlightType.Info);
+        private void LoadPatternList()
+        {
+            cbxPatterns.Items.Clear();
+            cbxPatterns.DisplayMember = "Key";
+            cbxPatterns.ValueMember = "Value";
 
-            Game.Board.SelectCellAtRowCol(9, 8);
-            Game.Board.ToggleNote(1);
-            Game.Board.ToggleNote(2);
-            Game.Board.HighlightNote(2, NoteHighlightType.Bad);
+            cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.XWing.Description(), Pattern.XWing));
+            cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.Skyscraper.Description(), Pattern.Skyscraper));
+            cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.TwoStringKite.Description(), Pattern.TwoStringKite));
+            cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.XYWing.Description(), Pattern.XYWing));
+        }
 
-            Game.Board.SelectCellAtRowCol(1, 1);
-            Game.Board.ToggleNote(1);
+        /// <summary>
+        /// Default board setup for testing
+        /// </summary>
+        private void SetTestState()
+        {
+            //// test code start vvv
+            Game.Board.ToggleNote(7, 4, 2);
+            Game.Board.HighlightNote(7, 4, 2, NoteHighlightType.Info);
+            Game.Board.ToggleNote(3, 6, 2);
+            Game.Board.HighlightNote(3, 6, 2, NoteHighlightType.Info);
+            Game.Board.SetGuess(4, 7, 6);
+            Game.Board.SetGiven(3, 3, 3);
+            Game.Board.ToggleNote(2, 7, 8);
+            Game.Board.HighlightNote(2, 7, 8, NoteHighlightType.Weak);
+            Game.Board.ToggleNote(5, 5, 3);
+            Game.Board.HighlightNote(5, 5, 3, NoteHighlightType.Strong);
+            Game.Board.ToggleNote(8, 6, 7);
+            Game.Board.HighlightNote(8, 6, 7, NoteHighlightType.Info);
+            Game.Board.ToggleNote(9, 8, 1);
+            Game.Board.ToggleNote(9, 8, 2);
+            Game.Board.HighlightNote(9, 8, 2, NoteHighlightType.Bad);
+            Game.Board.ToggleNote(1, 1, 1);
+            Game.Board.ToggleNote(9, 9, 4);
+            Game.Board.ToggleNote(1, 8, 5);
+            Game.Board.ToggleNote(9, 1, 6);
+            Game.Board.ToggleNote(4, 8, 9);
+            Game.Board.ToggleNote(1, 2, 2);
 
-            Game.Board.SelectCellAtRowCol(9, 9);
-            Game.Board.ToggleNote(4);
+            // xwing eliminations
+            Game.Board.HighlightNote(1, 2, 2, NoteHighlightType.Bad);
+            Game.Board.ToggleNote(3, 2, 2);
+            Game.Board.HighlightNote(3, 2, 2, NoteHighlightType.Bad);
+            // xy wing elimination
+            Game.Board.ToggleNote(8, 9, 9);
+            Game.Board.HighlightNote(8, 9, 9, NoteHighlightType.Bad);
 
-            Game.Board.SelectCellAtRowCol(1, 8);
-            Game.Board.ToggleNote(5);
-
-            Game.Board.SelectCellAtRowCol(9, 1);
-            Game.Board.ToggleNote(6);
-
-            Game.Board.SelectCellAtRowCol(4, 8);
-            Game.Board.ToggleNote(9);
-
-            Game.Board.SelectCellAtRowCol(1, 2);
-            Game.Board.ToggleNote(2);
-            Game.Board.HighlightNote(2, NoteHighlightType.Bad);
-
-            Game.Board.SelectCellAtRowCol(3, 2);
-            Game.Board.ToggleNote(2);
-            Game.Board.HighlightNote(2, NoteHighlightType.Bad);
-
-            Game.Board.SelectCellAtRowCol(8, 9);
-            Game.Board.ToggleNote(9);
-            Game.Board.HighlightNote(9, NoteHighlightType.Bad);
-
+            // doing this after the all the notes needed have been placed prior
             Game.Board.HighlightCellsWithNoteOrNumber(2);
 
-            // xwing
-            Game.Board.SelectCellAtRowCol(2, 2);
-            Game.Board.ToggleNote(2);
-            Game.Board.HighlightCell(2, 2, CellHighlightType.Pattern);
+            // xwing (corners)
+            Game.Board.ToggleNote(2, 2, 2);
+            Game.Board.HighlightCell(2, 2, CellHighlightType.Special);
+            Game.Board.ToggleNote(2, 8, 2);
+            Game.Board.HighlightCell(2, 8, CellHighlightType.Special);
+            Game.Board.ToggleNote(6, 2, 2);
+            Game.Board.HighlightCell(6, 2, CellHighlightType.Special);
+            Game.Board.ToggleNote(6, 8, 2);
+            Game.Board.HighlightCell(6, 8, CellHighlightType.Special);
 
-            Game.Board.SelectCellAtRowCol(2, 8);
-            Game.Board.ToggleNote(2);
-            Game.Board.HighlightCell(2, 8, CellHighlightType.Pattern);
-
-            Game.Board.SelectCellAtRowCol(6, 2);
-            Game.Board.ToggleNote(2);
-            Game.Board.HighlightCell(6, 2, CellHighlightType.Pattern);
-
-            Game.Board.SelectCellAtRowCol(6, 8);
-            Game.Board.ToggleNote(2);
-            Game.Board.HighlightCell(6, 8, CellHighlightType.Pattern);
-
-            // xy wing
-            Game.Board.SelectCellAtRowCol(3, 5);
-            Game.Board.ToggleNote(1);
-            Game.Board.ToggleNote(2);
+            // xy wing (pivot and two pincers)
+            Game.Board.ToggleNote(3, 5, 1);
+            Game.Board.ToggleNote(3, 5, 2);
             Game.Board.HighlightCell(3, 5, CellHighlightType.Pivot);
-
-            Game.Board.SelectCellAtRowCol(3, 9);
-            Game.Board.ToggleNote(2);
-            Game.Board.ToggleNote(9);
-            Game.Board.HighlightCell(3, 9, CellHighlightType.Pattern);
-
-            Game.Board.SelectCellAtRowCol(8, 5);
-            Game.Board.ToggleNote(1);
-            Game.Board.ToggleNote(9);
-            Game.Board.HighlightCell(8, 5, CellHighlightType.Pattern);
-
+            Game.Board.ToggleNote(3, 9, 2);
+            Game.Board.ToggleNote(3, 9, 9);
+            Game.Board.HighlightCell(3, 9, CellHighlightType.Pincer);
+            Game.Board.ToggleNote(8, 5, 1);
+            Game.Board.ToggleNote(8, 5, 9);
+            Game.Board.HighlightCell(8, 5, CellHighlightType.Pincer);
 
             //// test code end ^^^
-
-            Render();
         }
 
         /// <summary>
@@ -150,19 +138,126 @@ namespace Sudoku
             Game.Board.Render();
 
             // now paint the board directly on the Form
-            PaintEventArgs e = new PaintEventArgs(_gr, new Rectangle(0, 0, this.Width, this.Height));
+            PaintEventArgs e = new PaintEventArgs(_gr, new Rectangle(0, 0, Width, Height));
             e.Graphics.DrawImageUnscaled(((BitmapBoard)Game.Board).Image, xOffset, yOffset);  // Offset x/y to prevent board from being in the far upper left (0,0) of the form 
         }
 
         /// <summary>
-        /// Highlight all cells that have the selected number in them (whether as a Given, an Answer, or a Note)
+        /// Cycle through the three states of the Highlight Click Mode
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms check-event args</param>
+        private void chkHiMode_CheckStateChanged(object sender, EventArgs e)
+        {
+            switch (chkHiMode.CheckState)
+            {
+                case CheckState.Unchecked:
+                    chkHiMode.Text = "Cell Select";
+                    pnlHiCellOuter.Visible = true;
+                    pnlHiNoteOuter.Visible = false;
+                    pnlHiNumbers.Visible = false;
+                    _highlightClickMode = HighlightClickMode.Cell;
+                    break;
+                case CheckState.Indeterminate:
+                    chkHiMode.Text = "Manual";
+                    pnlHiCellOuter.Visible = true;
+                    pnlHiNoteOuter.Visible = true;
+                    pnlHiNoteOuter.Top = 97;
+                    pnlHiNumbers.Visible = true;
+                    _highlightClickMode = HighlightClickMode.Manual;
+                    break;
+                case CheckState.Checked:
+                    chkHiMode.Text = "Note Select";
+                    pnlHiNoteOuter.Visible = true;
+                    pnlHiNoteOuter.Top = 52;
+                    pnlHiCellOuter.Visible = false;
+                    pnlHiNumbers.Visible = false;
+                    _highlightClickMode = HighlightClickMode.Note;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Toggle the cell highlight option (am borrowing the radio button Tag property to hold the highlight type enum)
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms radiocheck-event args</param>
+        private void radHighlightCell_Click(object sender, EventArgs e)
+        {
+            RadioButton rad = (RadioButton)sender;
+
+            // flip the prior number seletion back to un-selected look/feel
+            _priorHiCellType.FlatStyle = FlatStyle.Popup;
+            // flip the new selection to unique look/feel
+            rad.FlatStyle = FlatStyle.Standard;
+
+            _priorHiCellType = rad;
+
+            if (_highlightClickMode == HighlightClickMode.Manual)
+            {
+                Game.Board.HighlightCell(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, (CellHighlightType)Convert.ToInt32(rad.Tag));
+                Render();
+            }
+        }
+
+        /// <summary>
+        /// Toggle the note highlight option (am borrowing the radio button Tag property to hold the highlight type enum)
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms radiocheck-event args</param>
+        private void radHighlightNote_Click(object sender, EventArgs e)
+        {
+            RadioButton rad = (RadioButton)sender;
+
+            // flip the prior number seletion back to un-selected look/feel
+            _priorHiNoteType.FlatStyle = FlatStyle.Popup;
+            // flip the new selection to unique look/feel
+            rad.FlatStyle = FlatStyle.Standard;
+
+            _priorHiNoteType = rad;
+
+            // if every click needs to update the selected cell (manual mode) && the cell has note visable (no answer set)
+            if ((_highlightClickMode == HighlightClickMode.Manual) && !Game.Board.SelectedCell.HasAnswer)
+            {
+                Game.Board.HighlightNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, _activeHiNumber, (NoteHighlightType)Convert.ToInt32(rad.Tag));
+                Render();
+            }
+        }
+
+        /// <summary>
+        /// Clicking one of the "this is my current Highlight focus number to mess with" buttons
         /// </summary>
         /// <param name="sender">Standard WinForms sender</param>
         /// <param name="e">Standard WinForms click-event args</param>
-        private void btnHighlightHavingValue_Click(object sender, EventArgs e)
+        private void radHiNumbers_Click(object sender, EventArgs e)
         {
-            Game.Board.HighlightCellsWithNoteOrNumber(_activeNumber);
-            Render();
+            RadioButton rad = (RadioButton)sender;
+
+            if (rad == _priorHiNumber)
+                return;
+
+            // flip the prior number seletion back to un-selected look/feel
+            _priorHiNumber.BackColor = SystemColors.Highlight;
+            _priorHiNumber.ForeColor = SystemColors.GradientInactiveCaption;
+            _priorHiNumber.FlatStyle = FlatStyle.Popup;
+            // flip the new selection to unique look/feel
+            rad.BackColor = SystemColors.GradientActiveCaption;
+            rad.ForeColor = SystemColors.Highlight;
+            rad.FlatStyle = FlatStyle.Standard;
+
+            _priorHiNumber = rad;
+
+            _activeHiNumber = Int32.Parse(rad.Tag.ToString());
+        }
+
+        /// <summary>
+        /// Toggle Notes/Numbers mode (and button text to make it look "checked")
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms check-event args</param>
+        private void chkNumberMode_CheckedChanged(object sender, EventArgs e)
+        {
+            chkKeysNotesMode.Text = (chkKeysNotesMode.Checked ? "Notes" : "Numbers");
         }
 
         /// <summary>
@@ -172,33 +267,25 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void btnToggleNote_Click(object sender, EventArgs e)
         {
-            Game.Board.ToggleNote(_activeNumber);
+            Game.Board.ToggleNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, _activeSetNumber);
             Render();
         }
 
         /// <summary>
-        /// Toggle the note highlight option and try to hightlight the note for the number of choice
+        /// Highlight all cells that have the selected number in them (whether as a Given, an Answer, or a Note)
         /// </summary>
         /// <param name="sender">Standard WinForms sender</param>
-        /// <param name="e">Standard WinForms radiocheck-event args</param>
-        private void radHighlightNoteClick(object sender, EventArgs e)
+        /// <param name="e">Standard WinForms check-event args</param>
+        private void chkHighlightHavingValue_CheckedChanged(object sender, EventArgs e)
         {
-            pnlHiNoteOuter.BackColor = ((RadioButton)sender).BackColor;
+            // toggle look and feel of button to make it look like it is "on mode" or not
+            chkHighlightHavingValue.FlatStyle = (chkHighlightHavingValue.Checked ? FlatStyle.Standard : FlatStyle.Popup);
 
-            NoteHighlightType type = NoteHighlightType.None;
+            if (chkHighlightHavingValue.Checked)
+                Game.Board.HighlightCellsWithNoteOrNumber(_activeSetNumber);
+            else
+                Game.Board.HighlightCellsWithNoteOrNumber(0);
 
-            if (radHiNone.Checked)
-                type = NoteHighlightType.None;
-            else if (radHiInfo.Checked)
-                type = NoteHighlightType.Info;
-            else if (radHiBad.Checked)
-                type = NoteHighlightType.Bad;
-            else if (radHiStrong.Checked)
-                type = NoteHighlightType.Strong;
-            else if (radHiWeak.Checked)
-                type = NoteHighlightType.Weak;
-
-            Game.Board.HighlightNote(_activeNumber, type);
             Render();
         }
 
@@ -209,8 +296,40 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void btnSetGuess_Click(object sender, EventArgs e)
         {
-            Game.Board.SetGuess(_activeNumber);
+            Game.Board.SetGuess(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, _activeSetNumber);
             Render();
+        }
+
+        /// <summary>
+        /// Clicking one of the "this is my current Set number to mess with" buttons
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void radSetNumbers_Click(object sender, EventArgs e)
+        {
+            RadioButton rad = (RadioButton)sender;
+
+            if (rad == _priorSetNumber)
+                return;
+
+            // flip the prior number seletion back to un-selected look/feel
+            _priorSetNumber.BackColor = SystemColors.Highlight;
+            _priorSetNumber.ForeColor = SystemColors.GradientInactiveCaption;
+            _priorSetNumber.FlatStyle = FlatStyle.Popup;
+            // flip the new selection to unique look/feel
+            rad.BackColor = SystemColors.GradientActiveCaption;
+            rad.ForeColor = SystemColors.Highlight;
+            rad.FlatStyle = FlatStyle.Standard;
+
+            _priorSetNumber = rad;
+
+            _activeSetNumber = Int32.Parse(rad.Tag.ToString());
+
+            if (chkHighlightHavingValue.Checked)
+            {
+                Game.Board.HighlightCellsWithNoteOrNumber(_activeSetNumber);
+                Render();
+            }
         }
 
         /// <summary>
@@ -220,42 +339,8 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void btnSetGiven_Click(object sender, EventArgs e)
         {
-            Game.Board.SetGiven(_activeNumber);
+            Game.Board.SetGiven(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, _activeSetNumber);
             Render();
-        }
-
-        /// <summary>
-        /// Clicking one of the "this is my current number to mess with" buttons
-        /// </summary>
-        /// <param name="sender">Standard WinForms sender</param>
-        /// <param name="e">Standard WinForms click-event args</param>
-        private void btnNumbers_Click(object sender, EventArgs e)
-        {
-            RadioButton rad = (RadioButton)sender;
-
-            if (rad == _priorFocusNumber)
-                return;
-
-            // flip the prior number seletion back to un-selected look/feel
-            _priorFocusNumber.BackColor = SystemColors.Highlight;
-            _priorFocusNumber.ForeColor = SystemColors.GradientInactiveCaption;
-            // flip the new selection to unique look/feel
-            rad.BackColor = SystemColors.GradientActiveCaption;
-            rad.ForeColor = SystemColors.Highlight;
-
-            _priorFocusNumber = rad;
-
-            _activeNumber = Int32.Parse(rad.Tag.ToString());
-        }
-
-        /// <summary>
-        /// Toggle Notes/Numbers mode (and button text to make it look "checked")
-        /// </summary>
-        /// <param name="sender">Standard WinForms sender</param>
-        /// <param name="e">Standard WinForms check-event args</param>
-        private void chkNumberMode_CheckedChanged(object sender, EventArgs e)
-        {
-            chkNumberMode.Text = (chkNumberMode.Checked ? "Notes" : "Numbers");
         }
 
         /// <summary>
@@ -343,10 +428,22 @@ namespace Sudoku
             {
                 // trap the modifier keys too
                 _modifierKey = ModifierKey.None;
-                if (e.Shift || chkNumberMode.Checked)    // borrowing Shift to also allow quick Note adding
-                    _modifierKey |= ModifierKey.Shift;
+                if (e.Shift)
+                {
+                    // Shift while in Numbers mode is Notes mode (so turn shift on in my modifiers flags)
+                    if (!chkKeysNotesMode.Checked)
+                        _modifierKey |= ModifierKey.Shift;
+                }
+                else
+                {
+                    // Non-Shift while in Notes mode means do note (so turn shift on in my modifiers flags)
+                    if (chkKeysNotesMode.Checked)    
+                        _modifierKey |= ModifierKey.Shift;
+                }
+
                 if (e.Alt)
                     _modifierKey |= ModifierKey.Alt;
+
                 if (e.Control)
                 {
                     _modifierKey |= ModifierKey.Control;
@@ -354,8 +451,8 @@ namespace Sudoku
                     // Contrl-#, pretend the user selected that # as focus number
                     if (input >= UserInput.One && input <= UserInput.Nine)
                     {
-                        RadioButton[] numButtons = { rad1, rad2, rad3, rad4, rad5, rad6, rad7, rad8, rad9 };
-                        btnNumbers_Click(numButtons[(int)input - 1], new EventArgs());
+                        RadioButton[] numButtons = { radSet1, radSet2, radSet3, radSet4, radSet5, radSet6, radSet7, radSet8, radSet9 };
+                        radSetNumbers_Click(numButtons[(int)input - 1], new EventArgs());
 
                         // but don't pass the key press down to cells since don't want ctrl-# to be cell based, just this outer form number selector
                         return;
@@ -363,6 +460,12 @@ namespace Sudoku
                 }
 
                 Game.Board.HandleKeyUserInput(input, _modifierKey);
+
+                // if pressed a number and in 'highlight all numbers' mode, highlight if that is the active highlight-me number, or just deleted main number, exposing potential notes
+                if (chkHighlightHavingValue.Checked && (numPressed == _activeSetNumber))
+                    Game.Board.HighlightCell(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, CellHighlightType.
+
+
                 Render();
             }
         }
@@ -425,11 +528,34 @@ namespace Sudoku
                 if (_clickX >= 0 && _clickX < board.BoardSize && _clickY >= 0 && _clickY < board.BoardSize)
                 {
                     if (_isDoubleClick)
+                    {
                         ((BitmapBoard)Game.Board).HandleXYClick(UserInput.DoubleClick, _modifierKey, _clickX, _clickY);
+
+                        // if the cell has an answer and it does NOT match the "highlight all of that number", ensure it unhighlights
+                        if (chkHighlightHavingValue.Checked && (Game.Board.SelectedCell.Answer != _activeSetNumber))
+                            Game.Board.HighlightCell(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, CellHighlightType.None);
+
+                    }
                     else if (_isRightClick)
                         ((BitmapBoard)Game.Board).HandleXYClick(UserInput.RightClick, _modifierKey, _clickX, _clickY);
                     else
+                    {
                         ((BitmapBoard)Game.Board).HandleXYClick(UserInput.LeftClick, _modifierKey, _clickX, _clickY);
+
+                        // do special highlighting if Control not clicked (Control-RightClick is for special strong/week coloring done in HandleXYClick)
+                        if ((_modifierKey & ModifierKey.Control) == 0)
+                        {
+                            if (_highlightClickMode == HighlightClickMode.Cell)
+                                Game.Board.HighlightCell(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, (CellHighlightType)Convert.ToInt32(_priorHiCellType.Tag));
+                            else if (_highlightClickMode == HighlightClickMode.Note && !Game.Board.SelectedCell.HasAnswer)
+                            {
+                                int selectedNote = Game.Board.SelectedCell.SelectedNote.Candidate;
+                                // if even clicked a note area that had a note set
+                                if (selectedNote != 0)
+                                    Game.Board.HighlightNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, selectedNote, (NoteHighlightType)Convert.ToInt32(_priorHiNoteType.Tag));
+                            }
+                        }
+                    }
                 }
 
                 // allow the MouseDown event handler to process clicks again
@@ -455,6 +581,11 @@ namespace Sudoku
                 _modifierKey |= ModifierKey.Control;
             if ((ModifierKeys & Keys.Alt) == Keys.Alt)
                 _modifierKey |= ModifierKey.Alt;
+        }
+
+        private void btFind_Click(object sender, EventArgs e)
+        {
+            Pattern pattern = ((KeyValuePair<string,Pattern>)cbxPatterns.SelectedItem).Value;
         }
     }
 }

@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace Sudoku
 {
-    public enum NoteHighlightType
+    public enum HighlightClickMode
     {
-        None,
-        Info,
-        Strong,
-        Weak,
-        Bad
+        Manual,
+        Cell,
+        Note
     }
 }

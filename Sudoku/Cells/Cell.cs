@@ -13,8 +13,9 @@ namespace Sudoku
     public abstract class Cell
     {
         protected int _answer;
-       // protected bool _isHighlighted;
         protected Note[] _notes = new Note[9];
+        protected Note _selectedNote;
+
 
         public int Answer { get { return _answer; } }
         public bool? IsGiven { get; set; }
@@ -22,6 +23,7 @@ namespace Sudoku
         public bool IsInvalid { get; set; }
         public CellHighlightType HighlightType { get; set; }
         public bool IsHouseSelected { get; set; }
+        public Note SelectedNote { get { return _selectedNote; } }
         public int Row { get; set; }
         public int Column { get; set; }
         public int Block { get; set; }
@@ -65,7 +67,12 @@ namespace Sudoku
                 return;
 
             _answer = guess;
-            IsGiven = false;
+
+            // if was a Delete, no idea if IsGiven or not, so reset the nullable bool
+            if (guess == 0)
+                IsGiven = null;
+            else // is an actual guess
+                IsGiven = false;
         }
 
         /// <summary>
@@ -115,11 +122,11 @@ namespace Sudoku
         /// <param name="value">Number or note to check against and highlight</param>
         public void HighlightHavingNoteOrNumber(int value)
         {
-            if (value < 1 || value > 9)
+            if (value < 0 || value > 9)
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
-            // if answer number is the one to highlight...OR notes are visible and the requested note is present
-            if ((_answer == value) || ((_answer == 0) && (_notes[value - 1].IsNoted))) 
+            // if not a forced unhighlight...AND answer number is the one to highlight OR notes are visible and the requested note is present
+            if ((value != 0) && ((_answer == value) || ((_answer == 0) && (_notes[value - 1].IsNoted))))
                 HighlightType = CellHighlightType.Value;
             else
                 HighlightType = CellHighlightType.None;

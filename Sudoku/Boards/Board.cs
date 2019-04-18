@@ -114,6 +114,14 @@ namespace Sudoku
                     _cells[r][c].HighlightHavingNoteOrNumber(value);
         }
 
+        public void HighlightCell(int row, int col, CellHighlightType highlightType)
+        {
+            if (row < 1 || row > 9 || col < 1 || col > 9)
+                throw new ArgumentException(String.Format("Invalid value row/column requested for cell highlight: {0}/{1}", row, col));
+
+            _cells[row - 1][col - 1].HighlightType = highlightType;
+        }
+
         /// <summary>
         /// Toggle a note on/off for the selected cell
         /// </summary>
@@ -176,7 +184,7 @@ namespace Sudoku
                         if ((modifierKey & ModifierKey.Shift) != 0)
                         {
                             // and the cell doesn't already have an answer number assigned
-                            if (!_selectedCell.HasNumberSet)
+                            if (!_selectedCell.HasAnswer)
                                 _selectedCell.ToggleNote((int)input);
                         }
                         else if (modifierKey == 0) // if not shift or ctrl, etc.
@@ -219,7 +227,7 @@ namespace Sudoku
                     break;
                 case UserInput.Delete:
                     // has number, BUT isn't a number that was given at the beginning (NOTE: For now, allowing Delete of Givens)
-                    if (_selectedCell.HasNumberSet)// && _selectedCell.IsGiven.HasValue && !_selectedCell.IsGiven.Value)
+                    if (_selectedCell.HasAnswer)// && _selectedCell.IsGiven.HasValue && !_selectedCell.IsGiven.Value)
                         SetGuess(0);
                     break;
                 case UserInput.Space:

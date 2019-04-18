@@ -12,14 +12,15 @@ namespace Sudoku
 {
     public abstract class Cell
     {
-        protected int _bigNumber;
-        protected bool _isHighlighted;
+        protected int _answer;
+       // protected bool _isHighlighted;
         protected Note[] _notes = new Note[9];
 
-        public int BigNumber { get { return _bigNumber; } }
+        public int Answer { get { return _answer; } }
         public bool? IsGiven { get; set; }
         public bool IsSelected { get; set; }
         public bool IsInvalid { get; set; }
+        public CellHighlightType HighlightType { get; set; }
         public bool IsHouseSelected { get; set; }
         public int Row { get; set; }
         public int Column { get; set; }
@@ -41,52 +42,50 @@ namespace Sudoku
         /// <summary>
         /// Checks if the answer number has been set
         /// </summary>
-        public bool HasNumberSet
+        public bool HasAnswer
         {
-            get { return _bigNumber != 0; }
+            get { return _answer != 0; }
         }
 
         /// <summary>
-        /// Places an answer/guess/solve main number in the cell
+        /// Places an guess number in the cell
         /// </summary>
-        /// <param name="num">Number to try and set</param>
-        public void SetGuess(int num)
+        /// <param name="guess">Number to try and set</param>
+        public void SetGuess(int guess)
         {
             // if is same number as current, don't waste your time
-            if (_bigNumber == num)
+            if (_answer == guess)
                 return;
 
-            if (num < 0 || num > 9)
-                throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
+            if (guess < 0 || guess > 9)
+                throw new ArgumentException(String.Format("Invalid solution number being set: {0}", guess));
 
             // if is trying to convert a given to a guess (unless the guess is 0 for "delete"), don't waste your time
-            if (IsGiven.HasValue && IsGiven.Value && (num != 0))
+            if (IsGiven.HasValue && IsGiven.Value && (guess != 0))
                 return;
 
-            _bigNumber = num;
-            _isHighlighted = false;
+            _answer = guess;
             IsGiven = false;
         }
 
         /// <summary>
-        /// Places a starter/given main number in the cell
+        /// Places a starter/given answer number in the cell
         /// </summary>
-        /// <param name="num">Number to try and set</param>
-        public void SetGiven(int num)
+        /// <param name="given">Number to try and set</param>
+        public void SetGiven(int given)
         {
             // if is same number as current, don't waste your time
-            if (_bigNumber == num)
+            if (_answer == given)
                 return;
 
-            if (num < 1 || num > 9)
-                throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
+            if (given < 1 || given > 9)
+                throw new ArgumentException(String.Format("Invalid given number being set: {0}", given));
 
             // if is trying to convert a guess to a given, don't waste your time
-        //    if (IsGiven.HasValue && !IsGiven.Value)
-          //      return;
+            if (IsGiven.HasValue && !IsGiven.Value)
+                return;
 
-            _bigNumber = num;
-            _isHighlighted = false;
+            _answer = given;
             IsGiven = true;
         }
 
@@ -119,13 +118,11 @@ namespace Sudoku
             if (value < 1 || value > 9)
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
-            // if answer number is the one to highlight
-            if (_bigNumber == value)
-                _isHighlighted = true;
-            else if (_bigNumber == 0) // or notes are visible
-                _isHighlighted = _notes[value - 1].IsNoted; // and the requested note is present
+            // if answer number is the one to highlight...OR notes are visible and the requested note is present
+            if ((_answer == value) || ((_answer == 0) && (_notes[value - 1].IsNoted))) 
+                HighlightType = CellHighlightType.Value;
             else
-                _isHighlighted = false;
+                HighlightType = CellHighlightType.None;
         }
 
         /// <summary>

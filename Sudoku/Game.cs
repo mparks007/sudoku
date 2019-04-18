@@ -37,6 +37,9 @@ namespace Sudoku
             if (_instance == null)
                 _instance = new Game(type, cellSize);
 
+            
+
+
             //return _instance;
         }
 

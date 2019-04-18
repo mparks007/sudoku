@@ -40,28 +40,37 @@ namespace Sudoku
             int left = (Column - 1) * _cellSize;
             Rectangle rect = new Rectangle(left, top, _cellSize, _cellSize);
 
-            if (_isHighlighted)
-                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.Lime), rect);
+            if (HighlightType == CellHighlightType.Pivot)
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.CellHighlightPivot), rect);
+            else if (HighlightType == CellHighlightType.Pattern)
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.CellHighlightPattern), rect);
+            else if (HighlightType == CellHighlightType.Value)
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.CellHighlightValue), rect);
             else if (IsHouseSelected)
-                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.WhiteSmoke), rect);
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.CellHouseSelect), rect);
             else
-                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Color.White), rect);
+            {
+                if (Block % 2 == 0)
+                    BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.BlockAltShade), rect);
+                else
+                    BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.CellBlank), rect);
+            }
 
             // if solved, render solved number
-            if (_bigNumber != 0)
+            if (_answer != 0)
             {
-                string num = _bigNumber.ToString();
+                string num = _answer.ToString();
 
-                Font f = new Font("Arial Black", _cellSize / 2);
+                Font f = new Font(BitmapBoard.Fonts.Answer, _cellSize / 2);
                 SizeF fSize = BitmapBoard.Graphics.MeasureString(num, f);
 
                 Brush br;
                 if (IsGiven.HasValue && IsGiven.Value)
-                    br = Brushes.Black;
+                    br = BitmapBoard.Colors.AnswerGiven;
                 else if (IsInvalid)
-                    br = Brushes.Red;
+                    br = BitmapBoard.Colors.AnswerInvalid;
                 else
-                    br =Brushes.Blue;
+                    br = BitmapBoard.Colors.AnswerGuess;
 
                 StringFormat format = new StringFormat()
                 {
@@ -79,10 +88,10 @@ namespace Sudoku
             
             // maybe render selection box
             if (IsSelected)
-                BitmapBoard.Graphics.DrawRectangle(new Pen(Color.Coral, 3), rect.X+2, rect.Y+2, rect.Width-4, rect.Height-4);
+                BitmapBoard.Graphics.DrawRectangle(new Pen(BitmapBoard.Colors.CellSelectFrame, 3), rect.X+2, rect.Y+2, rect.Width-4, rect.Height-4);
 
             // render cell border
-            BitmapBoard.Graphics.DrawRectangle(new Pen(Color.DarkGray, 1), rect);
+            BitmapBoard.Graphics.DrawRectangle(new Pen(BitmapBoard.Colors.CellBorder, 1), rect);
         }
 
         /// <summary>
@@ -117,13 +126,13 @@ namespace Sudoku
                 if (input == UserInput.LeftClick)
                 {
                     // TODO!!! First, Determine which note was actually clicked!
-                    if (!HasNumberSet && _notes[1].IsNoted)
+                    if (!HasAnswer && _notes[1].IsNoted)
                         HighlightNote(2, NoteHighlightType.Strong);
                 }
                 else if (input == UserInput.RightClick)
                 {
                     // TODO!!! First, Determine which note was actually clicked!
-                    if (!HasNumberSet && _notes[1].IsNoted)
+                    if (!HasAnswer && _notes[1].IsNoted)
                         HighlightNote(2, NoteHighlightType.Weak);
                 }
             }
@@ -134,7 +143,7 @@ namespace Sudoku
                 {
                     
                     // TODO!!! First, Determine which note was actually clicked!
-                    if (!HasNumberSet && _notes[1].IsNoted)
+                    if (!HasAnswer && _notes[1].IsNoted)
                         SetGuess(2);
 
                 }

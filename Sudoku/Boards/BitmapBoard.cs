@@ -9,12 +9,87 @@ using System.Threading.Tasks;
 
 namespace Sudoku
 {
+
     public class BitmapBoard : Board
     {
         public static Graphics Graphics;
         private Bitmap _boardImage;
-        
-        public Bitmap Image
+
+        private static class DefaultColors
+        {
+            // light
+            public static Color BoardBorder = Color.Black;
+            public static Color BlockBorder = Color.Black;
+            public static Color BlockAltShade = Color.Snow;
+            public static Color CellBorder = Color.DarkGray;
+            public static Color CellBlank = Color.White;
+            public static Color CellHouseSelect = Color.WhiteSmoke;
+            public static Color CellSelectFrame = Color.Coral;
+            public static Color CellHighlightValue = Color.Lime;
+            public static Color CellHighlightPattern = Color.LimeGreen;
+            public static Color CellHighlightPivot = Color.DarkSeaGreen;
+            public static Brush AnswerGiven = Brushes.Black;
+            public static Brush AnswerGuess = Brushes.Blue;
+            public static Brush AnswerInvalid = Brushes.Red;
+            public static Brush NoteOnEmpty = Brushes.DarkSlateGray;
+            public static Color NoteHighlightInfo = Color.LightSeaGreen;
+            public static Color NoteHighlightBad = Color.Red;
+            public static Color NoteHighlightStrong = Color.RoyalBlue;
+            public static Color NoteHighlightWeak = Color.Yellow;
+            public static Brush NoteOnHighlightInfo = Brushes.DarkSlateGray;
+            public static Brush NoteOnHighlightBad = Brushes.LightGray;
+            public static Brush NoteOnHighlightStrong = Brushes.LightGray;
+            public static Brush NoteOnHighlightWeak = Brushes.DarkSlateGray;
+
+            // dark
+            // maybe offer option to have dark mode
+        }
+
+        public static class Colors
+        {
+            // light
+            public static Color BoardBorder = DefaultColors.BoardBorder;
+            public static Color BlockBorder = DefaultColors.BlockBorder;
+            public static Color BlockAltShade = DefaultColors.BlockAltShade;
+            public static Color CellBorder = DefaultColors.CellBorder;
+            public static Color CellBlank = DefaultColors.CellBlank;
+            public static Color CellHouseSelect = DefaultColors.CellHouseSelect;
+            public static Color CellSelectFrame = DefaultColors.CellSelectFrame;
+            public static Color CellHighlightValue = DefaultColors.CellHighlightValue;
+            public static Color CellHighlightPattern = DefaultColors.CellHighlightPattern;
+            public static Color CellHighlightPivot = DefaultColors.CellHighlightPivot;
+            public static Brush AnswerGiven = DefaultColors.AnswerGiven;
+            public static Brush AnswerGuess = DefaultColors.AnswerGuess;
+            public static Brush AnswerInvalid = DefaultColors.AnswerInvalid;
+            public static Brush NoteOnEmpty = DefaultColors.NoteOnEmpty;
+            public static Color NoteHighlightInfo = DefaultColors.NoteHighlightInfo;
+            public static Color NoteHighlightBad = DefaultColors.NoteHighlightBad;
+            public static Color NoteHighlightStrong = DefaultColors.NoteHighlightStrong;
+            public static Color NoteHighlightWeak = DefaultColors.NoteHighlightWeak;
+            public static Brush NoteOnHighlightInfo = DefaultColors.NoteOnHighlightInfo;
+            public static Brush NoteOnHighlightBad = DefaultColors.NoteOnHighlightBad;
+            public static Brush NoteOnHighlightStrong = DefaultColors.NoteOnHighlightStrong;
+            public static Brush NoteOnHighlightWeak = DefaultColors.NoteOnHighlightWeak;
+
+            // dark
+            // maybe offer option to have dark mode
+        }
+
+        private static class DefaultFonts
+        {
+            // light
+            public static string Answer = "Arial Black";
+            public static string Note = "Arial";
+        }
+
+        public static class Fonts
+        {
+            // light
+            public static string Answer = DefaultFonts.Answer;
+            public static string Note = DefaultFonts.Note;
+        }
+
+            public Bitmap Image
         {
             get
             {
@@ -93,10 +168,10 @@ namespace Sudoku
                         _cells[r][c].Render();
 
                 // render board border
-                BitmapBoard.Graphics.DrawRectangle(new Pen(Color.Black, 4), 0, 0, _boardImage.Width, _boardImage.Height);
+                BitmapBoard.Graphics.DrawRectangle(new Pen(BitmapBoard.Colors.BoardBorder, 4), 0, 0, _boardImage.Width, _boardImage.Height);
 
                 // render block borders
-                Pen p = new Pen(Color.Black, 2);
+                Pen p = new Pen(BitmapBoard.Colors.BlockBorder, 2);
                 int blockSize = _boardImage.Height / 3;
                 // horizontal bars
                 BitmapBoard.Graphics.DrawLine(p, 0, blockSize, _boardImage.Width, blockSize);

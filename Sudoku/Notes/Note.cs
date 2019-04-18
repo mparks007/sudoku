@@ -10,7 +10,6 @@ namespace Sudoku
     public abstract class Note
     {
         protected int _candidate;
-        protected bool _isHighlighted;
 
         /// <summary>
         /// The number on this note (if one was assinged)

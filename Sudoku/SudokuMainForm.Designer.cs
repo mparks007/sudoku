@@ -460,6 +460,7 @@
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.frmMain_Paint);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmMain_KeyDown);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseDown);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseUp);
             this.pnlNumbers.ResumeLayout(false);
             this.pnlHiNoteInner.ResumeLayout(false);
             this.pnlHiNoteOuter.ResumeLayout(false);

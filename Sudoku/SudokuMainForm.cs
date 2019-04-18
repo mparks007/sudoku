@@ -39,37 +39,104 @@ namespace Sudoku
             Game.Board.SelectCellAtRowCol(1, 1);
 
             //// test code start vvv
-            //Game.Board.SelectHousesOfCellAtRowCol(3, 3);
-            //Game.Board.SelectCellAtRowCol(1, 1);
-            //Game.Board.Cells[6][3].ToggleNote(2);
-            //Game.Board.Cells[2][5].ToggleNote(2);
+            Game.Board.SelectHousesOfCellAtRowCol(3, 3);
+            Game.Board.SelectCellAtRowCol(7, 4);
+            Game.Board.ToggleNote(2);
+            Game.Board.HighlightNote(2, NoteHighlightType.Info);
 
-            //Game.Board.Cells[6][3].HighlightNote(2, NoteHighlightType.Info);
-            //Game.Board.Cells[2][5].HighlightNote(2, NoteHighlightType.Info);
+            // change this to not need select, but pass in row/col to board funcs
+            // change this to not need select, but pass in row/col to board funcs
+            // change this to not need select, but pass in row/col to board funcs
+            Game.Board.SelectCellAtRowCol(3, 6);
+            Game.Board.ToggleNote(2);
+            Game.Board.HighlightNote(2, NoteHighlightType.Info);
 
-            //Game.Board.Cells[3][6].SetGuess(6);
-            //Game.Board.Cells[2][2].SetGiven(2);
+            Game.Board.SelectCellAtRowCol(4, 7);
+            Game.Board.SetGuess(6);
 
-            //Game.Board.Cells[1][6].ToggleNote(8);
-            //Game.Board.Cells[1][6].HighlightNote(8, NoteHighlightType.Weak);
+            Game.Board.SelectCellAtRowCol(3, 3);
+            Game.Board.SetGiven(3);
 
-            //Game.Board.Cells[4][4].ToggleNote(3);
-            //Game.Board.Cells[4][4].HighlightNote(3, NoteHighlightType.Strong);
+            Game.Board.SelectCellAtRowCol(2, 7);
+            Game.Board.ToggleNote(8);
+            Game.Board.HighlightNote(8, NoteHighlightType.Weak);
 
-            //Game.Board.Cells[7][5].ToggleNote(7);
-            //Game.Board.Cells[7][5].HighlightNote(7, NoteHighlightType.Info);
+            Game.Board.SelectCellAtRowCol(5, 5);
+            Game.Board.ToggleNote(3);
+            Game.Board.HighlightNote(3, NoteHighlightType.Strong);
 
-            //Game.Board.Cells[8][7].ToggleNote(1);
-            //Game.Board.Cells[8][7].ToggleNote(2);
-            //Game.Board.Cells[8][7].HighlightNote(2, NoteHighlightType.Bad);
+            Game.Board.SelectCellAtRowCol(8, 6);
+            Game.Board.ToggleNote(7);
+            Game.Board.HighlightNote(7, NoteHighlightType.Info);
 
-            //Game.Board.Cells[0][0].ToggleNote(1);
-            //Game.Board.Cells[8][8].ToggleNote(4);
-            //Game.Board.Cells[0][7].ToggleNote(5);
-            //Game.Board.Cells[8][0].ToggleNote(6);
-            //Game.Board.Cells[3][7].ToggleNote(9);
+            Game.Board.SelectCellAtRowCol(9, 8);
+            Game.Board.ToggleNote(1);
+            Game.Board.ToggleNote(2);
+            Game.Board.HighlightNote(2, NoteHighlightType.Bad);
 
-            //Game.Board.HighlightCellsWithNoteOrNumber(2);
+            Game.Board.SelectCellAtRowCol(1, 1);
+            Game.Board.ToggleNote(1);
+
+            Game.Board.SelectCellAtRowCol(9, 9);
+            Game.Board.ToggleNote(4);
+
+            Game.Board.SelectCellAtRowCol(1, 8);
+            Game.Board.ToggleNote(5);
+
+            Game.Board.SelectCellAtRowCol(9, 1);
+            Game.Board.ToggleNote(6);
+
+            Game.Board.SelectCellAtRowCol(4, 8);
+            Game.Board.ToggleNote(9);
+
+            Game.Board.SelectCellAtRowCol(1, 2);
+            Game.Board.ToggleNote(2);
+            Game.Board.HighlightNote(2, NoteHighlightType.Bad);
+
+            Game.Board.SelectCellAtRowCol(3, 2);
+            Game.Board.ToggleNote(2);
+            Game.Board.HighlightNote(2, NoteHighlightType.Bad);
+
+            Game.Board.SelectCellAtRowCol(8, 9);
+            Game.Board.ToggleNote(9);
+            Game.Board.HighlightNote(9, NoteHighlightType.Bad);
+
+            Game.Board.HighlightCellsWithNoteOrNumber(2);
+
+            // xwing
+            Game.Board.SelectCellAtRowCol(2, 2);
+            Game.Board.ToggleNote(2);
+            Game.Board.HighlightCell(2, 2, CellHighlightType.Pattern);
+
+            Game.Board.SelectCellAtRowCol(2, 8);
+            Game.Board.ToggleNote(2);
+            Game.Board.HighlightCell(2, 8, CellHighlightType.Pattern);
+
+            Game.Board.SelectCellAtRowCol(6, 2);
+            Game.Board.ToggleNote(2);
+            Game.Board.HighlightCell(6, 2, CellHighlightType.Pattern);
+
+            Game.Board.SelectCellAtRowCol(6, 8);
+            Game.Board.ToggleNote(2);
+            Game.Board.HighlightCell(6, 8, CellHighlightType.Pattern);
+
+            // xy wing
+            Game.Board.SelectCellAtRowCol(3, 5);
+            Game.Board.ToggleNote(1);
+            Game.Board.ToggleNote(2);
+            Game.Board.HighlightCell(3, 5, CellHighlightType.Pivot);
+
+            Game.Board.SelectCellAtRowCol(3, 9);
+            Game.Board.ToggleNote(2);
+            Game.Board.ToggleNote(9);
+            Game.Board.HighlightCell(3, 9, CellHighlightType.Pattern);
+
+            Game.Board.SelectCellAtRowCol(8, 5);
+            Game.Board.ToggleNote(1);
+            Game.Board.ToggleNote(9);
+            Game.Board.HighlightCell(8, 5, CellHighlightType.Pattern);
+
+
             //// test code end ^^^
 
             Render();
@@ -165,6 +232,9 @@ namespace Sudoku
         private void btnNumbers_Click(object sender, EventArgs e)
         {
             RadioButton rad = (RadioButton)sender;
+
+            if (rad == _priorFocusNumber)
+                return;
 
             // flip the prior number seletion back to un-selected look/feel
             _priorFocusNumber.BackColor = SystemColors.Highlight;
@@ -285,7 +355,7 @@ namespace Sudoku
                     if (input >= UserInput.One && input <= UserInput.Nine)
                     {
                         RadioButton[] numButtons = { rad1, rad2, rad3, rad4, rad5, rad6, rad7, rad8, rad9 };
-                        btnNumbers_Click(numButtons[(int)input-1], new EventArgs());
+                        btnNumbers_Click(numButtons[(int)input - 1], new EventArgs());
 
                         // but don't pass the key press down to cells since don't want ctrl-# to be cell based, just this outer form number selector
                         return;
@@ -320,7 +390,7 @@ namespace Sudoku
             if (_isFirstClick)
             {
                 _isFirstClick = false;
-                    
+
                 // offset since the args x/y are FORM-based and I want the board area instead, which is NOT at 0,0 in the form
                 _clickX = ((MouseEventArgs)e).X - xOffset;
                 _clickY = ((MouseEventArgs)e).Y - yOffset;
@@ -369,6 +439,22 @@ namespace Sudoku
 
                 Render();
             }
+        }
+
+        /// <summary>
+        /// Needing to reset the state of the active modifier after the click is done so it doesn't think one is still down since KeyUp doesn't get just modifier un-presses
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void frmMain_MouseUp(object sender, MouseEventArgs e)
+        {
+            _modifierKey = ModifierKey.None;
+            if ((ModifierKeys & Keys.Shift) == Keys.Shift)
+                _modifierKey |= ModifierKey.Shift;
+            if ((ModifierKeys & Keys.Control) == Keys.Control)
+                _modifierKey |= ModifierKey.Control;
+            if ((ModifierKeys & Keys.Alt) == Keys.Alt)
+                _modifierKey |= ModifierKey.Alt;
         }
     }
 }

@@ -10,15 +10,15 @@ namespace Sudoku
 {
     public class BitmapNote : Note
     {
-        private int _cellSize;
+        private int _cellPixelSize;
 
         /// <summary>
         /// Ctor
         /// </summary>
-        /// <param name="cellSize">Render needs to know the parent cell size for calculations</param>
-        public BitmapNote(int cellSize)
+        /// <param name="cellPixelSize">Render needs to know the parent cell size for calculations</param>
+        public BitmapNote(int cellPixelSize)
         {
-            _cellSize = cellSize;
+            _cellPixelSize = cellPixelSize;
         }
 
         /// <summary>
@@ -34,25 +34,30 @@ namespace Sudoku
                 // calculate offset of each note to find right rect by note position in the overall board image
                 //   top: (row depth) + (inner-cell depth)
                 //   left: (col offset) + (inner-cell offset)
-                int top = ((parentCellRow - 1) * _cellSize) + ((_candidate - 1) / 3 * (_cellSize / 3));
-                int left = ((parentCellColumn - 1) * _cellSize) + ((_candidate - 1) % 3 * (_cellSize / 3));
-                Rectangle rect = new Rectangle(left, top, _cellSize / 3, _cellSize / 3);
+                int top = ((parentCellRow - 1) * _cellPixelSize) + ((_candidate - 1) / 3 * (_cellPixelSize / 3));
+                int left = ((parentCellColumn - 1) * _cellPixelSize) + ((_candidate - 1) % 3 * (_cellPixelSize / 3));
+                Rectangle rect = new Rectangle(left, top, _cellPixelSize / 3, _cellPixelSize / 3);
 
-                // render the note's background
+                // setup note background and font coloring based on highlight or not
                 Color c = Color.Transparent;
+                Brush br = Brushes.Black;
                 switch (HighlightType)
                 {
                     case NoteHighlightType.Info:
-                        c = Color.LightSeaGreen;
+                        c = BitmapBoard.Colors.NoteHighlightInfo;
+                        br = BitmapBoard.Colors.NoteOnHighlightInfo;
                         break;
                     case NoteHighlightType.Bad:
-                        c = Color.Red;
+                        c = BitmapBoard.Colors.NoteHighlightBad;
+                        br = BitmapBoard.Colors.NoteOnHighlightBad;
                         break;
                     case NoteHighlightType.Strong:
-                        c = Color.RoyalBlue;
+                        c = BitmapBoard.Colors.NoteHighlightStrong;
+                        br = BitmapBoard.Colors.NoteOnHighlightStrong;
                         break;
                     case NoteHighlightType.Weak:
-                        c = Color.Yellow;
+                        c = BitmapBoard.Colors.NoteHighlightWeak;
+                        br = BitmapBoard.Colors.NoteOnHighlightWeak;
                         break;
                 }
                 BitmapBoard.Graphics.FillRectangle(new SolidBrush(c), rect);
@@ -60,7 +65,7 @@ namespace Sudoku
                 string candidate = _candidate.ToString();
 
                 // prep for drawing the text onto the image
-                Font f = new Font("Arial", _cellSize / 3 / 2);
+                Font f = new Font(BitmapBoard.Fonts.Note, _cellPixelSize / 3 / 2);
                 SizeF fSize = BitmapBoard.Graphics.MeasureString(candidate, f);
                 StringFormat format = new StringFormat()
                 {
@@ -69,7 +74,7 @@ namespace Sudoku
                 };
 
                 // draw the string, but use different (lighter) color if on red background  (but this will have to change if I have custom colors)
-                BitmapBoard.Graphics.DrawString(candidate, f, ((HighlightType == NoteHighlightType.Bad || HighlightType == NoteHighlightType.Strong) ? Brushes.LightGray : Brushes.DarkSlateGray), rect, format);
+                BitmapBoard.Graphics.DrawString(candidate, f, br, rect, format);
             }
         }
     }

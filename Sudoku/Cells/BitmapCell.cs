@@ -120,6 +120,8 @@ namespace Sudoku
             int block = (3 * v) + h;
             int b2 = noteRow * noteCol;
 
+            // FORCED TEST CODE!!!!!!! 
+
             // pretend clicked a Note 2
             _selectedNote = _notes[1];
 
@@ -130,13 +132,13 @@ namespace Sudoku
             {
                 if (input == UserInput.LeftClick)
                 {
-                    // TODO!!! First, Determine which note was actually clicked!
+                    // TODO!!! First, Determine which note was actually clicked! (not _notes[1])
                     if (!HasAnswer && _notes[1].IsNoted)
                         HighlightNote(2, NoteHighlightType.Strong);
                 }
                 else if (input == UserInput.RightClick)
                 {
-                    // TODO!!! First, Determine which note was actually clicked!
+                    // TODO!!! First, Determine which note was actually clicked! (not _notes[1])
                     if (!HasAnswer && _notes[1].IsNoted)
                         HighlightNote(2, NoteHighlightType.Weak);
                 }
@@ -146,8 +148,8 @@ namespace Sudoku
                 // if double-clicked note (if had note) convert to solvedFor value
                 if (input == UserInput.DoubleClick)
                 {
-                    
-                    // TODO!!! First, Determine which note was actually clicked!
+
+                    // TODO!!! First, Determine which note was actually clicked! (not _notes[1])
                     if (!HasAnswer && _notes[1].IsNoted)
                         SetGuess(2);
 

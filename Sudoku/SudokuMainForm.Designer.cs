@@ -73,7 +73,7 @@
             this.chkHiMode = new System.Windows.Forms.CheckBox();
             this.chkHighlightHavingValue = new System.Windows.Forms.CheckBox();
             this.cbxPatterns = new System.Windows.Forms.ComboBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnFind = new System.Windows.Forms.Button();
             this.pnlSetNumbers.SuspendLayout();
             this.pnlHiNoteInner.SuspendLayout();
             this.pnlHiNoteOuter.SuspendLayout();
@@ -799,20 +799,20 @@
             this.cbxPatterns.TabIndex = 59;
             this.cbxPatterns.TabStop = false;
             // 
-            // button1
+            // btnFind
             // 
-            this.button1.BackColor = System.Drawing.SystemColors.Highlight;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.button1.Font = new System.Drawing.Font("Yu Gothic", 10F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.button1.Location = new System.Drawing.Point(582, 493);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(59, 23);
-            this.button1.TabIndex = 60;
-            this.button1.TabStop = false;
-            this.button1.Text = "Find:";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.btFind_Click);
+            this.btnFind.BackColor = System.Drawing.SystemColors.Highlight;
+            this.btnFind.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnFind.Font = new System.Drawing.Font("Yu Gothic", 10F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnFind.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.btnFind.Location = new System.Drawing.Point(582, 493);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(59, 23);
+            this.btnFind.TabIndex = 60;
+            this.btnFind.TabStop = false;
+            this.btnFind.Text = "Find:";
+            this.btnFind.UseVisualStyleBackColor = false;
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // frmMain
             // 
@@ -820,7 +820,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(840, 577);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnFind);
             this.Controls.Add(this.cbxPatterns);
             this.Controls.Add(this.chkHighlightHavingValue);
             this.Controls.Add(this.pnlHiMode);
@@ -904,7 +904,7 @@
         private System.Windows.Forms.CheckBox chkHiMode;
         private System.Windows.Forms.CheckBox chkHighlightHavingValue;
         private System.Windows.Forms.ComboBox cbxPatterns;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnFind;
     }
 }
 

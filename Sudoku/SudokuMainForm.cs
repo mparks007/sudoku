@@ -55,6 +55,9 @@ namespace Sudoku
             Render();
         }
 
+        /// <summary>
+        /// Setup the Patterns combo box
+        /// </summary>
         private void LoadPatternList()
         {
             cbxPatterns.Items.Clear();
@@ -296,9 +299,6 @@ namespace Sudoku
         private void radSetNumbers_Click(object sender, EventArgs e)
         {
             RadioButton rad = (RadioButton)sender;
-
-            if (rad == _priorSetNumber)
-                return;
 
             // flip the prior number seletion back to un-selected look/feel
             _priorSetNumber.BackColor = SystemColors.Highlight;
@@ -570,14 +570,20 @@ namespace Sudoku
                 _modifierKey |= ModifierKey.Alt;
         }
 
-        private void btFind_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Find the pattern selected in the patter combo box
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void btnFind_Click(object sender, EventArgs e)
         {
             Pattern pattern = ((KeyValuePair<string,Pattern>)cbxPatterns.SelectedItem).Value;
 
+            // FORCED TEST CODE!!!!!!! 
             switch (pattern)
             {
                 case Pattern.XWing:
-                    // FORCED TEST CODE xwing (corners)
+                    // xwing (corners)
                     Game.Board.HighlightCell(2, 2, CellHighlightType.Special);
                     Game.Board.HighlightCell(2, 8, CellHighlightType.Special);
                     Game.Board.HighlightCell(6, 2, CellHighlightType.Special);

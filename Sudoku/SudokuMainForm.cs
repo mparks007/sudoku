@@ -87,7 +87,6 @@ namespace Sudoku
             Game.Board.HighlightNote(8, 6, 7, NoteHighlightType.Info);
             Game.Board.ToggleNote(9, 8, 1);
             Game.Board.ToggleNote(9, 8, 2);
-            Game.Board.HighlightNote(9, 8, 2, NoteHighlightType.Bad);
             Game.Board.ToggleNote(1, 1, 1);
             Game.Board.ToggleNote(9, 9, 4);
             Game.Board.ToggleNote(1, 8, 5);
@@ -95,37 +94,26 @@ namespace Sudoku
             Game.Board.ToggleNote(4, 8, 9);
             Game.Board.ToggleNote(1, 2, 2);
 
-            // xwing eliminations
-            Game.Board.HighlightNote(1, 2, 2, NoteHighlightType.Bad);
-            Game.Board.ToggleNote(3, 2, 2);
-            Game.Board.HighlightNote(3, 2, 2, NoteHighlightType.Bad);
-            // xy wing elimination
-            Game.Board.ToggleNote(8, 9, 9);
-            Game.Board.HighlightNote(8, 9, 9, NoteHighlightType.Bad);
-
-            // doing this after the all the notes needed have been placed prior
-            Game.Board.HighlightCellsWithNoteOrNumber(2);
-
             // xwing (corners)
-            Game.Board.ToggleNote(2, 2, 2);
-            Game.Board.HighlightCell(2, 2, CellHighlightType.Special);
-            Game.Board.ToggleNote(2, 8, 2);
-            Game.Board.HighlightCell(2, 8, CellHighlightType.Special);
-            Game.Board.ToggleNote(6, 2, 2);
-            Game.Board.HighlightCell(6, 2, CellHighlightType.Special);
-            Game.Board.ToggleNote(6, 8, 2);
-            Game.Board.HighlightCell(6, 8, CellHighlightType.Special);
+            Game.Board.ToggleNote(2, 2, 1);
+            Game.Board.ToggleNote(2, 8, 1);
+            Game.Board.ToggleNote(6, 2, 1);
+            Game.Board.ToggleNote(6, 8, 1);
+            // xwing eliminations
+            Game.Board.ToggleNote(1, 2, 1);
+            Game.Board.ToggleNote(3, 2, 1);
 
             // xy wing (pivot and two pincers)
             Game.Board.ToggleNote(3, 5, 1);
             Game.Board.ToggleNote(3, 5, 2);
-            Game.Board.HighlightCell(3, 5, CellHighlightType.Pivot);
             Game.Board.ToggleNote(3, 9, 2);
             Game.Board.ToggleNote(3, 9, 9);
-            Game.Board.HighlightCell(3, 9, CellHighlightType.Pincer);
             Game.Board.ToggleNote(8, 5, 1);
             Game.Board.ToggleNote(8, 5, 9);
-            Game.Board.HighlightCell(8, 5, CellHighlightType.Pincer);
+            // xy wing elimination
+            Game.Board.ToggleNote(8, 9, 9);
+
+            Game.Board.HighlightCellsWithNoteOrNumber(1);
 
             //// test code end ^^^
         }
@@ -461,10 +449,9 @@ namespace Sudoku
 
                 Game.Board.HandleKeyUserInput(input, _modifierKey);
 
-                // if pressed a number and in 'highlight all numbers' mode, highlight if that is the active highlight-me number, or just deleted main number, exposing potential notes
-                if (chkHighlightHavingValue.Checked && (numPressed == _activeSetNumber))
-                    Game.Board.HighlightCell(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, CellHighlightType.
-
+                // if in auto-highlight mode AND (pressed a number OR just deleted main number, exposing potential notes), update highlighting
+                if (chkHighlightHavingValue.Checked && ((numPressed != 0) || (input == UserInput.Delete)))
+                    Game.Board.HighlightCellsWithNoteOrNumber(_activeSetNumber);
 
                 Render();
             }
@@ -586,6 +573,36 @@ namespace Sudoku
         private void btFind_Click(object sender, EventArgs e)
         {
             Pattern pattern = ((KeyValuePair<string,Pattern>)cbxPatterns.SelectedItem).Value;
+
+            switch (pattern)
+            {
+                case Pattern.XWing:
+                    // FORCED TEST CODE xwing (corners)
+                    Game.Board.HighlightCell(2, 2, CellHighlightType.Special);
+                    Game.Board.HighlightCell(2, 8, CellHighlightType.Special);
+                    Game.Board.HighlightCell(6, 2, CellHighlightType.Special);
+                    Game.Board.HighlightCell(6, 8, CellHighlightType.Special);
+                    // xwing eliminations
+                    Game.Board.HighlightNote(1, 2, 1, NoteHighlightType.Bad);
+                    Game.Board.HighlightNote(3, 2, 1, NoteHighlightType.Bad);
+                    Game.Board.HighlightNote(9, 8, 1, NoteHighlightType.Bad);
+                    // undo xy wing elimination
+                    Game.Board.HighlightNote(8, 9, 9, NoteHighlightType.None);
+                    break;
+                case Pattern.XYWing:
+                    Game.Board.HighlightCell(3, 5, CellHighlightType.Pivot);
+                    Game.Board.HighlightCell(3, 9, CellHighlightType.Pincer);
+                    Game.Board.HighlightCell(8, 5, CellHighlightType.Pincer);
+                    // xy wing elimination
+                    Game.Board.HighlightNote(8, 9, 9, NoteHighlightType.Bad);
+                    // undo xwing eliminations
+                    Game.Board.HighlightNote(1, 2, 1, NoteHighlightType.None);
+                    Game.Board.HighlightNote(3, 2, 1, NoteHighlightType.None);
+                    Game.Board.HighlightNote(9, 8, 1, NoteHighlightType.None);
+                    break;
+            }
+
+            Render();
         }
     }
 }

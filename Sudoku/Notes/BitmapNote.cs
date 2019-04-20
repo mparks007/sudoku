@@ -73,7 +73,7 @@ namespace Sudoku
                     LineAlignment = StringAlignment.Center
                 };
 
-                // draw the string, but use different (lighter) color if on red background  (but this will have to change if I have custom colors)
+                // draw the string (single digit note)
                 BitmapBoard.Graphics.DrawString(candidate, f, br, rect, format);
             }
         }

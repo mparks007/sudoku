@@ -74,6 +74,7 @@
             this.chkHighlightHavingValue = new System.Windows.Forms.CheckBox();
             this.cbxPatterns = new System.Windows.Forms.ComboBox();
             this.btnFind = new System.Windows.Forms.Button();
+            this.chkToggleNote = new System.Windows.Forms.CheckBox();
             this.pnlSetNumbers.SuspendLayout();
             this.pnlHiNoteInner.SuspendLayout();
             this.pnlHiNoteOuter.SuspendLayout();
@@ -308,7 +309,7 @@
             this.btnToggleNote.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnToggleNote.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnToggleNote.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.btnToggleNote.Location = new System.Drawing.Point(581, 253);
+            this.btnToggleNote.Location = new System.Drawing.Point(581, 527);
             this.btnToggleNote.Name = "btnToggleNote";
             this.btnToggleNote.Size = new System.Drawing.Size(239, 38);
             this.btnToggleNote.TabIndex = 50;
@@ -814,12 +815,30 @@
             this.btnFind.UseVisualStyleBackColor = false;
             this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
+            // chkToggleNote
+            // 
+            this.chkToggleNote.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkToggleNote.BackColor = System.Drawing.SystemColors.Highlight;
+            this.chkToggleNote.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.chkToggleNote.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkToggleNote.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.chkToggleNote.Location = new System.Drawing.Point(581, 254);
+            this.chkToggleNote.Name = "chkToggleNote";
+            this.chkToggleNote.Size = new System.Drawing.Size(239, 38);
+            this.chkToggleNote.TabIndex = 61;
+            this.chkToggleNote.TabStop = false;
+            this.chkToggleNote.Text = "Toggle Note";
+            this.chkToggleNote.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.chkToggleNote.UseVisualStyleBackColor = false;
+            this.chkToggleNote.CheckedChanged += new System.EventHandler(this.chkToggleNote_CheckedChanged);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(840, 577);
+            this.Controls.Add(this.chkToggleNote);
             this.Controls.Add(this.btnFind);
             this.Controls.Add(this.cbxPatterns);
             this.Controls.Add(this.chkHighlightHavingValue);
@@ -905,6 +924,7 @@
         private System.Windows.Forms.CheckBox chkHighlightHavingValue;
         private System.Windows.Forms.ComboBox cbxPatterns;
         private System.Windows.Forms.Button btnFind;
+        private System.Windows.Forms.CheckBox chkToggleNote;
     }
 }
 

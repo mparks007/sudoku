@@ -186,7 +186,13 @@ namespace Sudoku
 
             // if shift click on the X, clear all cell hightlights
             if ((rad == radHiCellNone) && (Control.ModifierKeys == Keys.Shift))
+            {
                 Game.Board.HighlightCellsWithNoteOrNumber(0);
+                
+                //// reset the highlight all values if needed since nothing is highlighted now
+                //if (chkHighlightHavingValue.Checked)
+                //    chkHighlightHavingValue.Checked = false;
+            }
             else if (_highlightClickMode == HighlightClickMode.Manual)
                 Game.Board.HighlightCell(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, (CellHighlightType)Convert.ToInt32(rad.Tag));
 
@@ -261,6 +267,20 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void btnToggleNote_Click(object sender, EventArgs e)
         {
+            Game.Board.ToggleNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, _activeSetNumber);
+            Render();
+        }
+
+        /// <summary>
+        /// Set ToggleNote mode, so if on, onclick will toggle note
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms check-event args</param>
+        private void chkToggleNote_CheckedChanged(object sender, EventArgs e)
+        {
+            // toggle look and feel of button to make it look like it is "on mode" or not
+            chkToggleNote.FlatStyle = (chkToggleNote.Checked ? FlatStyle.Standard : FlatStyle.Popup);
+
             Game.Board.ToggleNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, _activeSetNumber);
             Render();
         }
@@ -531,6 +551,15 @@ namespace Sudoku
                     else
                     {
                         ((BitmapBoard)Game.Board).HandleXYClick(UserInput.LeftClick, _modifierKey, _clickX, _clickY);
+
+                        // if toggle note on click is on, do that
+                        if (chkToggleNote.Checked)
+                        {
+                            Game.Board.ToggleNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, _activeSetNumber);
+
+                            if (chkHighlightHavingValue.Checked)
+                                Game.Board.HighlightCellsWithNoteOrNumber(_activeSetNumber);
+                        }
 
                         // do special highlighting if Control not clicked (Control-RightClick is for special strong/week coloring done in HandleXYClick)
                         if ((_modifierKey & ModifierKey.Control) == 0)

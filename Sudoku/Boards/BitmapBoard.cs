@@ -150,7 +150,7 @@ namespace Sudoku
 
             SelectCellAtRowCol(row, col);
 
-            // trigger special cell-level events (not click check), if notes are visible (no answer set)
+            // trigger special cell-level events, if notes are visible (no answer set)
             if (!((BitmapCell)Game.Board.SelectedCell).HasAnswer)
                 ((BitmapCell)Game.Board.SelectedCell).HandleXYClick(input, modifierKey, x, y);
         }

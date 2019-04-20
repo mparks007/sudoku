@@ -116,6 +116,7 @@ namespace Sudoku
 
             int noteNum = (3 * noteRowInCell) + noteColInCell; // zero-based
 
+            _selectedNote = null;
             if (_notes[noteNum].IsNoted)
             {
                 _selectedNote = _notes[noteNum];
@@ -124,23 +125,24 @@ namespace Sudoku
                 {
                     if (input == UserInput.LeftClick)
                     {
-                        // if notes visible// and clicked a set note
-                        if (!HasAnswer)// && _notes[noteNum].IsNoted)
+                        // if notes visible
+                        if (!HasAnswer)
                             HighlightNote(noteNum+1, NoteHighlightType.Strong);
                     }
                     else if (input == UserInput.RightClick)
                     {
-                        // if notes visible// and clicked a set note
-                        if (!HasAnswer)// && _notes[noteNum].IsNoted)
+                        // if notes visible
+                        if (!HasAnswer)
                             HighlightNote(noteNum+1, NoteHighlightType.Weak);
                     }
                 }
                 else
                 {
-                    // if double-clicked note (if had note) convert to solvedFor value
+                    // if double-clicked note convert to guess
                     if (input == UserInput.DoubleClick)
                     {
-                        if (!HasAnswer)// && _notes[1].IsNoted)
+                        // if notes visible
+                        if (!HasAnswer)
                             SetGuess(noteNum+1);
                     }
                 }

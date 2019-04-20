@@ -80,7 +80,7 @@ namespace Sudoku
         private static class DefaultFonts
         {
             // light
-            public static string Answer = "Arial Black";
+            public static string Answer = "Century Gothic";
             public static string Note = "Arial";
         }
 

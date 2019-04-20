@@ -41,7 +41,6 @@
             this.radSet1 = new System.Windows.Forms.RadioButton();
             this.chkKeysNotesMode = new System.Windows.Forms.CheckBox();
             this.btnSetGuess = new System.Windows.Forms.Button();
-            this.btnToggleNote = new System.Windows.Forms.Button();
             this.pnlHiNoteInner = new System.Windows.Forms.Panel();
             this.radHiNoteBad = new System.Windows.Forms.RadioButton();
             this.radHiNoteWeak = new System.Windows.Forms.RadioButton();
@@ -302,21 +301,6 @@
             this.btnSetGuess.Text = "Set Guess";
             this.btnSetGuess.UseVisualStyleBackColor = false;
             this.btnSetGuess.Click += new System.EventHandler(this.btnSetGuess_Click);
-            // 
-            // btnToggleNote
-            // 
-            this.btnToggleNote.BackColor = System.Drawing.SystemColors.Highlight;
-            this.btnToggleNote.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnToggleNote.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnToggleNote.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.btnToggleNote.Location = new System.Drawing.Point(581, 527);
-            this.btnToggleNote.Name = "btnToggleNote";
-            this.btnToggleNote.Size = new System.Drawing.Size(239, 38);
-            this.btnToggleNote.TabIndex = 50;
-            this.btnToggleNote.TabStop = false;
-            this.btnToggleNote.Text = "Toggle Note";
-            this.btnToggleNote.UseVisualStyleBackColor = false;
-            this.btnToggleNote.Click += new System.EventHandler(this.btnToggleNote_Click);
             // 
             // pnlHiNoteInner
             // 
@@ -772,8 +756,7 @@
             // 
             this.chkHighlightHavingValue.Appearance = System.Windows.Forms.Appearance.Button;
             this.chkHighlightHavingValue.BackColor = System.Drawing.SystemColors.Highlight;
-            this.chkHighlightHavingValue.Checked = true;
-            this.chkHighlightHavingValue.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkHighlightHavingValue.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.chkHighlightHavingValue.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkHighlightHavingValue.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.chkHighlightHavingValue.Location = new System.Drawing.Point(581, 293);
@@ -847,7 +830,6 @@
             this.Controls.Add(this.pnlHiCellOuter);
             this.Controls.Add(this.pnlKeysMode);
             this.Controls.Add(this.pnlHiNoteOuter);
-            this.Controls.Add(this.btnToggleNote);
             this.Controls.Add(this.btnSetGuess);
             this.Controls.Add(this.pnlSetNumbers);
             this.Controls.Add(this.btnSetGiven);
@@ -891,7 +873,6 @@
         private System.Windows.Forms.RadioButton radSet5;
         private System.Windows.Forms.RadioButton radSet4;
         private System.Windows.Forms.Button btnSetGuess;
-        private System.Windows.Forms.Button btnToggleNote;
         private System.Windows.Forms.Panel pnlHiNoteInner;
         private System.Windows.Forms.RadioButton radHiNoteBad;
         private System.Windows.Forms.RadioButton radHiNoteWeak;

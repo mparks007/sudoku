@@ -266,6 +266,28 @@ namespace Sudoku
         }
 
         /// <summary>
+        /// Determine if board is solved
+        /// </summary>
+        /// <returns></returns>
+        public bool IsBoardSolved()
+        {
+            bool solved = true;
+
+            // paw through all cells
+            for (int r = 0; r < 9; r++)
+                for (int c = 0; c < 9; c++)
+                {
+                    if (!_cells[r][c].HasAnswer || (_cells[r][c].HasAnswer && _cells[r][c].IsInvalid))
+                    {
+                        solved = false;
+                        break;
+                    }
+                }
+
+           return solved;
+        }
+
+        /// <summary>
         /// Render (work done in derived classes)
         /// </summary>
         public abstract void Render();

@@ -75,50 +75,85 @@ namespace Sudoku
         /// </summary>
         private void SetTestState()
         {
-            //// test code start vvv
-            Game.Board.ToggleNote(7, 4, 2);
-            Game.Board.HighlightNote(7, 4, 2, NoteHighlightType.Info);
-            Game.Board.ToggleNote(3, 6, 2);
-            Game.Board.HighlightNote(3, 6, 2, NoteHighlightType.Info);
-            Game.Board.SetGuess(4, 7, 6);
-            Game.Board.SetGiven(3, 3, 3);
-            Game.Board.ToggleNote(2, 7, 8);
-            Game.Board.HighlightNote(2, 7, 8, NoteHighlightType.Weak);
-            Game.Board.ToggleNote(5, 5, 3);
-            Game.Board.HighlightNote(5, 5, 3, NoteHighlightType.Strong);
-            Game.Board.ToggleNote(8, 6, 7);
-            Game.Board.HighlightNote(8, 6, 7, NoteHighlightType.Info);
-            Game.Board.ToggleNote(9, 8, 1);
-            Game.Board.ToggleNote(9, 8, 2);
-            Game.Board.ToggleNote(1, 1, 1);
-            Game.Board.ToggleNote(9, 9, 4);
-            Game.Board.ToggleNote(1, 8, 5);
-            Game.Board.ToggleNote(9, 1, 6);
-            Game.Board.ToggleNote(4, 8, 9);
-            Game.Board.ToggleNote(1, 2, 2);
+            Game.Board.SetGiven(1,1,9);
+            Game.Board.SetGiven(1,2,1);
+            Game.Board.SetGiven(1,4,7);
+            Game.Board.SetGiven(2,2,3);
+            Game.Board.SetGiven(2,3,2);
+            Game.Board.SetGiven(2,4,6);
+            Game.Board.SetGiven(2,6,9);
+            Game.Board.SetGiven(2,8,8);
+            Game.Board.SetGiven(3,3,7);
+            Game.Board.SetGiven(3,5,8);
+            Game.Board.SetGiven(3,7,9);
+            Game.Board.SetGiven(4,2,8);
+            Game.Board.SetGiven(4,3,6);
+            Game.Board.SetGiven(4,5,3);
+            Game.Board.SetGiven(4,7,1);
+            Game.Board.SetGiven(4,8,7);
+            Game.Board.SetGiven(5,1,3);
+            Game.Board.SetGiven(5,9,6);
+            Game.Board.SetGiven(6,2,5);
+            Game.Board.SetGiven(6,3,1);
+            Game.Board.SetGiven(6,5,2);
+            Game.Board.SetGiven(6,7,8);
+            Game.Board.SetGiven(6,8,4);
+            Game.Board.SetGiven(7,3,9);
+            Game.Board.SetGiven(7,5,5);
+            Game.Board.SetGiven(7,7,3);
+            Game.Board.SetGiven(8,2,2);
+            Game.Board.SetGiven(8,4,3);
+            Game.Board.SetGiven(8,6,1);
+            Game.Board.SetGiven(8,7,4);
+            Game.Board.SetGiven(8,8,9);
+            Game.Board.SetGiven(9,6,2);
+            Game.Board.SetGiven(9,8,6);
+            Game.Board.SetGiven(9,9,1);
 
-            // xwing (corners)
-            Game.Board.ToggleNote(2, 2, 1);
-            Game.Board.ToggleNote(2, 8, 1);
-            Game.Board.ToggleNote(6, 2, 1);
-            Game.Board.ToggleNote(6, 8, 1);
-            // xwing eliminations
-            Game.Board.ToggleNote(1, 2, 1);
-            Game.Board.ToggleNote(3, 2, 1);
 
-            // xy wing (pivot and two pincers)
-            Game.Board.ToggleNote(3, 5, 1);
-            Game.Board.ToggleNote(3, 5, 2);
-            Game.Board.ToggleNote(3, 9, 2);
-            Game.Board.ToggleNote(3, 9, 9);
-            Game.Board.ToggleNote(8, 5, 1);
-            Game.Board.ToggleNote(8, 5, 9);
-            // xy wing elimination
-            Game.Board.ToggleNote(8, 9, 9);
+            //// test highlight stuff, start vvv
+            //Game.Board.ToggleNote(7, 4, 2);
+            //Game.Board.HighlightNote(7, 4, 2, NoteHighlightType.Info);
+            //Game.Board.ToggleNote(3, 6, 2);
+            //Game.Board.HighlightNote(3, 6, 2, NoteHighlightType.Info);
+            //Game.Board.SetGuess(4, 7, 6);
+            //Game.Board.SetGiven(3, 3, 3);
+            //Game.Board.ToggleNote(2, 7, 8);
+            //Game.Board.HighlightNote(2, 7, 8, NoteHighlightType.Weak);
+            //Game.Board.ToggleNote(5, 5, 3);
+            //Game.Board.HighlightNote(5, 5, 3, NoteHighlightType.Strong);
+            //Game.Board.ToggleNote(8, 6, 7);
+            //Game.Board.HighlightNote(8, 6, 7, NoteHighlightType.Info);
+            //Game.Board.ToggleNote(9, 8, 1);
+            //Game.Board.ToggleNote(9, 8, 2);
+            //Game.Board.ToggleNote(1, 1, 1);
+            //Game.Board.ToggleNote(9, 9, 4);
+            //Game.Board.ToggleNote(1, 8, 5);
+            //Game.Board.ToggleNote(9, 1, 6);
+            //Game.Board.ToggleNote(4, 8, 9);
+            //Game.Board.ToggleNote(1, 2, 2);
 
-            Game.Board.HighlightCellsWithNoteOrNumber(1);
+            //// xwing (corners)
+            //Game.Board.ToggleNote(2, 2, 1);
+            //Game.Board.ToggleNote(2, 8, 1);
+            //Game.Board.ToggleNote(6, 2, 1);
+            //Game.Board.ToggleNote(6, 8, 1);
+            //// xwing eliminations
+            //Game.Board.ToggleNote(1, 2, 1);
+            //Game.Board.ToggleNote(3, 2, 1);
 
-            //// test code end ^^^
+            //// xy wing (pivot and two pincers)
+            //Game.Board.ToggleNote(3, 5, 1);
+            //Game.Board.ToggleNote(3, 5, 2);
+            //Game.Board.ToggleNote(3, 9, 2);
+            //Game.Board.ToggleNote(3, 9, 9);
+            //Game.Board.ToggleNote(8, 5, 1);
+            //Game.Board.ToggleNote(8, 5, 9);
+            //// xy wing elimination
+            //Game.Board.ToggleNote(8, 9, 9);
+
+            //Game.Board.HighlightCellsWithNoteOrNumber(1);
+            //// test highlight stuff, end ^^^
         }
 
         /// <summary>
@@ -261,17 +296,6 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Add or Remove a Note of the currently selected number
-        /// </summary>
-        /// <param name="sender">Standard WinForms sender</param>
-        /// <param name="e">Standard WinForms click-event args</param>
-        private void btnToggleNote_Click(object sender, EventArgs e)
-        {
-            Game.Board.ToggleNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, _activeSetNumber);
-            Render();
-        }
-
-        /// <summary>
         /// Set ToggleNote mode, so if on, onclick will toggle note
         /// </summary>
         /// <param name="sender">Standard WinForms sender</param>
@@ -282,6 +306,7 @@ namespace Sudoku
             chkToggleNote.FlatStyle = (chkToggleNote.Checked ? FlatStyle.Standard : FlatStyle.Popup);
 
             Game.Board.ToggleNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, _activeSetNumber);
+            Game.Board.HighlightCellsWithNoteOrNumber(_activeSetNumber);
             Render();
         }
 
@@ -311,7 +336,9 @@ namespace Sudoku
         private void btnSetGuess_Click(object sender, EventArgs e)
         {
             Game.Board.SetGuess(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, _activeSetNumber);
+            Game.Board.HighlightCellsWithNoteOrNumber(_activeSetNumber);
             Render();
+            CheckForSolved();
         }
 
         /// <summary>
@@ -351,7 +378,9 @@ namespace Sudoku
         private void btnSetGiven_Click(object sender, EventArgs e)
         {
             Game.Board.SetGiven(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, _activeSetNumber);
+            Game.Board.HighlightCellsWithNoteOrNumber(_activeSetNumber);
             Render();
+            CheckForSolved();
         }
 
         /// <summary>
@@ -477,7 +506,19 @@ namespace Sudoku
                     Game.Board.HighlightCellsWithNoteOrNumber(_activeSetNumber);
 
                 Render();
+
+                if (numPressed != 0)
+                    CheckForSolved();
             }
+        }
+
+        /// <summary>
+        /// Check if board solved
+        /// </summary>
+        public void CheckForSolved()
+        {
+            if (Game.Board.IsBoardSolved())
+                MessageBox.Show("Congratulations!", "Solved", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         /// <summary>
@@ -545,9 +586,14 @@ namespace Sudoku
                         if (chkHighlightHavingValue.Checked && (Game.Board.SelectedCell.Answer != _activeSetNumber))
                             Game.Board.HighlightCell(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, CellHighlightType.None);
 
+                        Render();
+                        CheckForSolved();
                     }
                     else if (_isRightClick)
+                    {
                         ((BitmapBoard)Game.Board).HandleXYClick(UserInput.RightClick, _modifierKey, _clickX, _clickY);
+                        Render();
+                    }
                     else
                     {
                         ((BitmapBoard)Game.Board).HandleXYClick(UserInput.LeftClick, _modifierKey, _clickX, _clickY);
@@ -574,6 +620,8 @@ namespace Sudoku
                                     Game.Board.HighlightNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, selectedNote, (NoteHighlightType)Convert.ToInt32(_priorHiNoteType.Tag));
                             }
                         }
+
+                        Render();
                     }
                 }
 
@@ -581,8 +629,6 @@ namespace Sudoku
                 _isFirstClick = true;
                 _isDoubleClick = false;
                 _milliseconds = 0;
-
-                Render();
             }
         }
 

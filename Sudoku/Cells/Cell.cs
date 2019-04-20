@@ -15,8 +15,7 @@ namespace Sudoku
         protected int _answer;
         protected Note[] _notes = new Note[9];
         protected Note _selectedNote;
-
-
+        
         public int Answer { get { return _answer; } }
         public bool? IsGiven { get; set; }
         public bool IsSelected { get; set; }

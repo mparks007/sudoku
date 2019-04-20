@@ -14,7 +14,93 @@ namespace Sudoku
 
         public Cell SelectedCell { get { return _selectedCell; } }
         public int BoardSize {  get { return _boardSize; } }
-        
+
+        /// <summary>
+        /// Default board setup for testing
+        /// </summary>
+        public void SetDefaultState()
+        {
+            Game.Board.SetGiven(1, 1, 9);
+            Game.Board.SetGiven(1, 2, 1);
+            Game.Board.SetGiven(1, 4, 7);
+            Game.Board.SetGiven(2, 2, 3);
+            Game.Board.SetGiven(2, 3, 2);
+            Game.Board.SetGiven(2, 4, 6);
+            Game.Board.SetGiven(2, 6, 9);
+            Game.Board.SetGiven(2, 8, 8);
+            Game.Board.SetGiven(3, 3, 7);
+            Game.Board.SetGiven(3, 5, 8);
+            Game.Board.SetGiven(3, 7, 9);
+            Game.Board.SetGiven(4, 2, 8);
+            Game.Board.SetGiven(4, 3, 6);
+            Game.Board.SetGiven(4, 5, 3);
+            Game.Board.SetGiven(4, 7, 1);
+            Game.Board.SetGiven(4, 8, 7);
+            Game.Board.SetGiven(5, 1, 3);
+            Game.Board.SetGiven(5, 9, 6);
+            Game.Board.SetGiven(6, 2, 5);
+            Game.Board.SetGiven(6, 3, 1);
+            Game.Board.SetGiven(6, 5, 2);
+            Game.Board.SetGiven(6, 7, 8);
+            Game.Board.SetGiven(6, 8, 4);
+            Game.Board.SetGiven(7, 3, 9);
+            Game.Board.SetGiven(7, 5, 5);
+            Game.Board.SetGiven(7, 7, 3);
+            Game.Board.SetGiven(8, 2, 2);
+            Game.Board.SetGiven(8, 4, 3);
+            Game.Board.SetGiven(8, 6, 1);
+            Game.Board.SetGiven(8, 7, 4);
+            Game.Board.SetGiven(8, 8, 9);
+            Game.Board.SetGiven(9, 6, 2);
+            Game.Board.SetGiven(9, 8, 6);
+            Game.Board.SetGiven(9, 9, 1);
+
+
+            //// test highlight stuff, start vvv
+            //Game.Board.ToggleNote(7, 4, 2);
+            //Game.Board.HighlightNote(7, 4, 2, NoteHighlightType.Info);
+            //Game.Board.ToggleNote(3, 6, 2);
+            //Game.Board.HighlightNote(3, 6, 2, NoteHighlightType.Info);
+            //Game.Board.SetGuess(4, 7, 6);
+            //Game.Board.SetGiven(3, 3, 3);
+            //Game.Board.ToggleNote(2, 7, 8);
+            //Game.Board.HighlightNote(2, 7, 8, NoteHighlightType.Weak);
+            //Game.Board.ToggleNote(5, 5, 3);
+            //Game.Board.HighlightNote(5, 5, 3, NoteHighlightType.Strong);
+            //Game.Board.ToggleNote(8, 6, 7);
+            //Game.Board.HighlightNote(8, 6, 7, NoteHighlightType.Info);
+            //Game.Board.ToggleNote(9, 8, 1);
+            //Game.Board.ToggleNote(9, 8, 2);
+            //Game.Board.ToggleNote(1, 1, 1);
+            //Game.Board.ToggleNote(9, 9, 4);
+            //Game.Board.ToggleNote(1, 8, 5);
+            //Game.Board.ToggleNote(9, 1, 6);
+            //Game.Board.ToggleNote(4, 8, 9);
+            //Game.Board.ToggleNote(1, 2, 2);
+
+            //// xwing (corners)
+            //Game.Board.ToggleNote(2, 2, 1);
+            //Game.Board.ToggleNote(2, 8, 1);
+            //Game.Board.ToggleNote(6, 2, 1);
+            //Game.Board.ToggleNote(6, 8, 1);
+            //// xwing eliminations
+            //Game.Board.ToggleNote(1, 2, 1);
+            //Game.Board.ToggleNote(3, 2, 1);
+
+            //// xy wing (pivot and two pincers)
+            //Game.Board.ToggleNote(3, 5, 1);
+            //Game.Board.ToggleNote(3, 5, 2);
+            //Game.Board.ToggleNote(3, 9, 2);
+            //Game.Board.ToggleNote(3, 9, 9);
+            //Game.Board.ToggleNote(8, 5, 1);
+            //Game.Board.ToggleNote(8, 5, 9);
+            //// xy wing elimination
+            //Game.Board.ToggleNote(8, 9, 9);
+
+            //Game.Board.HighlightCellsWithNoteOrNumber(1);
+            //// test highlight stuff, end ^^^
+        }
+
         /// <summary>
         /// Select the cell at the row/col coordinates passed in
         /// </summary>
@@ -94,21 +180,31 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Places a starter/given main number in the selected cell
+        /// Places a starter/given main number in the cell at row/col
         /// </summary>
         /// <param name="row">Row to update</param>
         /// <param name="col">Column to update</param>
         /// <param name="num">Number to try and set</param>
-        public void SetGiven(int row, int col, int num)
+        private void SetGiven(int row, int col, int num)
         {
             if (row < 1 || row > 9 || col < 1 || col > 9)
                 throw new ArgumentException(String.Format("Invalid value row/column requested for setting Given: {0}/{1}", row, col));
 
+            _cells[row - 1][col - 1].SetGiven(num);
+        }
+
+        /// <summary>
+        /// Places a starter/given main number in the selected cell
+        /// </summary>
+        /// <param name="num">Number to try and set</param>
+        public void SetGiven(int num)
+        {
             if (num < 1 || num > 9)
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
-            _cells[row - 1][col - 1].SetGiven(num);
+            SelectedCell.SetGiven(num);
         }
+
         /// <summary>
         /// For all cells in the board, highlight cells that have either an answer number or a note based on the passed in value
         /// </summary>

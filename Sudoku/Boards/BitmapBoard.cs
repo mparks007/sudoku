@@ -82,6 +82,9 @@ namespace Sudoku
             // light
             public static string Answer = "Century Gothic";
             public static string Note = "Arial";
+
+            // dark
+            // maybe offer option to have dark mode
         }
 
         public static class Fonts
@@ -89,9 +92,12 @@ namespace Sudoku
             // light
             public static string Answer = DefaultFonts.Answer;
             public static string Note = DefaultFonts.Note;
+
+            // dark
+            // maybe offer option to have dark mode
         }
 
-            public Bitmap Image
+        public Bitmap Image
         {
             get
             {

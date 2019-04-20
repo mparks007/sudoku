@@ -1,0 +1,8 @@
+C:\src\github.com\mparks007\sudoku\SudokuCustomControls\bin\Debug\SudokuCustomControls.dll
+C:\src\github.com\mparks007\sudoku\SudokuCustomControls\bin\Debug\SudokuCustomControls.pdb
+C:\src\github.com\mparks007\sudoku\SudokuCustomControls\obj\Debug\SudokuCustomControls.csproj.GenerateResource.cache
+C:\src\github.com\mparks007\sudoku\SudokuCustomControls\obj\Debug\SudokuCustomControls.csproj.CoreCompileInputs.cache
+C:\src\github.com\mparks007\sudoku\SudokuCustomControls\obj\Debug\SudokuCustomControls.dll
+C:\src\github.com\mparks007\sudoku\SudokuCustomControls\obj\Debug\SudokuCustomControls.pdb
+C:\src\github.com\mparks007\sudoku\SudokuCustomControls\obj\Debug\SudokuCustomControls.ColorButtonsList.resources
+C:\src\github.com\mparks007\sudoku\SudokuCustomControls\obj\Debug\SudokuCustomControls.NumbersList.resources

@@ -57,7 +57,6 @@
     <Compile Include="Enums\BoardType.cs" />
     <Compile Include="Cells\Cell.cs" />
     <Compile Include="Enums\CellHighlightType.cs" />
-    <Compile Include="Enums\ColorType.cs" />
     <Compile Include="Enums\ModifierKey.cs" />
     <Compile Include="Enums\NoteHighlightType.cs" />
     <Compile Include="Notes\BitmapNote.cs" />
@@ -98,6 +97,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SudokuCustomControls\SudokuCustomControls.csproj">
+      <Project>{34B13202-E7B3-40E2-9925-0295368B6D5E}</Project>
+      <Name>SudokuCustomControls</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -6,3 +6,5 @@ C:\src\github.com\mparks007\sudoku\SudokuCustomControls\obj\Debug\SudokuCustomCo
 C:\src\github.com\mparks007\sudoku\SudokuCustomControls\obj\Debug\SudokuCustomControls.pdb
 C:\src\github.com\mparks007\sudoku\SudokuCustomControls\obj\Debug\SudokuCustomControls.ColorButtonsList.resources
 C:\src\github.com\mparks007\sudoku\SudokuCustomControls\obj\Debug\SudokuCustomControls.NumbersList.resources
+C:\src\github.com\mparks007\sudoku\SudokuCustomControls\obj\Debug\SudokuCustomControls.csprojAssemblyReference.cache
+C:\src\github.com\mparks007\sudoku\SudokuCustomControls\obj\Debug\SudokuCustomControls.OptionButton.resources

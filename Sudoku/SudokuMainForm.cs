@@ -7,9 +7,9 @@ namespace Sudoku
 {
     public partial class frmMain : Form
     {
-        private Graphics _gr;       // to snag the Form's graphics object for use in Render call vs. snagging it every time Render is called
-        private int _xOffset = 20;  // how far over from Form's left edge to start painting the board
-        private int _yOffset = 20;  // how far down from Form's top edge to start painting the board
+        private Graphics _gr;                                                       // to snag the Form's graphics object for use in Render call vs. snagging it every time Render is called
+        private int _xOffset = 20;                                                  // how far over from Form's left edge to start painting the board
+        private int _yOffset = 20;                                                  // how far down from Form's top edge to start painting the board
         private ModifierKey _modifierKey = ModifierKey.None;                        // keeping track of alt, shift, ctrl state at the time of early key trapping and normal keypress events
         private HighlightClickMode _highlightClickMode = HighlightClickMode.Manual; // if on manual, cell, or note mode for cell/note highlight buttons
 
@@ -35,17 +35,22 @@ namespace Sudoku
 
             // component setup for Cell Highlight control
             pnlCellHighlightPicker.ButtonClicked += pnlCellHighlightPicker_Clicked;
-            pnlCellHighlightPicker.SetButtonText("X", "Value", "Special", "Pivor", "Pincer");
+            pnlCellHighlightPicker.SetButtonText(CellHighlightType.None.Description(), CellHighlightType.Value.Description(), CellHighlightType.Special.Description(), CellHighlightType.Pivot.Description(), CellHighlightType.Pincer.Description());
             pnlCellHighlightPicker.SetButtonColors(SystemColors.GradientInactiveCaption, Color.Lime, Color.MediumSeaGreen, Color.LightSeaGreen, Color.Aquamarine);
             pnlCellHighlightPicker.SetButtonFontColors(Color.DimGray, Color.DarkSlateGray, Color.DarkSlateGray, Color.DarkSlateGray, Color.DarkSlateGray);
 
             // component setup for Note Highlight control
             pnlNoteHighlightPicker.ButtonClicked += pnlNoteHighlightPicker_Clicked;
-            pnlNoteHighlightPicker.SetButtonText("X", "Info", "Strong", "Weak", "Bad");
+            pnlNoteHighlightPicker.SetButtonText(NoteHighlightType.None.Description(), NoteHighlightType.Info.Description(), NoteHighlightType.Strong.Description(), NoteHighlightType.Weak.Description(), NoteHighlightType.Bad.Description());
             pnlNoteHighlightPicker.SetButtonColors(SystemColors.GradientInactiveCaption, Color.Plum, Color.RoyalBlue, Color.Yellow, Color.Red);
             pnlNoteHighlightPicker.SetButtonFontColors(Color.DimGray, Color.DarkSlateGray, Color.LightGray, Color.DarkSlateGray, Color.LightGray);
 
-            // load up all the "Find pattern blah" details
+            // options buttons setup
+            chkHighlightClickMode.ButtonClicked += chkHighlightClickMode_ButtonClicked;
+            chkHighlightClickMode.SetButtonText(HighlightClickMode.Cell.Description(), HighlightClickMode.Note.Description(), HighlightClickMode.Manual.Description());
+            chkNumberKeysMode.SetButtonText(NumberKeysMode.Numbers.Description(), NumberKeysMode.Notes.Description(), "n/a");
+
+            // load up all the "Find pattern blah" items
             LoadPatternList();
             cbxPatterns.SelectedIndex = 0;
 
@@ -88,36 +93,33 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Cycle through the three states of the Highlight Click Mode
+        /// Callback/Event from cell click mode to track mode and to manipulate the UI a bit per mode
         /// </summary>
         /// <param name="sender">Standard WinForms sender</param>
-        /// <param name="e">Standard WinForms check-event args</param>
-        private void chkHiMode_CheckStateChanged(object sender, EventArgs e)
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void chkHighlightClickMode_ButtonClicked(object sender, EventArgs e)
         {
-            switch (chkHiMode.CheckState)
+            switch (chkHighlightClickMode.CheckState)
             {
                 case CheckState.Unchecked:
-                    chkHiMode.Text = "Cell Select";
                     pnlCellHighlightPicker.Visible = true;
                     pnlNoteHighlightPicker.Visible = false;
-                    pnlHiNumbers.Visible = false;
+                    pnlHiNumbersList.Visible = false;
                     _highlightClickMode = HighlightClickMode.Cell;
                     break;
-                case CheckState.Indeterminate:
-                    chkHiMode.Text = "Manual";
-                    pnlCellHighlightPicker.Visible = true;
-                    pnlNoteHighlightPicker.Visible = true;
-                    pnlNoteHighlightPicker.Top = 94;
-                    pnlHiNumbers.Visible = true;
-                    _highlightClickMode = HighlightClickMode.Manual;
-                    break;
                 case CheckState.Checked:
-                    chkHiMode.Text = "Note Select";
                     pnlNoteHighlightPicker.Visible = true;
                     pnlNoteHighlightPicker.Top = 51;
                     pnlCellHighlightPicker.Visible = false;
-                    pnlHiNumbers.Visible = false;
+                    pnlHiNumbersList.Visible = false;
                     _highlightClickMode = HighlightClickMode.Note;
+                    break;
+                case CheckState.Indeterminate:
+                    pnlCellHighlightPicker.Visible = true;
+                    pnlNoteHighlightPicker.Visible = true;
+                    pnlNoteHighlightPicker.Top = 94;
+                    pnlHiNumbersList.Visible = true;
+                    _highlightClickMode = HighlightClickMode.Manual;
                     break;
             }
         }
@@ -133,6 +135,7 @@ namespace Sudoku
             if (pnlCellHighlightPicker.ClearSelected && (Control.ModifierKeys == Keys.Shift))
             {
                 Game.Board.HighlightCellsWithNoteOrNumber(0);
+                // reset the 'highlight every time I select a a cell' option
                 chkHighlightHavingValue.Checked = false;
             }
             else if (_highlightClickMode == HighlightClickMode.Manual)
@@ -152,19 +155,9 @@ namespace Sudoku
             if (pnlNoteHighlightPicker.ClearSelected && (Control.ModifierKeys == Keys.Shift))
                 Game.Board.ClearNoteHighlights();
             else if ((_highlightClickMode == HighlightClickMode.Manual) && !Game.Board.SelectedCell.HasAnswer) // if every click needs to update the selected cell (manual mode) && the cell has note visable (no answer set)
-                Game.Board.HighlightNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, pnlHiNumbers.ActiveValue, (NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
+                Game.Board.HighlightNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, pnlHiNumbersList.ActiveValue, (NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
 
             Render();
-        }
-
-        /// <summary>
-        /// Toggle Notes/Numbers mode (and button text to make it look "checked")
-        /// </summary>
-        /// <param name="sender">Standard WinForms sender</param>
-        /// <param name="e">Standard WinForms check-event args</param>
-        private void chkNumberMode_CheckedChanged(object sender, EventArgs e)
-        {
-            chkKeysNotesMode.Text = (chkKeysNotesMode.Checked ? "Notes" : "Numbers");
         }
 
         /// <summary>
@@ -210,7 +203,7 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void btnSetGuess_Click(object sender, EventArgs e)
         {
-            Game.Board.SetGuess(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, pnlFocusNumber.ActiveValue);
+            Game.Board.SetGuess(pnlFocusNumber.ActiveValue);
 
             if (chkHighlightHavingValue.Checked)
                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
@@ -337,13 +330,13 @@ namespace Sudoku
                 if (e.Shift)
                 {
                     // Shift while in Numbers mode is Notes mode (so turn shift on in my modifiers flags)
-                    if (!chkKeysNotesMode.Checked)
+                    if (!chkNumberKeysMode.Checked)
                         _modifierKey |= ModifierKey.Shift;
                 }
                 else
                 {
                     // Non-Shift while in Notes mode means do note (so turn shift on in my modifiers flags)
-                    if (chkKeysNotesMode.Checked)    
+                    if (chkNumberKeysMode.Checked)    
                         _modifierKey |= ModifierKey.Shift;
                 }
 

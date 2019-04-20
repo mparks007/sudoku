@@ -52,6 +52,8 @@
     <Compile Include="Boards\BitmapBoard.cs" />
     <Compile Include="Boards\Board.cs" />
     <Compile Include="Cells\BitmapCell.cs" />
+    <Compile Include="Enums\EnumExtensions.cs" />
+    <Compile Include="Enums\NumberKeysMode.cs" />
     <Compile Include="Enums\Pattern.cs" />
     <Compile Include="Enums\HighlightClickMode.cs" />
     <Compile Include="Enums\BoardType.cs" />

@@ -165,10 +165,22 @@ namespace Sudoku
         /// <summary>
         /// Places an answer/guess/solve main number in the selected cell
         /// </summary>
+        /// <param name="num">Number to try and set</param>
+        public void SetGuess(int num)
+        {
+            if (num < 0 || num > 9)
+                throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
+
+            _selectedCell.SetGuess(num);
+        }
+
+        /// <summary>
+        /// Places an answer/guess/solve main number in the cell at row/col
+        /// </summary>
         /// <param name="row">Row to update</param>
         /// <param name="col">Column to update</param>
         /// <param name="num">Number to try and set</param>
-        public void SetGuess(int row, int col, int num)
+        private void SetGuess(int row, int col, int num)
         {
             if (row < 1 || row > 9 || col < 1 || col > 9)
                 throw new ArgumentException(String.Format("Invalid value row/column requested for setting Guess: {0}/{1}", row, col));
@@ -177,6 +189,18 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
             _cells[row - 1][col - 1].SetGuess(num);
+        }
+
+        /// <summary>
+        /// Places a starter/given main number in the selected cell
+        /// </summary>
+        /// <param name="num">Number to try and set</param>
+        public void SetGiven(int num)
+        {
+            if (num < 1 || num > 9)
+                throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
+
+            SelectedCell.SetGiven(num);
         }
 
         /// <summary>
@@ -190,19 +214,10 @@ namespace Sudoku
             if (row < 1 || row > 9 || col < 1 || col > 9)
                 throw new ArgumentException(String.Format("Invalid value row/column requested for setting Given: {0}/{1}", row, col));
 
-            _cells[row - 1][col - 1].SetGiven(num);
-        }
-
-        /// <summary>
-        /// Places a starter/given main number in the selected cell
-        /// </summary>
-        /// <param name="num">Number to try and set</param>
-        public void SetGiven(int num)
-        {
             if (num < 1 || num > 9)
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
-            SelectedCell.SetGiven(num);
+            _cells[row - 1][col - 1].SetGiven(num);
         }
 
         /// <summary>

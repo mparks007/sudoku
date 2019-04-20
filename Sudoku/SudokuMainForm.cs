@@ -184,11 +184,13 @@ namespace Sudoku
 
             _priorHiCellType = rad;
 
-            if (_highlightClickMode == HighlightClickMode.Manual)
-            {
+            // if shift click on the X, clear all cell hightlights
+            if ((rad == radHiCellNone) && (Control.ModifierKeys == Keys.Shift))
+                Game.Board.HighlightCellsWithNoteOrNumber(0);
+            else if (_highlightClickMode == HighlightClickMode.Manual)
                 Game.Board.HighlightCell(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, (CellHighlightType)Convert.ToInt32(rad.Tag));
-                Render();
-            }
+
+            Render();
         }
 
         /// <summary>
@@ -207,12 +209,13 @@ namespace Sudoku
 
             _priorHiNoteType = rad;
 
-            // if every click needs to update the selected cell (manual mode) && the cell has note visable (no answer set)
-            if ((_highlightClickMode == HighlightClickMode.Manual) && !Game.Board.SelectedCell.HasAnswer)
-            {
+            // if shift click on the X, clear all note hightlights
+            if ((rad == radHiNoteNone) && (Control.ModifierKeys == Keys.Shift))
+                Game.Board.ClearNoteHighlights();
+            else if ((_highlightClickMode == HighlightClickMode.Manual) && !Game.Board.SelectedCell.HasAnswer) // if every click needs to update the selected cell (manual mode) && the cell has note visable (no answer set)
                 Game.Board.HighlightNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, _activeHiNumber, (NoteHighlightType)Convert.ToInt32(rad.Tag));
-                Render();
-            }
+
+            Render();
         }
 
         /// <summary>
@@ -536,7 +539,7 @@ namespace Sudoku
                                 Game.Board.HighlightCell(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, (CellHighlightType)Convert.ToInt32(_priorHiCellType.Tag));
                             else if (_highlightClickMode == HighlightClickMode.Note && !Game.Board.SelectedCell.HasAnswer)
                             {
-                                int selectedNote = Game.Board.SelectedCell.SelectedNote.Candidate;
+                                int selectedNote = (Game.Board.SelectedCell.HasNoteSelected ? Game.Board.SelectedCell.SelectedNote.Candidate : 0);
                                 // if even clicked a note area that had a note set
                                 if (selectedNote != 0)
                                     Game.Board.HighlightNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, selectedNote, (NoteHighlightType)Convert.ToInt32(_priorHiNoteType.Tag));

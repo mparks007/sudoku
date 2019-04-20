@@ -105,54 +105,44 @@ namespace Sudoku
         /// <param name="y">Y pixel location clicked in the main board</param>
         public void HandleXYClick(UserInput input, ModifierKey modifierKey, int x, int y)
         {
+            if (x < 0 || x > (_cellSize * 9 - 1) || y < 0 || y > (_cellSize * 9 - 1))
+                throw new ArgumentException(String.Format("Invalid point requested (x:{0}, y:{1})", x, y));
 
-            //if (x < 0 || x > _boardImage.Height || y < 0 || y > _boardImage.Width)
-            //    throw new ArgumentException(String.Format("Invalid point requested (x:{0}, y:{1})", x, y));
+            int noteRowInBoard = y / (_cellSize / 3);
+            int noteColInBoard = x / (_cellSize / 3);
 
-            int row = y / _cellSize + 1;
-            int col = x / _cellSize + 1;
+            int noteRowInCell = noteRowInBoard % 3; // zero-based
+            int noteColInCell = noteColInBoard % 3; // zero-based
 
-            int noteRow = y / (_cellSize / 3) + 1;
-            int noteCol = x / (_cellSize / 3) + 1;
+            int noteNum = (3 * noteRowInCell) + noteColInCell; // zero-based
 
-            int v = (noteRow / 3);
-            int h = (noteCol / 3);
-            int block = (3 * v) + h;
-            int b2 = noteRow * noteCol;
-
-            // FORCED TEST CODE!!!!!!! 
-
-            // pretend clicked a Note 2
-            _selectedNote = _notes[1];
-
-            //            int noteNum = (noteRow - 1) % 3 + 1;
-            //int noteCol = (noteCol - 1) % 3 + 1;
-
-            if ((modifierKey & ModifierKey.Control) != 0)
+            if (_notes[noteNum].IsNoted)
             {
-                if (input == UserInput.LeftClick)
-                {
-                    // TODO!!! First, Determine which note was actually clicked! (not _notes[1])
-                    if (!HasAnswer && _notes[1].IsNoted)
-                        HighlightNote(2, NoteHighlightType.Strong);
-                }
-                else if (input == UserInput.RightClick)
-                {
-                    // TODO!!! First, Determine which note was actually clicked! (not _notes[1])
-                    if (!HasAnswer && _notes[1].IsNoted)
-                        HighlightNote(2, NoteHighlightType.Weak);
-                }
-            }
-            else
-            {
-                // if double-clicked note (if had note) convert to solvedFor value
-                if (input == UserInput.DoubleClick)
-                {
+                _selectedNote = _notes[noteNum];
 
-                    // TODO!!! First, Determine which note was actually clicked! (not _notes[1])
-                    if (!HasAnswer && _notes[1].IsNoted)
-                        SetGuess(2);
-
+                if ((modifierKey & ModifierKey.Control) != 0)
+                {
+                    if (input == UserInput.LeftClick)
+                    {
+                        // if notes visible// and clicked a set note
+                        if (!HasAnswer)// && _notes[noteNum].IsNoted)
+                            HighlightNote(noteNum+1, NoteHighlightType.Strong);
+                    }
+                    else if (input == UserInput.RightClick)
+                    {
+                        // if notes visible// and clicked a set note
+                        if (!HasAnswer)// && _notes[noteNum].IsNoted)
+                            HighlightNote(noteNum+1, NoteHighlightType.Weak);
+                    }
+                }
+                else
+                {
+                    // if double-clicked note (if had note) convert to solvedFor value
+                    if (input == UserInput.DoubleClick)
+                    {
+                        if (!HasAnswer)// && _notes[1].IsNoted)
+                            SetGuess(noteNum+1);
+                    }
                 }
             }
         }

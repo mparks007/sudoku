@@ -24,6 +24,7 @@ namespace Sudoku
         public CellHighlightType HighlightType { get; set; }
         public bool IsHouseSelected { get; set; }
         public Note SelectedNote { get { return _selectedNote; } }
+        public bool HasNoteSelected {  get { return _selectedNote != null; } }
         public int Row { get; set; }
         public int Column { get; set; }
         public int Block { get; set; }
@@ -145,6 +146,15 @@ namespace Sudoku
             // if note is set
             if (_notes[note - 1].IsNoted)
                 _notes[note - 1].HighlightType = highlightType;
+        }
+
+        /// <summary>
+        /// Clear every note in the cell of highlight
+        /// </summary>
+        public void ClearNoteHighlights()
+        {
+            for (int i = 0; i < 9; i++)
+                _notes[i].HighlightType = NoteHighlightType.None;
         }
 
         /// <summary>

@@ -174,6 +174,17 @@ namespace Sudoku
         }
 
         /// <summary>
+        /// Clear every note in the cell of highlight
+        /// </summary>
+        public void ClearNoteHighlights()
+        {
+            // paw through all cells
+            for (int r = 0; r < 9; r++)
+                for (int c = 0; c < 9; c++)
+                    _cells[r][c].ClearNoteHighlights(); ;
+        }
+
+        /// <summary>
         /// Deal with the supported key presses and modifiers select when key was pressed
         /// </summary>
         /// <param name="input">Which key was pressed</param>

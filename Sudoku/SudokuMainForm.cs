@@ -139,7 +139,7 @@ namespace Sudoku
                 chkHighlightHavingValue.Checked = false;
             }
             else if (_highlightClickMode == HighlightClickMode.Manual)
-                Game.Board.HighlightCell(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, (CellHighlightType)pnlCellHighlightPicker.ActiveValue);
+                Game.Board.HighlightCell((CellHighlightType)pnlCellHighlightPicker.ActiveValue);
 
             Render();
         }
@@ -155,7 +155,7 @@ namespace Sudoku
             if (pnlNoteHighlightPicker.ClearSelected && (Control.ModifierKeys == Keys.Shift))
                 Game.Board.ClearNoteHighlights();
             else if ((_highlightClickMode == HighlightClickMode.Manual) && !Game.Board.SelectedCell.HasAnswer) // if every click needs to update the selected cell (manual mode) && the cell has note visable (no answer set)
-                Game.Board.HighlightNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, pnlHiNumbersList.ActiveValue, (NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
+                Game.Board.HighlightNote(pnlHiNumbersList.ActiveValue, (NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
 
             Render();
         }
@@ -170,7 +170,7 @@ namespace Sudoku
             // toggle look and feel of button to make it look like it is "on mode" or not
             chkToggleNote.FlatStyle = (chkToggleNote.Checked ? FlatStyle.Standard : FlatStyle.Popup);
 
-            Game.Board.ToggleNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, pnlFocusNumber.ActiveValue);
+            Game.Board.ToggleNote(pnlFocusNumber.ActiveValue);
 
             if (chkHighlightHavingValue.Checked)
                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
@@ -442,7 +442,7 @@ namespace Sudoku
 
                         // if auto-highlighting cells and if the cell now has an answer and it does NOT match the "highlight all of that number" number, ensure it unhighlights
                         if (chkHighlightHavingValue.Checked && (Game.Board.SelectedCell.Answer != pnlFocusNumber.ActiveValue))
-                            Game.Board.HighlightCell(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, CellHighlightType.None);
+                            Game.Board.HighlightCell(CellHighlightType.None);
 
                         Render();
                         CheckForSolved();
@@ -459,7 +459,7 @@ namespace Sudoku
                         // if toggle note on click is on, do that
                         if (chkToggleNote.Checked)
                         {
-                            Game.Board.ToggleNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, pnlFocusNumber.ActiveValue);
+                            Game.Board.ToggleNote(pnlFocusNumber.ActiveValue);
 
                             if (chkHighlightHavingValue.Checked)
                                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
@@ -469,13 +469,13 @@ namespace Sudoku
                         if ((_modifierKey & ModifierKey.Control) == 0)
                         {
                             if (_highlightClickMode == HighlightClickMode.Cell)
-                                Game.Board.HighlightCell(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, (CellHighlightType)pnlCellHighlightPicker.ActiveValue);
+                                Game.Board.HighlightCell((CellHighlightType)pnlCellHighlightPicker.ActiveValue);
                             else if ((_highlightClickMode == HighlightClickMode.Note) && !Game.Board.SelectedCell.HasAnswer)
                             {
                                 int selectedNote = (Game.Board.SelectedCell.HasNoteSelected ? Game.Board.SelectedCell.SelectedNote.Candidate : 0);
                                 // if even clicked a note area that had a note set
                                 if (selectedNote != 0)
-                                    Game.Board.HighlightNote(Game.Board.SelectedCell.Row, Game.Board.SelectedCell.Column, selectedNote, (NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
+                                    Game.Board.HighlightNote(selectedNote, (NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
                             }
                         }
 
@@ -516,33 +516,33 @@ namespace Sudoku
             Pattern pattern = ((KeyValuePair<string,Pattern>)cbxPatterns.SelectedItem).Value;
 
             // FORCED TEST CODE!!!!!!! 
-            switch (pattern)
-            {
-                case Pattern.XWing:
-                    // xwing (corners)
-                    Game.Board.HighlightCell(2, 2, CellHighlightType.Special);
-                    Game.Board.HighlightCell(2, 8, CellHighlightType.Special);
-                    Game.Board.HighlightCell(6, 2, CellHighlightType.Special);
-                    Game.Board.HighlightCell(6, 8, CellHighlightType.Special);
-                    // xwing eliminations
-                    Game.Board.HighlightNote(1, 2, 1, NoteHighlightType.Bad);
-                    Game.Board.HighlightNote(3, 2, 1, NoteHighlightType.Bad);
-                    Game.Board.HighlightNote(9, 8, 1, NoteHighlightType.Bad);
-                    // undo xy wing elimination
-                    Game.Board.HighlightNote(8, 9, 9, NoteHighlightType.None);
-                    break;
-                case Pattern.XYWing:
-                    Game.Board.HighlightCell(3, 5, CellHighlightType.Pivot);
-                    Game.Board.HighlightCell(3, 9, CellHighlightType.Pincer);
-                    Game.Board.HighlightCell(8, 5, CellHighlightType.Pincer);
-                    // xy wing elimination
-                    Game.Board.HighlightNote(8, 9, 9, NoteHighlightType.Bad);
-                    // undo xwing eliminations
-                    Game.Board.HighlightNote(1, 2, 1, NoteHighlightType.None);
-                    Game.Board.HighlightNote(3, 2, 1, NoteHighlightType.None);
-                    Game.Board.HighlightNote(9, 8, 1, NoteHighlightType.None);
-                    break;
-            }
+            //switch (pattern)
+            //{
+            //    case Pattern.XWing:
+            //        // xwing (corners)
+            //        Game.Board.HighlightCell(2, 2, CellHighlightType.Special);
+            //        Game.Board.HighlightCell(2, 8, CellHighlightType.Special);
+            //        Game.Board.HighlightCell(6, 2, CellHighlightType.Special);
+            //        Game.Board.HighlightCell(6, 8, CellHighlightType.Special);
+            //        // xwing eliminations
+            //        Game.Board.HighlightNote(1, 2, 1, NoteHighlightType.Bad);
+            //        Game.Board.HighlightNote(3, 2, 1, NoteHighlightType.Bad);
+            //        Game.Board.HighlightNote(9, 8, 1, NoteHighlightType.Bad);
+            //        // undo xy wing elimination
+            //        Game.Board.HighlightNote(8, 9, 9, NoteHighlightType.None);
+            //        break;
+            //    case Pattern.XYWing:
+            //        Game.Board.HighlightCell(3, 5, CellHighlightType.Pivot);
+            //        Game.Board.HighlightCell(3, 9, CellHighlightType.Pincer);
+            //        Game.Board.HighlightCell(8, 5, CellHighlightType.Pincer);
+            //        // xy wing elimination
+            //        Game.Board.HighlightNote(8, 9, 9, NoteHighlightType.Bad);
+            //        // undo xwing eliminations
+            //        Game.Board.HighlightNote(1, 2, 1, NoteHighlightType.None);
+            //        Game.Board.HighlightNote(3, 2, 1, NoteHighlightType.None);
+            //        Game.Board.HighlightNote(9, 8, 1, NoteHighlightType.None);
+            //        break;
+            //}
 
             Render();
         }

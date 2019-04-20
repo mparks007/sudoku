@@ -34,16 +34,12 @@
             this.cbxPatterns = new System.Windows.Forms.ComboBox();
             this.btnFind = new System.Windows.Forms.Button();
             this.chkToggleNote = new System.Windows.Forms.CheckBox();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.chkHighlightClickMode = new SudokuCustomControls.OptionButton();
             this.chkNumberKeysMode = new SudokuCustomControls.OptionButton();
             this.pnlCellHighlightPicker = new SudokuCustomControls.ColorButtonsList();
             this.pnlNoteHighlightPicker = new SudokuCustomControls.ColorButtonsList();
             this.pnlFocusNumber = new SudokuCustomControls.NumbersList();
             this.pnlHiNumbersList = new SudokuCustomControls.NumbersList();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnSetGiven
@@ -139,43 +135,6 @@
             this.chkToggleNote.UseVisualStyleBackColor = false;
             this.chkToggleNote.CheckedChanged += new System.EventHandler(this.chkToggleNote_CheckedChanged);
             // 
-            // panel1
-            // 
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.checkBox1);
-            this.panel1.Location = new System.Drawing.Point(582, 537);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(239, 28);
-            this.panel1.TabIndex = 66;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Yu Gothic", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.DimGray;
-            this.label1.Location = new System.Drawing.Point(33, 5);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(85, 14);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Invalids Mode:";
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBox1.BackColor = System.Drawing.SystemColors.Highlight;
-            this.checkBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.checkBox1.Font = new System.Drawing.Font("Yu Gothic", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox1.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.checkBox1.Location = new System.Drawing.Point(120, 2);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(112, 21);
-            this.checkBox1.TabIndex = 48;
-            this.checkBox1.TabStop = false;
-            this.checkBox1.Text = "Don\'t Mark";
-            this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBox1.UseVisualStyleBackColor = false;
-            // 
             // chkHighlightClickMode
             // 
             this.chkHighlightClickMode.Checked = true;
@@ -242,7 +201,6 @@
             this.ClientSize = new System.Drawing.Size(840, 577);
             this.Controls.Add(this.chkHighlightClickMode);
             this.Controls.Add(this.chkNumberKeysMode);
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.pnlCellHighlightPicker);
             this.Controls.Add(this.pnlNoteHighlightPicker);
             this.Controls.Add(this.pnlFocusNumber);
@@ -265,8 +223,6 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmMain_KeyDown);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseDown);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseUp);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -282,9 +238,6 @@
         private SudokuCustomControls.NumbersList pnlFocusNumber;
         private SudokuCustomControls.ColorButtonsList pnlNoteHighlightPicker;
         private SudokuCustomControls.ColorButtonsList pnlCellHighlightPicker;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox checkBox1;
         private SudokuCustomControls.OptionButton chkNumberKeysMode;
         private SudokuCustomControls.OptionButton chkHighlightClickMode;
     }

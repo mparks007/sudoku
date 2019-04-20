@@ -54,51 +54,6 @@ namespace Sudoku
             Game.Board.SetGiven(9, 6, 2);
             Game.Board.SetGiven(9, 8, 6);
             Game.Board.SetGiven(9, 9, 1);
-
-
-            //// test highlight stuff, start vvv
-            //Game.Board.ToggleNote(7, 4, 2);
-            //Game.Board.HighlightNote(7, 4, 2, NoteHighlightType.Info);
-            //Game.Board.ToggleNote(3, 6, 2);
-            //Game.Board.HighlightNote(3, 6, 2, NoteHighlightType.Info);
-            //Game.Board.SetGuess(4, 7, 6);
-            //Game.Board.SetGiven(3, 3, 3);
-            //Game.Board.ToggleNote(2, 7, 8);
-            //Game.Board.HighlightNote(2, 7, 8, NoteHighlightType.Weak);
-            //Game.Board.ToggleNote(5, 5, 3);
-            //Game.Board.HighlightNote(5, 5, 3, NoteHighlightType.Strong);
-            //Game.Board.ToggleNote(8, 6, 7);
-            //Game.Board.HighlightNote(8, 6, 7, NoteHighlightType.Info);
-            //Game.Board.ToggleNote(9, 8, 1);
-            //Game.Board.ToggleNote(9, 8, 2);
-            //Game.Board.ToggleNote(1, 1, 1);
-            //Game.Board.ToggleNote(9, 9, 4);
-            //Game.Board.ToggleNote(1, 8, 5);
-            //Game.Board.ToggleNote(9, 1, 6);
-            //Game.Board.ToggleNote(4, 8, 9);
-            //Game.Board.ToggleNote(1, 2, 2);
-
-            //// xwing (corners)
-            //Game.Board.ToggleNote(2, 2, 1);
-            //Game.Board.ToggleNote(2, 8, 1);
-            //Game.Board.ToggleNote(6, 2, 1);
-            //Game.Board.ToggleNote(6, 8, 1);
-            //// xwing eliminations
-            //Game.Board.ToggleNote(1, 2, 1);
-            //Game.Board.ToggleNote(3, 2, 1);
-
-            //// xy wing (pivot and two pincers)
-            //Game.Board.ToggleNote(3, 5, 1);
-            //Game.Board.ToggleNote(3, 5, 2);
-            //Game.Board.ToggleNote(3, 9, 2);
-            //Game.Board.ToggleNote(3, 9, 9);
-            //Game.Board.ToggleNote(8, 5, 1);
-            //Game.Board.ToggleNote(8, 5, 9);
-            //// xy wing elimination
-            //Game.Board.ToggleNote(8, 9, 9);
-
-            //Game.Board.HighlightCellsWithNoteOrNumber(1);
-            //// test highlight stuff, end ^^^
         }
 
         /// <summary>
@@ -140,7 +95,7 @@ namespace Sudoku
         /// </summary>
         /// <param name="row">Row of the source cell</param>
         /// <param name="col">Columm of the source cell</param>
-        public void SelectHousesOfCellAtRowCol(int row, int col)
+        private void SelectHousesOfCellAtRowCol(int row, int col)
         {
             if (row < 1 || row > 9)
                 throw new ArgumentException(String.Format("Invalid cell row requested for house selection: {0}", row));
@@ -168,9 +123,12 @@ namespace Sudoku
         /// <param name="num">Number to try and set</param>
         public void SetGuess(int num)
         {
-            if (num < 0 || num > 9)
-                throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
+            if (_selectedCell == null)
+                throw new ArgumentException(String.Format("No cell is selected for setting guess: {0}", num));
 
+            if (num < 0 || num > 9)
+                throw new ArgumentException(String.Format("Invalid guess number being set: {0}", num));
+            
             _selectedCell.SetGuess(num);
         }
 
@@ -197,10 +155,13 @@ namespace Sudoku
         /// <param name="num">Number to try and set</param>
         public void SetGiven(int num)
         {
-            if (num < 1 || num > 9)
-                throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
+            if (_selectedCell == null)
+                throw new ArgumentException(String.Format("No cell is selected for setting given: {0}", num));
 
-            SelectedCell.SetGiven(num);
+            if (num < 1 || num > 9)
+                throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
+
+            _selectedCell.SetGiven(num);
         }
 
         /// <summary>
@@ -212,10 +173,10 @@ namespace Sudoku
         private void SetGiven(int row, int col, int num)
         {
             if (row < 1 || row > 9 || col < 1 || col > 9)
-                throw new ArgumentException(String.Format("Invalid value row/column requested for setting Given: {0}/{1}", row, col));
+                throw new ArgumentException(String.Format("Invalid value row/column requested for setting given: {0}/{1}", row, col));
 
             if (num < 1 || num > 9)
-                throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
+                throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
 
             _cells[row - 1][col - 1].SetGiven(num);
         }
@@ -236,52 +197,46 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Highlight the cell at row/col with the specified type of hightlight
+        /// Highlight the selected cell with the specified type of highlight
         /// </summary>
-        /// <param name="row">Row to update</param>
-        /// <param name="col">Column to update</param>
         /// <param name="highlightType">Type of cell highlight</param>
-        public void HighlightCell(int row, int col, CellHighlightType highlightType)
+        public void HighlightCell(CellHighlightType highlightType)
         {
-            if (row < 1 || row > 9 || col < 1 || col > 9)
-                throw new ArgumentException(String.Format("Invalid value row/column requested for cell highlight: {0}/{1}", row, col));
+            if (_selectedCell == null)
+                throw new ArgumentException(String.Format("No cell is selected for highlight: {0}", highlightType.Description()));
 
-            _cells[row - 1][col - 1].HighlightType = highlightType;
+            _selectedCell.HighlightType = highlightType;
         }
 
         /// <summary>
         /// Toggle a note on/off for the selected cell
         /// </summary>
-        /// <param name="row">Row of cell to toggle note</param>
-        /// <param name="col">Column of cell to toggle note</param>
         /// <param name="note">Note number to toggle</param>
-        public void ToggleNote(int row, int col, int note)
+        public void ToggleNote(int note)
         {
-            if (note < 1 || note > 9)
-                throw new ArgumentException(String.Format("Invalid note being set/unset: {0}", note));
-
             if (_selectedCell == null)
-                throw new ArgumentException(String.Format("No cell is selected for note toggle", note));
+                throw new ArgumentException(String.Format("No cell is selected for note toggle: {0}", note));
 
-            _cells[row - 1][col - 1].ToggleNote(note);
+            if (note < 1 || note > 9)
+                throw new ArgumentException(String.Format("Invalid note requested for note toggle: {0}", note));
+
+            _selectedCell.ToggleNote(note);
         }
 
         /// <summary>
         /// Set the specific note to the specified hightlight level for the selected cell
         /// </summary>
-        /// <param name="row">Row to update</param>
-        /// <param name="col">Column to update</param>
         /// <param name="note">Which note to hightlight</param>
         /// <param name="highlightType">How to highlight it</param>
-        public void HighlightNote(int row, int col, int note, NoteHighlightType highlightType)
+        public void HighlightNote(int note, NoteHighlightType highlightType)
         {
-            if (note < 1 || note > 9)
-                throw new ArgumentException(String.Format("Invalid note being set/unset: {0}", note));
-
             if (_selectedCell == null)
-                throw new ArgumentException(String.Format("No cell is selected for note toggle", note));
+                throw new ArgumentException(String.Format("No cell is selected for note highlight update: {0}", note));
 
-            _cells[row - 1][col - 1].HighlightNote(note, highlightType);
+            if (note < 1 || note > 9)
+                throw new ArgumentException(String.Format("Invalid note having highlight updated: {0}", note));
+            
+            _selectedCell.HighlightNote(note, highlightType);
         }
 
         /// <summary>

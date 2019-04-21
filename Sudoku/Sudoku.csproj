@@ -53,6 +53,7 @@
     <Compile Include="Boards\Board.cs" />
     <Compile Include="Cells\BitmapCell.cs" />
     <Compile Include="Enums\EnumExtensions.cs" />
+    <Compile Include="Enums\YesNo.cs" />
     <Compile Include="Enums\ValidationMode.cs" />
     <Compile Include="Enums\NumberKeysMode.cs" />
     <Compile Include="Enums\Pattern.cs" />

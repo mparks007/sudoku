@@ -51,6 +51,7 @@ namespace Sudoku
             chkNumberKeysMode.SetButtonText(NumberKeysMode.Numbers.Description(), NumberKeysMode.Notes.Description(), "n/a");
             chkValidationMode.ButtonClicked += chkValidationMode_ButtonClicked;
             chkValidationMode.SetButtonText(ValidationMode.Numbers.Description(), ValidationMode.Notes.Description(), ValidationMode.Off.Description());
+            chkClearOldNotes.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description(), "n/a");
 
             // load up all the "Find pattern blah" items
             LoadPatternList();

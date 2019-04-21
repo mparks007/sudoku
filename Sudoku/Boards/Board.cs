@@ -340,19 +340,31 @@ namespace Sudoku
         /// <summary>
         /// Scan the whole board and tag all invalid stuff so it renders as 'Invalid' (if that options is on)
         /// </summary>
-        protected void ValidateBoard()
+        protected bool ValidateBoard()
         {
+            bool valid = true;
+
             switch (ValidationMode)
             {
+                // Need to scan stuff and set the IsInvalid flag to true on any GUESS cells that are violating the rules.
                 case ValidationMode.Numbers:
-                    // Need to scan stuff and set the IsInvalid flag to true on any GUESS cells that are violating the rules.
+                    // paw through all cells
+                    for (int r = 0; r < 9; r++)
+                        for (int c = 0; c < 9; c++)
+                        {
+
+                        }
+
                     Render();
                     break;
+                // Notes don't have an IsValid checked at render time.  I may use the NoteHighlightType.Bad  
                 case ValidationMode.Notes:
-                    // Notes don't have an IsValid checked at render time.  I may use the NoteHighlightType.Bad                    
+                    //Game.Board.HighlightNote(r, c, note, NoteHighlightType.Bad);
                     Render();
                     break;
             }
+
+            return valid;
         }
 
         /// <summary>
@@ -361,6 +373,9 @@ namespace Sudoku
         /// <returns></returns>
         public bool IsBoardSolved()
         {
+            if (!ValidateBoard())
+                return false;
+
             bool solved = true;
 
             // paw through all cells

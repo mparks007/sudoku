@@ -41,6 +41,7 @@
             this.pnlFocusNumber = new SudokuCustomControls.NumbersList();
             this.pnlHiNumbersList = new SudokuCustomControls.NumbersList();
             this.chkValidationMode = new SudokuCustomControls.OptionButton();
+            this.chkClearOldNotes = new SudokuCustomControls.OptionButton();
             this.SuspendLayout();
             // 
             // btnSetGiven
@@ -206,12 +207,25 @@
             this.chkValidationMode.TabStop = false;
             this.chkValidationMode.ThreeState = true;
             // 
+            // chkClearOldNotes
+            // 
+            this.chkClearOldNotes.Checked = false;
+            this.chkClearOldNotes.CheckState = System.Windows.Forms.CheckState.Unchecked;
+            this.chkClearOldNotes.Label = "Clear Old Notes:";
+            this.chkClearOldNotes.Location = new System.Drawing.Point(581, 503);
+            this.chkClearOldNotes.Name = "chkClearOldNotes";
+            this.chkClearOldNotes.Size = new System.Drawing.Size(242, 28);
+            this.chkClearOldNotes.TabIndex = 70;
+            this.chkClearOldNotes.TabStop = false;
+            this.chkClearOldNotes.ThreeState = false;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(840, 577);
+            this.Controls.Add(this.chkClearOldNotes);
             this.Controls.Add(this.chkValidationMode);
             this.Controls.Add(this.chkHighlightClickMode);
             this.Controls.Add(this.chkNumberKeysMode);
@@ -255,6 +269,7 @@
         private SudokuCustomControls.OptionButton chkNumberKeysMode;
         private SudokuCustomControls.OptionButton chkHighlightClickMode;
         private SudokuCustomControls.OptionButton chkValidationMode;
+        private SudokuCustomControls.OptionButton chkClearOldNotes;
     }
 }
 

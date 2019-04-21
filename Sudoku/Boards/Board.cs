@@ -9,6 +9,7 @@ namespace Sudoku
     public abstract class Board
     {
         private Cell _selectedCell;
+
         protected int _boardSize;
         protected Cell[][] _cells;
 
@@ -131,6 +132,15 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid guess number being set: {0}", num));
 
             _selectedCell.SetGuess(num);
+
+            ActionManager.Add(new BoardAction
+            {
+                Row = _selectedCell.Row,
+                Column = _selectedCell.Column,
+                ActionType = ActionType.SetGuess,
+                Number = num
+            });
+
             Validate();
         }
 

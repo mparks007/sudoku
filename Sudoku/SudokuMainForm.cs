@@ -12,6 +12,7 @@ namespace Sudoku
         private int _yOffset = 20;                                                  // how far down from Form's top edge to start painting the board
         private ModifierKey _modifierKey = ModifierKey.None;                        // keeping track of alt, shift, ctrl state at the time of early key trapping and normal keypress events
         private HighlightClickMode _highlightClickMode = HighlightClickMode.Manual; // if on manual, cell, or note mode for cell/note highlight buttons
+        private int _undoRedoIndex = -1;                                            //
 
         // components for click/doubleclick hack code :(
         private Timer _doubleClickTimer = new Timer();
@@ -380,6 +381,12 @@ namespace Sudoku
                     case Keys.Delete:
                         input = UserInput.Delete;
                         break;
+                    case Keys.Z:
+                        input = UserInput.Z;
+                        break;
+                    case Keys.Y:
+                        input = UserInput.Y;
+                        break;
                 }
             }
 
@@ -416,6 +423,11 @@ namespace Sudoku
                         // but don't pass the key press down to cells since don't need ctrl-# to be cell based, just this outer form number selector
                         return;
                     }
+
+                    if (input == UserInput.Z)
+                        Undo();
+                    else if (input == UserInput.Y)
+                        Redo();
                 }
 
                 Game.Board.HandleKeyUserInput(input, _modifierKey);
@@ -429,6 +441,18 @@ namespace Sudoku
                 if (numPressed != 0)
                     CheckForSolved();
             }
+        }
+
+        // dabbling with undo/redo.  no major plans yet
+        private void Undo()
+        {
+            ActionManager.Undo();
+            Render();
+        }
+
+        private void Redo()
+        {
+
         }
 
         /// <summary>

@@ -108,6 +108,7 @@
             // 
             this.chkClearOldNotes.Checked = false;
             this.chkClearOldNotes.CheckState = System.Windows.Forms.CheckState.Unchecked;
+            this.chkClearOldNotes.Enabled = false;
             this.chkClearOldNotes.Label = "Clear Old Notes:";
             this.chkClearOldNotes.Location = new System.Drawing.Point(581, 508);
             this.chkClearOldNotes.Name = "chkClearOldNotes";
@@ -120,6 +121,7 @@
             // 
             this.chkValidationMode.Checked = true;
             this.chkValidationMode.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+            this.chkValidationMode.Enabled = false;
             this.chkValidationMode.Label = "Validation Mode:";
             this.chkValidationMode.Location = new System.Drawing.Point(581, 535);
             this.chkValidationMode.Name = "chkValidationMode";

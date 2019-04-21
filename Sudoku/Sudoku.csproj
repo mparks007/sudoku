@@ -49,9 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionManager.cs" />
     <Compile Include="Boards\BitmapBoard.cs" />
     <Compile Include="Boards\Board.cs" />
     <Compile Include="Cells\BitmapCell.cs" />
+    <Compile Include="Enums\ActionType.cs" />
     <Compile Include="Enums\EnumExtensions.cs" />
     <Compile Include="Enums\YesNo.cs" />
     <Compile Include="Enums\ValidationMode.cs" />

@@ -28,6 +28,8 @@ namespace Sudoku
         Space,
         LeftClick,
         RightClick,
-        DoubleClick
+        DoubleClick,
+        Z,
+        Y
     };
 }

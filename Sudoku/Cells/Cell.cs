@@ -150,10 +150,16 @@ namespace Sudoku
         /// <summary>
         /// Clear every note in the cell of highlight
         /// </summary>
-        public void ClearNoteHighlights()
+        public void ClearNoteHighlights(NoteHighlightType type)
         {
             for (int i = 0; i < 9; i++)
-                _notes[i].HighlightType = NoteHighlightType.None;
+            {
+                // none means clear them all
+                if (type == NoteHighlightType.None)
+                    _notes[i].HighlightType = NoteHighlightType.None;
+                else if (_notes[i].HighlightType == type) // else, only clear specified highlight type
+                    _notes[i].HighlightType = NoteHighlightType.None;
+            }
         }
 
         /// <summary>

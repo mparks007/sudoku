@@ -41,7 +41,7 @@
             this.pnlOption.Controls.Add(this.chkOption);
             this.pnlOption.Location = new System.Drawing.Point(0, 0);
             this.pnlOption.Name = "pnlOption";
-            this.pnlOption.Size = new System.Drawing.Size(239, 28);
+            this.pnlOption.Size = new System.Drawing.Size(239, 26);
             this.pnlOption.TabIndex = 58;
             // 
             // lbOption
@@ -50,7 +50,7 @@
             this.lbOption.ForeColor = System.Drawing.Color.DimGray;
             this.lbOption.Location = new System.Drawing.Point(3, 5);
             this.lbOption.Name = "lbOption";
-            this.lbOption.Size = new System.Drawing.Size(123, 14);
+            this.lbOption.Size = new System.Drawing.Size(123, 15);
             this.lbOption.TabIndex = 2;
             this.lbOption.Tag = "0";
             this.lbOption.Text = "Option Label:";
@@ -65,9 +65,9 @@
             this.chkOption.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.chkOption.Font = new System.Drawing.Font("Yu Gothic", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkOption.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.chkOption.Location = new System.Drawing.Point(126, 2);
+            this.chkOption.Location = new System.Drawing.Point(126, 1);
             this.chkOption.Name = "chkOption";
-            this.chkOption.Size = new System.Drawing.Size(106, 21);
+            this.chkOption.Size = new System.Drawing.Size(106, 20);
             this.chkOption.TabIndex = 48;
             this.chkOption.TabStop = false;
             this.chkOption.Text = "Option";

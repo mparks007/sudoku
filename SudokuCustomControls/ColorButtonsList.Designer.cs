@@ -28,38 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pnlHiCellOuter = new System.Windows.Forms.Panel();
             this.pnlHiCellInner = new System.Windows.Forms.Panel();
             this.rad4 = new System.Windows.Forms.RadioButton();
             this.rad3 = new System.Windows.Forms.RadioButton();
             this.rad2 = new System.Windows.Forms.RadioButton();
             this.rad1 = new System.Windows.Forms.RadioButton();
             this.radNone = new System.Windows.Forms.RadioButton();
-            this.pnlHiCellOuter.SuspendLayout();
             this.pnlHiCellInner.SuspendLayout();
             this.SuspendLayout();
             // 
-            // pnlHiCellOuter
-            // 
-            this.pnlHiCellOuter.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.pnlHiCellOuter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pnlHiCellOuter.Controls.Add(this.pnlHiCellInner);
-            this.pnlHiCellOuter.Location = new System.Drawing.Point(0, 0);
-            this.pnlHiCellOuter.Name = "pnlHiCellOuter";
-            this.pnlHiCellOuter.Size = new System.Drawing.Size(239, 42);
-            this.pnlHiCellOuter.TabIndex = 56;
-            // 
             // pnlHiCellInner
             // 
+            this.pnlHiCellInner.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.pnlHiCellInner.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.pnlHiCellInner.Controls.Add(this.rad4);
             this.pnlHiCellInner.Controls.Add(this.rad3);
             this.pnlHiCellInner.Controls.Add(this.rad2);
             this.pnlHiCellInner.Controls.Add(this.rad1);
             this.pnlHiCellInner.Controls.Add(this.radNone);
-            this.pnlHiCellInner.Location = new System.Drawing.Point(3, 2);
+            this.pnlHiCellInner.Location = new System.Drawing.Point(1, 1);
             this.pnlHiCellInner.Name = "pnlHiCellInner";
-            this.pnlHiCellInner.Size = new System.Drawing.Size(229, 35);
+            this.pnlHiCellInner.Size = new System.Drawing.Size(240, 30);
             this.pnlHiCellInner.TabIndex = 52;
             // 
             // rad4
@@ -69,9 +58,9 @@
             this.rad4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.rad4.Font = new System.Drawing.Font("Tahoma", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rad4.ForeColor = System.Drawing.Color.DarkSlateGray;
-            this.rad4.Location = new System.Drawing.Point(176, 1);
+            this.rad4.Location = new System.Drawing.Point(185, 1);
             this.rad4.Name = "rad4";
-            this.rad4.Size = new System.Drawing.Size(48, 30);
+            this.rad4.Size = new System.Drawing.Size(50, 25);
             this.rad4.TabIndex = 4;
             this.rad4.Tag = "4";
             this.rad4.Text = "4";
@@ -86,9 +75,9 @@
             this.rad3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.rad3.Font = new System.Drawing.Font("Tahoma", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rad3.ForeColor = System.Drawing.Color.DarkSlateGray;
-            this.rad3.Location = new System.Drawing.Point(127, 1);
+            this.rad3.Location = new System.Drawing.Point(133, 1);
             this.rad3.Name = "rad3";
-            this.rad3.Size = new System.Drawing.Size(48, 30);
+            this.rad3.Size = new System.Drawing.Size(50, 25);
             this.rad3.TabIndex = 3;
             this.rad3.Tag = "3";
             this.rad3.Text = "3";
@@ -103,9 +92,9 @@
             this.rad2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.rad2.Font = new System.Drawing.Font("Tahoma", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rad2.ForeColor = System.Drawing.Color.DarkSlateGray;
-            this.rad2.Location = new System.Drawing.Point(78, 1);
+            this.rad2.Location = new System.Drawing.Point(81, 1);
             this.rad2.Name = "rad2";
-            this.rad2.Size = new System.Drawing.Size(48, 30);
+            this.rad2.Size = new System.Drawing.Size(50, 25);
             this.rad2.TabIndex = 2;
             this.rad2.Tag = "2";
             this.rad2.Text = "2";
@@ -122,7 +111,7 @@
             this.rad1.ForeColor = System.Drawing.Color.DarkSlateGray;
             this.rad1.Location = new System.Drawing.Point(29, 1);
             this.rad1.Name = "rad1";
-            this.rad1.Size = new System.Drawing.Size(48, 30);
+            this.rad1.Size = new System.Drawing.Size(50, 25);
             this.rad1.TabIndex = 1;
             this.rad1.Tag = "1";
             this.rad1.Text = "1";
@@ -135,11 +124,11 @@
             this.radNone.Appearance = System.Windows.Forms.Appearance.Button;
             this.radNone.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.radNone.Checked = true;
-            this.radNone.Font = new System.Drawing.Font("Yu Gothic", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.radNone.Font = new System.Drawing.Font("Yu Gothic", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.radNone.ForeColor = System.Drawing.Color.DimGray;
             this.radNone.Location = new System.Drawing.Point(1, 1);
             this.radNone.Name = "radNone";
-            this.radNone.Size = new System.Drawing.Size(26, 29);
+            this.radNone.Size = new System.Drawing.Size(26, 24);
             this.radNone.TabIndex = 0;
             this.radNone.TabStop = true;
             this.radNone.Tag = "0";
@@ -152,18 +141,15 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.pnlHiCellOuter);
+            this.Controls.Add(this.pnlHiCellInner);
             this.Name = "ColorButtonsList";
-            this.Size = new System.Drawing.Size(239, 42);
-            this.pnlHiCellOuter.ResumeLayout(false);
+            this.Size = new System.Drawing.Size(243, 32);
             this.pnlHiCellInner.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Panel pnlHiCellOuter;
         private System.Windows.Forms.Panel pnlHiCellInner;
         private System.Windows.Forms.RadioButton rad4;
         private System.Windows.Forms.RadioButton rad3;

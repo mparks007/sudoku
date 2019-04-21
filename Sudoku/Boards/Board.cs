@@ -131,7 +131,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid guess number being set: {0}", num));
 
             _selectedCell.SetGuess(num);
-            ValidateBoard();
+            Validate();
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
             _cells[row - 1][col - 1].SetGuess(num);
-            ValidateBoard();
+            Validate();
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
 
             _selectedCell.SetGiven(num);
-            ValidateBoard();
+            Validate();
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
 
             _cells[row - 1][col - 1].SetGiven(num);
-            ValidateBoard();
+            Validate();
         }
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid note requested for note toggle: {0}", note));
 
             _selectedCell.ToggleNote(note);
-            ValidateBoard();
+            Validate();
         }
 
         /// <summary>
@@ -248,12 +248,12 @@ namespace Sudoku
         /// <summary>
         /// Clear every note in the cell of highlight
         /// </summary>
-        public void ClearNoteHighlights()
+        public void ClearNoteHighlights(NoteHighlightType type)
         {
             // paw through all cells
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
-                    _cells[r][c].ClearNoteHighlights(); ;
+                    _cells[r][c].ClearNoteHighlights(type);
         }
 
         /// <summary>
@@ -340,7 +340,7 @@ namespace Sudoku
         /// <summary>
         /// Scan the whole board and tag all invalid stuff so it renders as 'Invalid' (if that options is on)
         /// </summary>
-        protected bool ValidateBoard()
+        public bool Validate()
         {
             bool valid = true;
 
@@ -373,7 +373,7 @@ namespace Sudoku
         /// <returns></returns>
         public bool IsBoardSolved()
         {
-            if (!ValidateBoard())
+            if (!Validate())
                 return false;
 
             bool solved = true;

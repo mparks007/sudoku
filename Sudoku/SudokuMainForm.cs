@@ -46,12 +46,15 @@ namespace Sudoku
             pnlNoteHighlightPicker.SetButtonFontColors(Color.DimGray, Color.DarkSlateGray, Color.LightGray, Color.DarkSlateGray, Color.LightGray);
 
             // options buttons setup
-            chkHighlightClickMode.ButtonClicked += chkHighlightClickMode_ButtonClicked;
             chkHighlightClickMode.SetButtonText(HighlightClickMode.Cell.Description(), HighlightClickMode.Note.Description(), HighlightClickMode.Manual.Description());
+            chkHighlightClickMode.ButtonClicked += chkHighlightClickMode_ButtonClicked;
+            chkNotesHold.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description(), "n/a");
             chkNumberKeysMode.SetButtonText(NumberKeysMode.Numbers.Description(), NumberKeysMode.Notes.Description(), "n/a");
-            chkValidationMode.ButtonClicked += chkValidationMode_ButtonClicked;
-            chkValidationMode.SetButtonText(ValidationMode.Numbers.Description(), ValidationMode.Notes.Description(), ValidationMode.Off.Description());
             chkClearOldNotes.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description(), "n/a");
+            chkValidationMode.SetButtonText(ValidationMode.Numbers.Description(), ValidationMode.Notes.Description(), ValidationMode.Off.Description());
+            chkValidationMode.ButtonClicked += chkValidationMode_ButtonClicked;
+            chkHighlightHavingValue.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description(), "n/a");
+            chkHighlightHavingValue.ButtonClicked += chkHighlightHavingValue_ButtonClicked;
 
             // load up all the "Find pattern blah" items
             LoadPatternList();
@@ -112,7 +115,7 @@ namespace Sudoku
                     break;
                 case CheckState.Checked:
                     pnlNoteHighlightPicker.Visible = true;
-                    pnlNoteHighlightPicker.Top = 51;
+                    pnlNoteHighlightPicker.Top = 48;
                     pnlCellHighlightPicker.Visible = false;
                     pnlHiNumbersList.Visible = false;
                     _highlightClickMode = HighlightClickMode.Note;
@@ -120,7 +123,7 @@ namespace Sudoku
                 case CheckState.Indeterminate:
                     pnlCellHighlightPicker.Visible = true;
                     pnlNoteHighlightPicker.Visible = true;
-                    pnlNoteHighlightPicker.Top = 94;
+                    pnlNoteHighlightPicker.Top = 79;
                     pnlHiNumbersList.Visible = true;
                     _highlightClickMode = HighlightClickMode.Manual;
                     break;
@@ -136,11 +139,7 @@ namespace Sudoku
         {
             // if shift click on the X, clear all cell hightlights
             if (pnlCellHighlightPicker.ClearSelected && (Control.ModifierKeys == Keys.Shift))
-            {
                 Game.Board.HighlightCellsWithNoteOrNumber(0);
-                // reset the 'highlight every time I select a a cell' option
-                chkHighlightHavingValue.Checked = false;
-            }
             else if (_highlightClickMode == HighlightClickMode.Manual)
                 Game.Board.HighlightCell((CellHighlightType)pnlCellHighlightPicker.ActiveValue);
 
@@ -156,45 +155,9 @@ namespace Sudoku
         {
             // if shift click on the X, clear all note hightlights
             if (pnlNoteHighlightPicker.ClearSelected && (Control.ModifierKeys == Keys.Shift))
-                Game.Board.ClearNoteHighlights();
+                Game.Board.ClearNoteHighlights(NoteHighlightType.None);
             else if ((_highlightClickMode == HighlightClickMode.Manual) && !Game.Board.SelectedCell.HasAnswer) // if every click needs to update the selected cell (manual mode) && the cell has note visable (no answer set)
                 Game.Board.HighlightNote(pnlHiNumbersList.ActiveValue, (NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
-
-            Render();
-        }
-
-        /// <summary>
-        /// Set ToggleNote mode, so if on, onclick will toggle note
-        /// </summary>
-        /// <param name="sender">Standard WinForms sender</param>
-        /// <param name="e">Standard WinForms check-event args</param>
-        private void chkToggleNote_CheckedChanged(object sender, EventArgs e)
-        {
-            // toggle look and feel of button to make it look like it is "on mode" or not
-            chkToggleNote.FlatStyle = (chkToggleNote.Checked ? FlatStyle.Standard : FlatStyle.Popup);
-
-            Game.Board.ToggleNote(pnlFocusNumber.ActiveValue);
-
-            if (chkHighlightHavingValue.Checked)
-                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
-
-            Render();
-        }
-
-        /// <summary>
-        /// Highlight all cells that have the selected number in them (whether as a Given, an Answer, or a Note)
-        /// </summary>
-        /// <param name="sender">Standard WinForms sender</param>
-        /// <param name="e">Standard WinForms check-event args</param>
-        private void chkHighlightHavingValue_CheckedChanged(object sender, EventArgs e)
-        {
-            // toggle look and feel of button to make it look like it is "on mode" or not
-            chkHighlightHavingValue.FlatStyle = (chkHighlightHavingValue.Checked ? FlatStyle.Standard : FlatStyle.Popup);
-
-            if (chkHighlightHavingValue.Checked)
-                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
-            else
-                Game.Board.HighlightCellsWithNoteOrNumber(0);
 
             Render();
         }
@@ -222,11 +185,28 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void pnlSetNumbers_NumberClicked(object sender, EventArgs e)
         {
+            if (chkNotesHold.Checked)
+                btnToggleNote_Click(sender, e);
+
             if (chkHighlightHavingValue.Checked)
-            {
                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
-                Render();
-            }
+
+            Render();
+        }
+
+        /// <summary>
+        /// Toggle select note on/off in the selected cell
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void btnToggleNote_Click(object sender, EventArgs e)
+        {
+            Game.Board.ToggleNote(pnlFocusNumber.ActiveValue);
+
+            if (chkHighlightHavingValue.Checked)
+                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+
+            Render();
         }
 
         /// <summary>
@@ -246,6 +226,66 @@ namespace Sudoku
         }
 
         /// <summary>
+        /// Find the pattern selected in the patter combo box
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void btnFind_Click(object sender, EventArgs e)
+        {
+            Pattern pattern = ((KeyValuePair<string, Pattern>)cbxPatterns.SelectedItem).Value;
+
+            // FORCED TEST CODE!!!!!!! 
+            //switch (pattern)
+            //{
+            //    case Pattern.XWing:
+            //        // xwing (corners)
+            //        Game.Board.HighlightCell(2, 2, CellHighlightType.Special);
+            //        Game.Board.HighlightCell(2, 8, CellHighlightType.Special);
+            //        Game.Board.HighlightCell(6, 2, CellHighlightType.Special);
+            //        Game.Board.HighlightCell(6, 8, CellHighlightType.Special);
+            //        // xwing eliminations
+            //        Game.Board.HighlightNote(1, 2, 1, NoteHighlightType.Bad);
+            //        Game.Board.HighlightNote(3, 2, 1, NoteHighlightType.Bad);
+            //        Game.Board.HighlightNote(9, 8, 1, NoteHighlightType.Bad);
+            //        // undo xy wing elimination
+            //        Game.Board.HighlightNote(8, 9, 9, NoteHighlightType.None);
+            //        break;
+            //    case Pattern.XYWing:
+            //        Game.Board.HighlightCell(3, 5, CellHighlightType.Pivot);
+            //        Game.Board.HighlightCell(3, 9, CellHighlightType.Pincer);
+            //        Game.Board.HighlightCell(8, 5, CellHighlightType.Pincer);
+            //        // xy wing elimination
+            //        Game.Board.HighlightNote(8, 9, 9, NoteHighlightType.Bad);
+            //        // undo xwing eliminations
+            //        Game.Board.HighlightNote(1, 2, 1, NoteHighlightType.None);
+            //        Game.Board.HighlightNote(3, 2, 1, NoteHighlightType.None);
+            //        Game.Board.HighlightNote(9, 8, 1, NoteHighlightType.None);
+            //        break;
+            //}
+
+            Render();
+        }
+
+        ////////////////////NOTE HOLD GOES HERE//////////////////////////////
+
+        /// <summary>
+        /// Callback/Event from Value Highlight control
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void chkHighlightHavingValue_ButtonClicked(object sender, EventArgs e)
+        {
+            if (chkHighlightHavingValue.Checked)
+                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+            else
+                Game.Board.HighlightCellsWithNoteOrNumber(0);
+
+            Render();
+        }
+
+        /////////////////////CLEAR OLD NOTES GOES HERE/////////////////////////
+
+        /// <summary>
         /// Callback/Event from validation options changing
         /// </summary>
         /// <param name="sender">Standard WinForms sender</param>
@@ -254,7 +294,13 @@ namespace Sudoku
         {
             Board.ValidationMode = (ValidationMode)chkValidationMode.CheckState;
             if (Game.Board != null)
-                Render();
+            {
+                if (Board.ValidationMode != ValidationMode.Off)
+                {
+                    Game.Board.Validate();
+                    Render();
+                }
+            }
         }
 
         /// <summary>
@@ -472,7 +518,7 @@ namespace Sudoku
                         ((BitmapBoard)Game.Board).HandleXYClick(UserInput.LeftClick, _modifierKey, _clickX, _clickY);
 
                         // if toggle note on click is on, do that
-                        if (chkToggleNote.Checked)
+                        if (chkNotesHold.Checked)
                         {
                             Game.Board.ToggleNote(pnlFocusNumber.ActiveValue);
 
@@ -519,47 +565,6 @@ namespace Sudoku
                 _modifierKey |= ModifierKey.Control;
             if ((ModifierKeys & Keys.Alt) == Keys.Alt)
                 _modifierKey |= ModifierKey.Alt;
-        }
-
-        /// <summary>
-        /// Find the pattern selected in the patter combo box
-        /// </summary>
-        /// <param name="sender">Standard WinForms sender</param>
-        /// <param name="e">Standard WinForms click-event args</param>
-        private void btnFind_Click(object sender, EventArgs e)
-        {
-            Pattern pattern = ((KeyValuePair<string,Pattern>)cbxPatterns.SelectedItem).Value;
-
-            // FORCED TEST CODE!!!!!!! 
-            //switch (pattern)
-            //{
-            //    case Pattern.XWing:
-            //        // xwing (corners)
-            //        Game.Board.HighlightCell(2, 2, CellHighlightType.Special);
-            //        Game.Board.HighlightCell(2, 8, CellHighlightType.Special);
-            //        Game.Board.HighlightCell(6, 2, CellHighlightType.Special);
-            //        Game.Board.HighlightCell(6, 8, CellHighlightType.Special);
-            //        // xwing eliminations
-            //        Game.Board.HighlightNote(1, 2, 1, NoteHighlightType.Bad);
-            //        Game.Board.HighlightNote(3, 2, 1, NoteHighlightType.Bad);
-            //        Game.Board.HighlightNote(9, 8, 1, NoteHighlightType.Bad);
-            //        // undo xy wing elimination
-            //        Game.Board.HighlightNote(8, 9, 9, NoteHighlightType.None);
-            //        break;
-            //    case Pattern.XYWing:
-            //        Game.Board.HighlightCell(3, 5, CellHighlightType.Pivot);
-            //        Game.Board.HighlightCell(3, 9, CellHighlightType.Pincer);
-            //        Game.Board.HighlightCell(8, 5, CellHighlightType.Pincer);
-            //        // xy wing elimination
-            //        Game.Board.HighlightNote(8, 9, 9, NoteHighlightType.Bad);
-            //        // undo xwing eliminations
-            //        Game.Board.HighlightNote(1, 2, 1, NoteHighlightType.None);
-            //        Game.Board.HighlightNote(3, 2, 1, NoteHighlightType.None);
-            //        Game.Board.HighlightNote(9, 8, 1, NoteHighlightType.None);
-            //        break;
-            //}
-
-            Render();
         }
     }
 }

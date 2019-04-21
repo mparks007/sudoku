@@ -55,7 +55,7 @@
             this.pnlNumbers.Controls.Add(this.rad1);
             this.pnlNumbers.Location = new System.Drawing.Point(0, 1);
             this.pnlNumbers.Name = "pnlNumbers";
-            this.pnlNumbers.Size = new System.Drawing.Size(239, 44);
+            this.pnlNumbers.Size = new System.Drawing.Size(239, 37);
             this.pnlNumbers.TabIndex = 57;
             // 
             // rad9
@@ -67,7 +67,7 @@
             this.rad9.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.rad9.Location = new System.Drawing.Point(209, 1);
             this.rad9.Name = "rad9";
-            this.rad9.Size = new System.Drawing.Size(25, 37);
+            this.rad9.Size = new System.Drawing.Size(25, 31);
             this.rad9.TabIndex = 8;
             this.rad9.Tag = "9";
             this.rad9.Text = "9";
@@ -84,7 +84,7 @@
             this.rad8.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.rad8.Location = new System.Drawing.Point(183, 1);
             this.rad8.Name = "rad8";
-            this.rad8.Size = new System.Drawing.Size(25, 37);
+            this.rad8.Size = new System.Drawing.Size(25, 31);
             this.rad8.TabIndex = 7;
             this.rad8.Tag = "8";
             this.rad8.Text = "8";
@@ -101,7 +101,7 @@
             this.rad7.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.rad7.Location = new System.Drawing.Point(157, 1);
             this.rad7.Name = "rad7";
-            this.rad7.Size = new System.Drawing.Size(25, 37);
+            this.rad7.Size = new System.Drawing.Size(25, 31);
             this.rad7.TabIndex = 6;
             this.rad7.Tag = "7";
             this.rad7.Text = "7";
@@ -118,7 +118,7 @@
             this.rad6.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.rad6.Location = new System.Drawing.Point(131, 1);
             this.rad6.Name = "rad6";
-            this.rad6.Size = new System.Drawing.Size(25, 37);
+            this.rad6.Size = new System.Drawing.Size(25, 31);
             this.rad6.TabIndex = 5;
             this.rad6.Tag = "6";
             this.rad6.Text = "6";
@@ -135,7 +135,7 @@
             this.rad5.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.rad5.Location = new System.Drawing.Point(105, 1);
             this.rad5.Name = "rad5";
-            this.rad5.Size = new System.Drawing.Size(25, 37);
+            this.rad5.Size = new System.Drawing.Size(25, 31);
             this.rad5.TabIndex = 4;
             this.rad5.Tag = "5";
             this.rad5.Text = "5";
@@ -152,7 +152,7 @@
             this.rad4.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.rad4.Location = new System.Drawing.Point(79, 1);
             this.rad4.Name = "rad4";
-            this.rad4.Size = new System.Drawing.Size(25, 37);
+            this.rad4.Size = new System.Drawing.Size(25, 31);
             this.rad4.TabIndex = 3;
             this.rad4.Tag = "4";
             this.rad4.Text = "4";
@@ -169,7 +169,7 @@
             this.rad3.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.rad3.Location = new System.Drawing.Point(53, 1);
             this.rad3.Name = "rad3";
-            this.rad3.Size = new System.Drawing.Size(25, 37);
+            this.rad3.Size = new System.Drawing.Size(25, 31);
             this.rad3.TabIndex = 2;
             this.rad3.Tag = "3";
             this.rad3.Text = "3";
@@ -186,7 +186,7 @@
             this.rad2.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.rad2.Location = new System.Drawing.Point(27, 1);
             this.rad2.Name = "rad2";
-            this.rad2.Size = new System.Drawing.Size(25, 37);
+            this.rad2.Size = new System.Drawing.Size(25, 31);
             this.rad2.TabIndex = 1;
             this.rad2.Tag = "2";
             this.rad2.Text = "2";
@@ -203,7 +203,7 @@
             this.rad1.ForeColor = System.Drawing.SystemColors.Highlight;
             this.rad1.Location = new System.Drawing.Point(1, 1);
             this.rad1.Name = "rad1";
-            this.rad1.Size = new System.Drawing.Size(25, 37);
+            this.rad1.Size = new System.Drawing.Size(25, 31);
             this.rad1.TabIndex = 0;
             this.rad1.TabStop = true;
             this.rad1.Tag = "1";
@@ -216,7 +216,7 @@
             // 
             this.Controls.Add(this.pnlNumbers);
             this.Name = "NumbersList";
-            this.Size = new System.Drawing.Size(237, 44);
+            this.Size = new System.Drawing.Size(237, 40);
             this.pnlNumbers.ResumeLayout(false);
             this.ResumeLayout(false);
 

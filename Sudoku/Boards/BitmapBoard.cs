@@ -158,7 +158,10 @@ namespace Sudoku
 
             // trigger special cell-level events, if notes are visible (no answer set)
             if (!((BitmapCell)Game.Board.SelectedCell).HasAnswer)
+            {
                 ((BitmapCell)Game.Board.SelectedCell).HandleXYClick(input, modifierKey, x, y);
+                ValidateBoard();
+            }
         }
 
         /// <summary>

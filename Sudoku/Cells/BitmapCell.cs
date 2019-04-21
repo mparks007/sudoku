@@ -67,10 +67,10 @@ namespace Sudoku
                 SizeF fSize = BitmapBoard.Graphics.MeasureString(num, f);
 
                 Brush br;
-                if (IsGiven.HasValue && IsGiven.Value)
-                    br = BitmapBoard.Colors.AnswerGiven;
-                else if (IsInvalid)
+                if (IsInvalid)
                     br = BitmapBoard.Colors.AnswerInvalid;
+                else if (IsGiven.HasValue && IsGiven.Value)
+                    br = BitmapBoard.Colors.AnswerGiven;
                 else
                     br = BitmapBoard.Colors.AnswerGuess;
 

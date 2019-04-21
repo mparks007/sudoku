@@ -60,6 +60,7 @@ namespace Sudoku
                         br = BitmapBoard.Colors.NoteOnHighlightWeak;
                         break;
                 }
+
                 BitmapBoard.Graphics.FillRectangle(new SolidBrush(c), rect);
 
                 string candidate = _candidate.ToString();

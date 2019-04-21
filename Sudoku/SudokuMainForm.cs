@@ -49,6 +49,8 @@ namespace Sudoku
             chkHighlightClickMode.ButtonClicked += chkHighlightClickMode_ButtonClicked;
             chkHighlightClickMode.SetButtonText(HighlightClickMode.Cell.Description(), HighlightClickMode.Note.Description(), HighlightClickMode.Manual.Description());
             chkNumberKeysMode.SetButtonText(NumberKeysMode.Numbers.Description(), NumberKeysMode.Notes.Description(), "n/a");
+            chkValidationMode.ButtonClicked += chkValidationMode_ButtonClicked;
+            chkValidationMode.SetButtonText(ValidationMode.Numbers.Description(), ValidationMode.Notes.Description(), ValidationMode.Off.Description());
 
             // load up all the "Find pattern blah" items
             LoadPatternList();
@@ -240,6 +242,18 @@ namespace Sudoku
 
             Render();
             CheckForSolved();
+        }
+
+        /// <summary>
+        /// Callback/Event from validation options changing
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void chkValidationMode_ButtonClicked(Object sender, EventArgs e)
+        {
+            Board.ValidationMode = (ValidationMode)chkValidationMode.CheckState;
+            if (Game.Board != null)
+                Render();
         }
 
         /// <summary>

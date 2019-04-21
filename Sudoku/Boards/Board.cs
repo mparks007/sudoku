@@ -13,7 +13,8 @@ namespace Sudoku
         protected Cell[][] _cells;
 
         public Cell SelectedCell { get { return _selectedCell; } }
-        public int BoardSize {  get { return _boardSize; } }
+        public int BoardSize { get { return _boardSize; } }
+        public static ValidationMode ValidationMode { get; set; }
 
         /// <summary>
         /// Default board setup for testing
@@ -84,7 +85,7 @@ namespace Sudoku
                         _cells[r][c].IsSelected = false;
                 }
 
-            _selectedCell = _cells[row-1][col-1];
+            _selectedCell = _cells[row - 1][col - 1];
 
             // cell selection changed, so house would have too
             SelectHousesOfCellAtRowCol(row, col);
@@ -108,7 +109,7 @@ namespace Sudoku
                 for (int c = 0; c < 9; c++)
                 {
                     // if in the same row, column, or block as the requested row/col
-                    if ((_cells[r][c].Row == _cells[row-1][col-1].Row) ||
+                    if ((_cells[r][c].Row == _cells[row - 1][col - 1].Row) ||
                         (_cells[r][c].Column == _cells[row - 1][col - 1].Column) ||
                         (_cells[r][c].Block == _cells[row - 1][col - 1].Block))
                         _cells[r][c].IsHouseSelected = true;
@@ -128,8 +129,9 @@ namespace Sudoku
 
             if (num < 0 || num > 9)
                 throw new ArgumentException(String.Format("Invalid guess number being set: {0}", num));
-            
+
             _selectedCell.SetGuess(num);
+            ValidateBoard();
         }
 
         /// <summary>
@@ -147,6 +149,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
             _cells[row - 1][col - 1].SetGuess(num);
+            ValidateBoard();
         }
 
         /// <summary>
@@ -162,6 +165,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
 
             _selectedCell.SetGiven(num);
+            ValidateBoard();
         }
 
         /// <summary>
@@ -179,6 +183,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
 
             _cells[row - 1][col - 1].SetGiven(num);
+            ValidateBoard();
         }
 
         /// <summary>
@@ -221,6 +226,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid note requested for note toggle: {0}", note));
 
             _selectedCell.ToggleNote(note);
+            ValidateBoard();
         }
 
         /// <summary>
@@ -235,7 +241,7 @@ namespace Sudoku
 
             if (note < 1 || note > 9)
                 throw new ArgumentException(String.Format("Invalid note having highlight updated: {0}", note));
-            
+
             _selectedCell.HighlightNote(note, highlightType);
         }
 
@@ -280,10 +286,10 @@ namespace Sudoku
                         {
                             // and the cell doesn't already have an answer number assigned
                             if (!_selectedCell.HasAnswer)
-                                _selectedCell.ToggleNote((int)input);
+                                ToggleNote((int)input);
                         }
                         else if (modifierKey == 0) // if not shift or ctrl, etc.
-                            SetGuess(_selectedCell.Row, _selectedCell.Column, (int)input);
+                            SetGuess((int)input);
                     }
                     break;
                 case UserInput.UpArrow:
@@ -323,10 +329,28 @@ namespace Sudoku
                 case UserInput.Delete:
                     // has number, BUT isn't a number that was given at the beginning (NOTE: For now, allowing Delete of Givens)
                     if (_selectedCell.HasAnswer)// && _selectedCell.IsGiven.HasValue && !_selectedCell.IsGiven.Value)
-                        SetGuess(_selectedCell.Row, _selectedCell.Column, 0);
+                        SetGuess(0);
                     break;
                 case UserInput.Space:
                     // tbd
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Scan the whole board and tag all invalid stuff so it renders as 'Invalid' (if that options is on)
+        /// </summary>
+        protected void ValidateBoard()
+        {
+            switch (ValidationMode)
+            {
+                case ValidationMode.Numbers:
+                    // Need to scan stuff and set the IsInvalid flag to true on any GUESS cells that are violating the rules.
+                    Render();
+                    break;
+                case ValidationMode.Notes:
+                    // Notes don't have an IsValid checked at render time.  I may use the NoteHighlightType.Bad                    
+                    Render();
                     break;
             }
         }

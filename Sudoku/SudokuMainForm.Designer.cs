@@ -40,6 +40,7 @@
             this.pnlNoteHighlightPicker = new SudokuCustomControls.ColorButtonsList();
             this.pnlFocusNumber = new SudokuCustomControls.NumbersList();
             this.pnlHiNumbersList = new SudokuCustomControls.NumbersList();
+            this.chkValidationMode = new SudokuCustomControls.OptionButton();
             this.SuspendLayout();
             // 
             // btnSetGiven
@@ -97,9 +98,9 @@
             this.cbxPatterns.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.cbxPatterns.Font = new System.Drawing.Font("Yu Gothic", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbxPatterns.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.cbxPatterns.Location = new System.Drawing.Point(641, 449);
+            this.cbxPatterns.Location = new System.Drawing.Point(636, 449);
             this.cbxPatterns.Name = "cbxPatterns";
-            this.cbxPatterns.Size = new System.Drawing.Size(179, 25);
+            this.cbxPatterns.Size = new System.Drawing.Size(183, 25);
             this.cbxPatterns.TabIndex = 59;
             this.cbxPatterns.TabStop = false;
             // 
@@ -109,9 +110,9 @@
             this.btnFind.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnFind.Font = new System.Drawing.Font("Yu Gothic", 10F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnFind.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.btnFind.Location = new System.Drawing.Point(582, 450);
+            this.btnFind.Location = new System.Drawing.Point(581, 450);
             this.btnFind.Name = "btnFind";
-            this.btnFind.Size = new System.Drawing.Size(59, 23);
+            this.btnFind.Size = new System.Drawing.Size(55, 23);
             this.btnFind.TabIndex = 60;
             this.btnFind.TabStop = false;
             this.btnFind.Text = "Find:";
@@ -193,12 +194,25 @@
             this.pnlHiNumbersList.TabStop = false;
             this.pnlHiNumbersList.TriggerClickEvent = false;
             // 
+            // chkValidationMode
+            // 
+            this.chkValidationMode.Checked = true;
+            this.chkValidationMode.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+            this.chkValidationMode.Label = "Validation Mode:";
+            this.chkValidationMode.Location = new System.Drawing.Point(581, 531);
+            this.chkValidationMode.Name = "chkValidationMode";
+            this.chkValidationMode.Size = new System.Drawing.Size(242, 28);
+            this.chkValidationMode.TabIndex = 69;
+            this.chkValidationMode.TabStop = false;
+            this.chkValidationMode.ThreeState = true;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(840, 577);
+            this.Controls.Add(this.chkValidationMode);
             this.Controls.Add(this.chkHighlightClickMode);
             this.Controls.Add(this.chkNumberKeysMode);
             this.Controls.Add(this.pnlCellHighlightPicker);
@@ -240,6 +254,7 @@
         private SudokuCustomControls.ColorButtonsList pnlCellHighlightPicker;
         private SudokuCustomControls.OptionButton chkNumberKeysMode;
         private SudokuCustomControls.OptionButton chkHighlightClickMode;
+        private SudokuCustomControls.OptionButton chkValidationMode;
     }
 }
 

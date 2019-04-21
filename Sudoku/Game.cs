@@ -18,8 +18,8 @@ namespace Sudoku
         {
             get
             {
-                if (_board == null)
-                    throw new InvalidOperationException("Call GetInstance first to create board");
+                //if (_board == null)
+                //    throw new InvalidOperationException("Call GetInstance first to create board");
 
                 return _board;
             }

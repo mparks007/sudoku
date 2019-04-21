@@ -67,7 +67,8 @@ namespace Sudoku
                 SizeF fSize = BitmapBoard.Graphics.MeasureString(num, f);
 
                 Brush br;
-                if (IsInvalid && (Board.ValidationMode == ValidationMode.Numbers))
+                // only turn red when invalid if....validating full number option and that number isn't a given
+                if (IsInvalid && (Board.ValidationMode == ValidationMode.Numbers) && (IsGiven.HasValue && !IsGiven.Value))
                     br = BitmapBoard.Colors.AnswerInvalid;
                 else if (IsGiven.HasValue && IsGiven.Value)
                     br = BitmapBoard.Colors.AnswerGiven;

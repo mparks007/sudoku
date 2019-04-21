@@ -510,7 +510,13 @@ namespace Sudoku
                     }
                     else if (_isRightClick)
                     {
-                        ((BitmapBoard)Game.Board).HandleXYClick(UserInput.RightClick, _modifierKey, _clickX, _clickY);
+                        // nothing down in cell/note stuff for rightclick atm
+                        //((BitmapBoard)Game.Board).HandleXYClick(UserInput.RightClick, _modifierKey, _clickX, _clickY);
+
+                        // why note allow right-click to simulate Delete of a Guess, ya?
+                        if (Game.Board.SelectedCell.HasAnswer && (Game.Board.SelectedCell.IsGiven.HasValue && !Game.Board.SelectedCell.IsGiven.Value))
+                            frmMain_KeyDown(this, new KeyEventArgs(Keys.Delete));
+                            
                         Render();
                     }
                     else // left-click

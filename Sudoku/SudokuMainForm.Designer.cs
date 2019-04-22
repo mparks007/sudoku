@@ -121,7 +121,6 @@
             // 
             this.chkValidationMode.Checked = true;
             this.chkValidationMode.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-            this.chkValidationMode.Enabled = false;
             this.chkValidationMode.Label = "Validation Mode:";
             this.chkValidationMode.Location = new System.Drawing.Point(581, 535);
             this.chkValidationMode.Name = "chkValidationMode";

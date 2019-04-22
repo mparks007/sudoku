@@ -66,6 +66,7 @@ namespace Sudoku
             _doubleClickTimer.Tick += new EventHandler(doubleClickTimer_Tick);
 
             Game.CreateInstance(BoardType.Bitmap, cellSize: 60);
+            Board.ValidationMode = ValidationMode.Off;
             Game.Board.SetDefaultState();
             Game.Board.SelectCellAtRowCol(5, 5);
 

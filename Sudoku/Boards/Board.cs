@@ -141,7 +141,7 @@ namespace Sudoku
                 Number = num
             });
 
-            Validate();
+            IsBoardValid();
         }
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
             _cells[row - 1][col - 1].SetGuess(num);
-            Validate();
+            IsBoardValid();
         }
 
         /// <summary>
@@ -175,7 +175,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
 
             _selectedCell.SetGiven(num);
-            Validate();
+            IsBoardValid();
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
 
             _cells[row - 1][col - 1].SetGiven(num);
-            Validate();
+            IsBoardValid();
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid note requested for note toggle: {0}", note));
 
             _selectedCell.ToggleNote(note);
-            Validate();
+            IsBoardValid();
         }
 
         /// <summary>
@@ -351,135 +351,163 @@ namespace Sudoku
         /// Scan the whole board and tag all invalid stuff so it renders as 'Invalid' (if that options is on)
         /// Ugly, brute force approach atm.  But it works....
         /// </summary>
-        public bool Validate()
+        public bool IsBoardValid()
         {
             bool valid = true;
 
-            int rowFirstFind = -1;
-            int columnFirstFind = -1;
+            // flatten the cells multidimmensional array
+            IEnumerable<Cell> allCells = _cells.SelectMany(list => list);
+            
+            // reset all to valid
+            allCells.ToList().ForEach(c => c.IsInvalid = false);
 
-            // Need to scan stuff and set the IsInvalid flag to true on cells that are violating the rules.
-            switch (ValidationMode)
-            {
-                // for now, just super obvious dupes, not yet based on the setup not aligning with the final solve values
-                case ValidationMode.Numbers:
-                    
-                    // do row at a time
-                    for (int r = 0; r < 9; r++)
+            // do rows
+            for (int r = 1; r <= 9; r++)
+                for (int n = 1; n <= 9; n++) // while on this row, pick each number
+                {
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => cell.Row == r && cell.Answer == n);
+                    int count = filteredCells.Count();
+                    if (filteredCells.Count() > 1)
                     {
-                        rowFirstFind = -1;
-                        columnFirstFind = -1;
-
-                        // while on this row, pick each number
-                        for (int n = 1; n <= 9; n++)
-                        {
-                            // back to the next number to scan, so reset that the number has been found already
-                            columnFirstFind = -1;
-
-                            // then scan across the columns on this focus row
-                            for (int c = 0; c < 9; c++)
-                            {
-                                // if the cell has this number
-                                if (_cells[r][c].Answer == n)
-                                {
-                                    // if this was the first time finding this number, remember its row/col (in case we find a dupe and need to come back and mark this first find as Invalid)
-                                    if (columnFirstFind == -1)
-                                    {
-                                        rowFirstFind = r;
-                                        columnFirstFind = c;
-
-                                        // clearing first occurance as we go as it can clear all before deciding invalids (this is NOT to be done in the subsqeuent scans for Column and Block
-                                        _cells[r][c].IsInvalid = false;
-                                    }
-                                    else // wasn't the first find, so mark original find as Invalid and this one
-                                    {
-                                        _cells[rowFirstFind][columnFirstFind].IsInvalid = true;
-                                        _cells[r][c].IsInvalid = true;
-                                    }
-                                }
-                            }
-                        }
+                        filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
+                        valid = false;
                     }
+                }
 
-                    // do column at a time
-                    for (int c = 0; c < 9; c++)
+            // do columns
+            for (int c = 1; c <= 9; c++)
+                for (int n = 1; n <= 9; n++) // while on this column, pick each number
+                {
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => cell.Column == c && cell.Answer == n);
+                    if (filteredCells.Count() > 1)
                     {
-                        rowFirstFind = -1;
-                        columnFirstFind = -1;
-
-                        // while on this column, pick each number
-                        for (int n = 1; n <= 9; n++)
-                        {
-                            // back to the next number to scan, so reset that the number has been found already
-                            rowFirstFind = -1;
-
-                            // then scan down the rows on this focus column
-                            for (int r = 0; r < 9; r++)
-                            {
-                                // if the cell has this number
-                                if (_cells[r][c].Answer == n)
-                                {
-                                    // if this was the first time finding this number, remember its row/col (in case we find a dupe and need to come back and mark this first find as Invalid)
-                                    if (rowFirstFind == -1)
-                                    {
-                                        rowFirstFind = r;
-                                        columnFirstFind = c;
-                                    }
-                                    else // wasn't the first find, so mark original find as Invalid and this one
-                                    {
-                                        _cells[rowFirstFind][columnFirstFind].IsInvalid = true;
-                                        _cells[r][c].IsInvalid = true;
-                                    }
-                                }
-                            }
-                        }
+                        filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
+                        valid = false;
                     }
+                }
 
-                    // do blocks
-                    List<Cell> cellsForBlock;
-                    int blockFirstFind = -1;
-                    for (int b = 1; b <= 9; b++)
+            // do blocks
+            for (int b = 1; b <= 9; b++)
+                for (int n = 1; n <= 9; n++) // while on a block, pick each number
+                {
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => cell.Block == b && cell.Answer == n);
+                    if (filteredCells.Count() > 1)
                     {
-                        // convert two dimenstional array to single, but based on the focused block number
-                        cellsForBlock = _cells.SelectMany(list => list).Where(c => c.Block == b).ToList<Cell>();
-
-                        // while on a block, pick each number
-                        for (int n = 1; n <= 9; n++)
-                        {
-                            // back to the next number to scan, so reset that the number has been found already
-                            blockFirstFind = -1;
-
-                            // now scan through the rows in the focused block
-                            for (int c = 0; c < 9; c++)
-                            {
-                                // if the cell has this number
-                                if (cellsForBlock[c].Answer == n)
-                                {
-                                    // if this was the first time finding this number, remember its index (in case we find a dupe and need to come back and mark this first find as Invalid)
-                                    if (blockFirstFind == -1)
-                                    {
-                                        blockFirstFind = c;
-                                    }
-                                    else // wasn't the first find, so mark original find as Invalid and this one
-                                    {
-                                        _cells[cellsForBlock[blockFirstFind].Row - 1][cellsForBlock[blockFirstFind].Column - 1].IsInvalid = true;
-                                        _cells[cellsForBlock[c].Row - 1][cellsForBlock[c].Column - 1].IsInvalid = true;
-                                    }
-                                }
-                            }
-                        }
+                        filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
+                        valid = false;
                     }
+                }
 
-                    Render();
-                    break;
-                // Notes don't have an IsValid checked at render time.  I may use NoteHighlightType.Bad  
-                case ValidationMode.Notes:
-                    
-                    //Game.Board.HighlightNote(r, c, note, NoteHighlightType.Bad);
+            //int rowFirstFind = -1;
+            //int columnFirstFind = -1;
 
-                    Render();
-                    break;
-            }
+            //// do row at a time
+            //for (int r = 0; r < 9; r++)
+            //{
+            //    rowFirstFind = -1;
+            //    columnFirstFind = -1;
+
+            //    // while on this row, pick each number
+            //    for (int n = 1; n <= 9; n++)
+            //    {
+            //        // back to the next number to scan, so reset that the number has been found already
+            //        columnFirstFind = -1;
+
+            //        // then scan across the columns on this focus row
+            //        for (int c = 0; c < 9; c++)
+            //        {
+            //            // if the cell has this number
+            //            if (_cells[r][c].Answer == n)
+            //            {
+            //                // if this was the first time finding this number, remember its row/col (in case we find a dupe and need to come back and mark this first find as Invalid)
+            //                if (columnFirstFind == -1)
+            //                {
+            //                    rowFirstFind = r;
+            //                    columnFirstFind = c;
+
+            //                    // clearing first occurance as we go as it can clear all before deciding invalids (this is NOT to be done in the subsqeuent scans for Column and Block
+            //                    _cells[r][c].IsInvalid = false;
+            //                }
+            //                else // wasn't the first find, so mark original find as Invalid and this one
+            //                {
+            //                    _cells[rowFirstFind][columnFirstFind].IsInvalid = true;
+            //                    _cells[r][c].IsInvalid = true;
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            //// do column at a time
+            //for (int c = 0; c < 9; c++)
+            //{
+            //    rowFirstFind = -1;
+            //    columnFirstFind = -1;
+
+            //    // while on this column, pick each number
+            //    for (int n = 1; n <= 9; n++)
+            //    {
+            //        // back to the next number to scan, so reset that the number has been found already
+            //        rowFirstFind = -1;
+
+            //        // then scan down the rows on this focus column
+            //        for (int r = 0; r < 9; r++)
+            //        {
+            //            // if the cell has this number
+            //            if (_cells[r][c].Answer == n)
+            //            {
+            //                // if this was the first time finding this number, remember its row/col (in case we find a dupe and need to come back and mark this first find as Invalid)
+            //                if (rowFirstFind == -1)
+            //                {
+            //                    rowFirstFind = r;
+            //                    columnFirstFind = c;
+            //                }
+            //                else // wasn't the first find, so mark original find as Invalid and this one
+            //                {
+            //                    _cells[rowFirstFind][columnFirstFind].IsInvalid = true;
+            //                    _cells[r][c].IsInvalid = true;
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            //// do blocks
+            //List<Cell> cellsForBlock;
+            //int blockFirstFind = -1;
+            //for (int b = 1; b <= 9; b++)
+            //{
+            //    // convert two dimenstional array to single, but based on the focused block number
+            //    cellsForBlock = _cells.SelectMany(list => list).Where(c => c.Block == b).ToList<Cell>();
+
+            //    // while on a block, pick each number
+            //    for (int n = 1; n <= 9; n++)
+            //    {
+            //        // back to the next number to scan, so reset that the number has been found already
+            //        blockFirstFind = -1;
+
+            //        // now scan through the cells in the focused block
+            //        for (int c = 0; c < 9; c++)
+            //        {
+            //            // if the cell has this number
+            //            if (cellsForBlock[c].Answer == n)
+            //            {
+            //                // if this was the first time finding this number, remember its index (in case we find a dupe and need to come back and mark this first find as Invalid)
+            //                if (blockFirstFind == -1)
+            //                {
+            //                    blockFirstFind = c;
+            //                }
+            //                else // wasn't the first find, so mark original find as Invalid and this one
+            //                {
+            //                    _cells[cellsForBlock[blockFirstFind].Row - 1][cellsForBlock[blockFirstFind].Column - 1].IsInvalid = true;
+            //                    _cells[cellsForBlock[c].Row - 1][cellsForBlock[c].Column - 1].IsInvalid = true;
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            Render();
 
             return valid;
         }
@@ -490,23 +518,16 @@ namespace Sudoku
         /// <returns></returns>
         public bool IsBoardSolved()
         {
-            if (!Validate())
+            if (!IsBoardValid())
                 return false;
-
-            bool solved = true;
 
             // paw through all cells
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
-                {
-                    if (!_cells[r][c].HasAnswer || (_cells[r][c].HasAnswer && _cells[r][c].IsInvalid))
-                    {
-                        solved = false;
-                        break;
-                    }
-                }
+                    if (!_cells[r][c].HasAnswer) // if no number decided (given or guess)
+                        return false;
 
-           return solved;
+           return true;
         }
 
         /// <summary>

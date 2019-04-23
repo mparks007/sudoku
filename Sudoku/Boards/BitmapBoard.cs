@@ -160,7 +160,7 @@ namespace Sudoku
             if (!((BitmapCell)Game.Board.SelectedCell).HasAnswer)
             {
                 ((BitmapCell)Game.Board.SelectedCell).HandleXYClick(input, modifierKey, x, y);
-                Validate();
+                IsBoardValid();
             }
         }
 

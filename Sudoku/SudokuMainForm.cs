@@ -299,7 +299,7 @@ namespace Sudoku
             {
                 if (Board.ValidationMode != ValidationMode.Off)
                 {
-                    Game.Board.Validate();
+                    Game.Board.IsBoardValid();
                     Render();
                 }
             }
@@ -535,8 +535,7 @@ namespace Sudoku
                     }
                     else if (_isRightClick)
                     {
-                        // nothing down in cell/note stuff for rightclick atm
-                        //((BitmapBoard)Game.Board).HandleXYClick(UserInput.RightClick, _modifierKey, _clickX, _clickY);
+                        ((BitmapBoard)Game.Board).HandleXYClick(UserInput.RightClick, _modifierKey, _clickX, _clickY);
 
                         // why note allow right-click to simulate Delete of a Guess, ya?
                         if (Game.Board.SelectedCell.HasAnswer && (Game.Board.SelectedCell.IsGiven.HasValue && !Game.Board.SelectedCell.IsGiven.Value))

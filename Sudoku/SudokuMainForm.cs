@@ -157,7 +157,7 @@ namespace Sudoku
         {
             // if shift click on the X, clear all note hightlights
             if (pnlNoteHighlightPicker.ClearSelected && (Control.ModifierKeys == Keys.Shift))
-                Game.Board.ClearNoteHighlights(NoteHighlightType.None);
+                Game.Board.ClearNoteHighlights();
             else if ((_highlightClickMode == HighlightClickMode.Manual) && !Game.Board.SelectedCell.HasAnswer) // if every click needs to update the selected cell (manual mode) && the cell has note visable (no answer set)
                 Game.Board.HighlightNote(pnlHiNumbersList.ActiveValue, (NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
 
@@ -299,7 +299,7 @@ namespace Sudoku
             {
                 if (Board.ValidationMode != ValidationMode.Off)
                 {
-                    Game.Board.IsBoardValid();
+                    Game.Board.CheckAndMarkDupes();
                     Render();
                 }
             }
@@ -524,7 +524,7 @@ namespace Sudoku
                 {
                     if (_isDoubleClick)
                     {
-                        ((BitmapBoard)Game.Board).HandleXYClick(UserInput.DoubleClick, _modifierKey, _clickX, _clickY);
+                        ((BitmapBoard)Game.Board).HandlePixelXYClick(UserInput.DoubleClick, _modifierKey, _clickX, _clickY);
 
                         // if auto-highlighting cells and if the cell now has an answer and it does NOT match the "highlight all of that number" number, ensure it unhighlights
                         if (chkHighlightHavingValue.Checked && (Game.Board.SelectedCell.Answer != pnlFocusNumber.ActiveValue))
@@ -535,7 +535,7 @@ namespace Sudoku
                     }
                     else if (_isRightClick)
                     {
-                        ((BitmapBoard)Game.Board).HandleXYClick(UserInput.RightClick, _modifierKey, _clickX, _clickY);
+                        ((BitmapBoard)Game.Board).HandlePixelXYClick(UserInput.RightClick, _modifierKey, _clickX, _clickY);
 
                         // why note allow right-click to simulate Delete of a Guess, ya?
                         if (Game.Board.SelectedCell.HasAnswer && (Game.Board.SelectedCell.IsGiven.HasValue && !Game.Board.SelectedCell.IsGiven.Value))
@@ -545,7 +545,7 @@ namespace Sudoku
                     }
                     else // left-click
                     {
-                        ((BitmapBoard)Game.Board).HandleXYClick(UserInput.LeftClick, _modifierKey, _clickX, _clickY);
+                        ((BitmapBoard)Game.Board).HandlePixelXYClick(UserInput.LeftClick, _modifierKey, _clickX, _clickY);
 
                         // if toggle note on click is on, do that
                         if (chkNotesHold.Checked)
@@ -555,6 +555,8 @@ namespace Sudoku
                             if (chkHighlightHavingValue.Checked)
                                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
                         }
+
+                         Move ALL THIS TO BOARD YA?  highlightclick mode as static in board class?
 
                         // do special highlighting if Control WASN'T clicked (Control-Left click is for special strong/week coloring done in HandleXYClick)
                         if ((_modifierKey & ModifierKey.Control) == 0)

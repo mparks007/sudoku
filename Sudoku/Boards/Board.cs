@@ -8,13 +8,13 @@ namespace Sudoku
 {
     public abstract class Board
     {
-        private Cell _selectedCell;
-
         protected int _boardSize;
         protected Cell[][] _cells;
+        protected Cell _selectedCell;
 
         public Cell SelectedCell { get { return _selectedCell; } }
         public int BoardSize { get { return _boardSize; } }
+
         public static ValidationMode ValidationMode { get; set; }
 
         /// <summary>
@@ -70,23 +70,18 @@ namespace Sudoku
                 return;
 
             if (row < 1 || row > 9)
-                throw new ArgumentException(String.Format("Invalid cell row requested for selection: {0}", row));
+                throw new ArgumentException(String.Format("Invalid row requested for selection: {0}", row));
 
             if (col < 1 || col > 9)
-                throw new ArgumentException(String.Format("Invalid cell column requested for selection: {0}", col));
+                throw new ArgumentException(String.Format("Invalid column requested for selection: {0}", col));
 
-            // paw through all cells
-            for (int r = 0; r < 9; r++)
-                for (int c = 0; c < 9; c++)
-                {
-                    // if found the desired cell
-                    if ((r + 1 == row) && (c + 1 == col))
-                        _cells[r][c].IsSelected = true;
-                    else
-                        _cells[r][c].IsSelected = false;
-                }
-
+            // first maybe clear current selection
+            if (_selectedCell != null)
+                _selectedCell.IsSelected = false;
+            
+            // select and remember new selection
             _selectedCell = _cells[row - 1][col - 1];
+            _selectedCell.IsSelected = true;
 
             // cell selection changed, so house would have too
             SelectHousesOfCellAtRowCol(row, col);
@@ -100,10 +95,10 @@ namespace Sudoku
         private void SelectHousesOfCellAtRowCol(int row, int col)
         {
             if (row < 1 || row > 9)
-                throw new ArgumentException(String.Format("Invalid cell row requested for house selection: {0}", row));
+                throw new ArgumentException(String.Format("Invalid row requested for house selection: {0}", row));
 
             if (col < 1 || col > 9)
-                throw new ArgumentException(String.Format("Invalid cell column requested for house selection: {0}", col));
+                throw new ArgumentException(String.Format("Invalid column requested for house selection: {0}", col));
 
             // paw through all cells
             for (int r = 0; r < 9; r++)
@@ -126,22 +121,13 @@ namespace Sudoku
         public void SetGuess(int num)
         {
             if (_selectedCell == null)
-                throw new ArgumentException(String.Format("No cell is selected for setting guess: {0}", num));
+                throw new ArgumentException(String.Format("No cell is selected for setting guess number: {0}", num));
 
             if (num < 0 || num > 9)
                 throw new ArgumentException(String.Format("Invalid guess number being set: {0}", num));
 
             _selectedCell.SetGuess(num);
-
-            ActionManager.Add(new BoardAction
-            {
-                Row = _selectedCell.Row,
-                Column = _selectedCell.Column,
-                ActionType = ActionType.SetGuess,
-                Number = num
-            });
-
-            IsBoardValid();
+            CheckAndMarkDupes();
         }
 
         /// <summary>
@@ -159,7 +145,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
             _cells[row - 1][col - 1].SetGuess(num);
-            IsBoardValid();
+            CheckAndMarkDupes();
         }
 
         /// <summary>
@@ -175,7 +161,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
 
             _selectedCell.SetGiven(num);
-            IsBoardValid();
+            CheckAndMarkDupes();
         }
 
         /// <summary>
@@ -193,7 +179,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
 
             _cells[row - 1][col - 1].SetGiven(num);
-            IsBoardValid();
+            CheckAndMarkDupes();
         }
 
         /// <summary>
@@ -236,7 +222,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid note requested for note toggle: {0}", note));
 
             _selectedCell.ToggleNote(note);
-            IsBoardValid();
+            CheckAndMarkDupes();
         }
 
         /// <summary>
@@ -256,14 +242,14 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Clear every note in the cell of highlight
+        /// Clear every note in the cell of its highlight
         /// </summary>
-        public void ClearNoteHighlights(NoteHighlightType type)
+        public void ClearNoteHighlights()
         {
             // paw through all cells
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
-                    _cells[r][c].ClearNoteHighlights(type);
+                    _cells[r][c].ClearNoteHighlights();
         }
 
         /// <summary>
@@ -291,13 +277,9 @@ namespace Sudoku
                     // if no main number present OR there is but it isn't a given number (then we are allowed assignment of a guess number)
                     if (!_selectedCell.IsGiven.HasValue || (_selectedCell.IsGiven.HasValue && !_selectedCell.IsGiven.Value))
                     {
-                        // if shift-num 
-                        if ((modifierKey & ModifierKey.Shift) != 0)
-                        {
-                            // and the cell doesn't already have an answer number assigned
-                            if (!_selectedCell.HasAnswer)
-                                ToggleNote((int)input);
-                        }
+                        // if shift-num and the cell doesn't already have an answer number assigned 
+                        if (((modifierKey & ModifierKey.Shift) != 0) && !_selectedCell.HasAnswer)
+                            ToggleNote((int)input);
                         else if (modifierKey == 0) // if not shift or ctrl, etc.
                             SetGuess((int)input);
                     }
@@ -337,8 +319,8 @@ namespace Sudoku
                     }
                     break;
                 case UserInput.Delete:
-                    // has number, BUT isn't a number that was given at the beginning (NOTE: For now, allowing Delete of Givens)
-                    if (_selectedCell.HasAnswer)// && _selectedCell.IsGiven.HasValue && !_selectedCell.IsGiven.Value)
+                    // allowing both Givens and Guesses to be deleted this way
+                    if (_selectedCell.HasAnswer)
                         SetGuess(0);
                     break;
                 case UserInput.Space:
@@ -348,12 +330,12 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Scan the whole board and tag all invalid stuff so it renders as 'Invalid' (if that options is on)
+        /// Scan the whole board, rows then columns then blocks, tagging all invalid stuff so it renders as 'Invalid' (if that options is on)
         /// Ugly, brute force approach atm.  But it works....
         /// </summary>
-        public bool IsBoardValid()
+        public bool CheckAndMarkDupes()
         {
-            bool valid = true;
+            bool hasDupes = false;
 
             // flatten the cells multidimmensional array
             IEnumerable<Cell> allCells = _cells.SelectMany(list => list);
@@ -363,26 +345,26 @@ namespace Sudoku
 
             // do rows
             for (int r = 1; r <= 9; r++)
-                for (int n = 1; n <= 9; n++) // while on this row, pick each number
+                for (int n = 1; n <= 9; n++) // while on a row, pick each number
                 {
                     IEnumerable<Cell> filteredCells = allCells.Where(cell => cell.Row == r && cell.Answer == n);
                     int count = filteredCells.Count();
                     if (filteredCells.Count() > 1)
                     {
                         filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
-                        valid = false;
+                        hasDupes = true;
                     }
                 }
 
             // do columns
             for (int c = 1; c <= 9; c++)
-                for (int n = 1; n <= 9; n++) // while on this column, pick each number
+                for (int n = 1; n <= 9; n++) // while on a column, pick each number
                 {
                     IEnumerable<Cell> filteredCells = allCells.Where(cell => cell.Column == c && cell.Answer == n);
                     if (filteredCells.Count() > 1)
                     {
                         filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
-                        valid = false;
+                        hasDupes = true;
                     }
                 }
 
@@ -394,131 +376,20 @@ namespace Sudoku
                     if (filteredCells.Count() > 1)
                     {
                         filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
-                        valid = false;
+                        hasDupes = true;
                     }
                 }
 
-            //int rowFirstFind = -1;
-            //int columnFirstFind = -1;
-
-            //// do row at a time
-            //for (int r = 0; r < 9; r++)
-            //{
-            //    rowFirstFind = -1;
-            //    columnFirstFind = -1;
-
-            //    // while on this row, pick each number
-            //    for (int n = 1; n <= 9; n++)
-            //    {
-            //        // back to the next number to scan, so reset that the number has been found already
-            //        columnFirstFind = -1;
-
-            //        // then scan across the columns on this focus row
-            //        for (int c = 0; c < 9; c++)
-            //        {
-            //            // if the cell has this number
-            //            if (_cells[r][c].Answer == n)
-            //            {
-            //                // if this was the first time finding this number, remember its row/col (in case we find a dupe and need to come back and mark this first find as Invalid)
-            //                if (columnFirstFind == -1)
-            //                {
-            //                    rowFirstFind = r;
-            //                    columnFirstFind = c;
-
-            //                    // clearing first occurance as we go as it can clear all before deciding invalids (this is NOT to be done in the subsqeuent scans for Column and Block
-            //                    _cells[r][c].IsInvalid = false;
-            //                }
-            //                else // wasn't the first find, so mark original find as Invalid and this one
-            //                {
-            //                    _cells[rowFirstFind][columnFirstFind].IsInvalid = true;
-            //                    _cells[r][c].IsInvalid = true;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
-            //// do column at a time
-            //for (int c = 0; c < 9; c++)
-            //{
-            //    rowFirstFind = -1;
-            //    columnFirstFind = -1;
-
-            //    // while on this column, pick each number
-            //    for (int n = 1; n <= 9; n++)
-            //    {
-            //        // back to the next number to scan, so reset that the number has been found already
-            //        rowFirstFind = -1;
-
-            //        // then scan down the rows on this focus column
-            //        for (int r = 0; r < 9; r++)
-            //        {
-            //            // if the cell has this number
-            //            if (_cells[r][c].Answer == n)
-            //            {
-            //                // if this was the first time finding this number, remember its row/col (in case we find a dupe and need to come back and mark this first find as Invalid)
-            //                if (rowFirstFind == -1)
-            //                {
-            //                    rowFirstFind = r;
-            //                    columnFirstFind = c;
-            //                }
-            //                else // wasn't the first find, so mark original find as Invalid and this one
-            //                {
-            //                    _cells[rowFirstFind][columnFirstFind].IsInvalid = true;
-            //                    _cells[r][c].IsInvalid = true;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
-            //// do blocks
-            //List<Cell> cellsForBlock;
-            //int blockFirstFind = -1;
-            //for (int b = 1; b <= 9; b++)
-            //{
-            //    // convert two dimenstional array to single, but based on the focused block number
-            //    cellsForBlock = _cells.SelectMany(list => list).Where(c => c.Block == b).ToList<Cell>();
-
-            //    // while on a block, pick each number
-            //    for (int n = 1; n <= 9; n++)
-            //    {
-            //        // back to the next number to scan, so reset that the number has been found already
-            //        blockFirstFind = -1;
-
-            //        // now scan through the cells in the focused block
-            //        for (int c = 0; c < 9; c++)
-            //        {
-            //            // if the cell has this number
-            //            if (cellsForBlock[c].Answer == n)
-            //            {
-            //                // if this was the first time finding this number, remember its index (in case we find a dupe and need to come back and mark this first find as Invalid)
-            //                if (blockFirstFind == -1)
-            //                {
-            //                    blockFirstFind = c;
-            //                }
-            //                else // wasn't the first find, so mark original find as Invalid and this one
-            //                {
-            //                    _cells[cellsForBlock[blockFirstFind].Row - 1][cellsForBlock[blockFirstFind].Column - 1].IsInvalid = true;
-            //                    _cells[cellsForBlock[c].Row - 1][cellsForBlock[c].Column - 1].IsInvalid = true;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
-            Render();
-
-            return valid;
+            return hasDupes;
         }
 
         /// <summary>
-        /// Determine if board is solved
+        /// Determine if board is solved.  Until I can do any board create with unique solve awareness, just doing a sloppy "If nothing is duped and all cells filled, must be 'valid'"
         /// </summary>
         /// <returns></returns>
         public bool IsBoardSolved()
         {
-            if (!IsBoardValid())
+            if (!CheckAndMarkDupes())
                 return false;
 
             // paw through all cells

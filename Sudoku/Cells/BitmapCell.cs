@@ -12,7 +12,7 @@ namespace Sudoku
 {
     public class BitmapCell : Cell
     {
-        private int _cellSize;
+        private readonly int _cellSize;
 
         /// <summary>
         /// Ctor
@@ -52,6 +52,7 @@ namespace Sudoku
                 BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.CellHouseSelect), rect);
             else
             {
+                // make a subtle checkerboard pattern on the blocks
                 if (Block % 2 == 0)
                     BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.BlockAltShade), rect);
                 else

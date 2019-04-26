@@ -9,9 +9,9 @@ namespace Sudoku
 {
     public enum YesNo
     {
-        [Description("Yes")]
-        Yes,
         [Description("No")]
-        No
+        No,
+        [Description("Yes")]
+        Yes
     }
 }

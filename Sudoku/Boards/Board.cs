@@ -15,7 +15,13 @@ namespace Sudoku
         public Cell SelectedCell { get { return _selectedCell; } }
         public int BoardSize { get { return _boardSize; } }
 
+        public static YesNo RemoveOldNotes { get; set; }
         public static ValidationMode ValidationMode { get; set; }
+
+        public Board()
+        {
+            Board.RemoveOldNotes = YesNo.No;
+        }
 
         /// <summary>
         /// Default board setup for testing
@@ -127,6 +133,10 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid guess number being set: {0}", num));
 
             _selectedCell.SetGuess(num);
+
+            if (Board.RemoveOldNotes == YesNo.Yes)
+                RemoveNotes(num);
+
             CheckAndMarkDupes();
         }
 
@@ -145,6 +155,10 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
 
             _cells[row - 1][col - 1].SetGuess(num);
+
+            if (Board.RemoveOldNotes == YesNo.Yes)
+                RemoveNotes(num);
+
             CheckAndMarkDupes();
         }
 
@@ -161,6 +175,10 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
 
             _selectedCell.SetGiven(num);
+
+            if (Board.RemoveOldNotes == YesNo.Yes)
+                RemoveNotes(num);
+
             CheckAndMarkDupes();
         }
 
@@ -179,6 +197,10 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
 
             _cells[row - 1][col - 1].SetGiven(num);
+
+            if (Board.RemoveOldNotes == YesNo.Yes)
+                RemoveNotes(num);
+
             CheckAndMarkDupes();
         }
 
@@ -223,6 +245,18 @@ namespace Sudoku
 
             _selectedCell.ToggleNote(note);
             CheckAndMarkDupes();
+        }
+
+        /// <summary>
+        /// Set the selected note to the specified hightlight level for the selected cell
+        /// </summary>
+        /// <param name="highlightType">How to highlight it</param>
+        public void HighlightSelectedNote(NoteHighlightType highlightType)
+        {
+            if (_selectedCell == null)
+                throw new ArgumentException("No cell is selected for note highlight update");
+
+            _selectedCell.HighlightSelectedNote(highlightType);
         }
 
         /// <summary>
@@ -327,6 +361,52 @@ namespace Sudoku
                     // tbd
                     break;
             }
+        }
+
+        /// <summary>
+        /// Remove ALL old notes for all guess/given values
+        /// </summary>
+        public void RemoveNotes()
+        {
+            RemoveNotes(0);
+        }
+
+        /// <summary>
+        /// Remove all notes in houses of selected cell for the given note
+        /// </summary>
+        /// <param name="note">Note to remove, if has it</param>
+        public void RemoveNotes(int note)
+        {
+            //// flatten the cells multidimmensional array
+            //IEnumerable<Cell> allCells = _cells.SelectMany(list => list);
+
+            //// do rows
+            //for (int r = 1; r <= 9; r++)
+            //    for (int n = 1; n <= 9; n++) // while on a row, pick each number
+            //    {
+            //        IEnumerable<Cell> filteredCells = allCells.Where(cell => cell.Row == r && cell.Answer == n);
+            //        int count = filteredCells.Count();
+            //        if (filteredCells.Count() > 1)
+            //            filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
+            //    }
+
+            //// do columns
+            //for (int c = 1; c <= 9; c++)
+            //    for (int n = 1; n <= 9; n++) // while on a column, pick each number
+            //    {
+            //        IEnumerable<Cell> filteredCells = allCells.Where(cell => cell.Column == c && cell.Answer == n);
+            //        if (filteredCells.Count() > 1)
+            //            filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
+            //    }
+
+            //// do blocks
+            //for (int b = 1; b <= 9; b++)
+            //    for (int n = 1; n <= 9; n++) // while on a block, pick each number
+            //    {
+            //        IEnumerable<Cell> filteredCells = allCells.Where(cell => cell.Block == b && cell.Answer == n);
+            //        if (filteredCells.Count() > 1)
+            //            filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
+            //    }
         }
 
         /// <summary>

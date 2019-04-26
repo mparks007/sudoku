@@ -24,22 +24,29 @@ namespace Sudoku
             public static Color CellBlank = Color.White;
             public static Color CellHouseSelect = Color.LavenderBlush;
             public static Color CellSelectFrame = Color.Coral;
+            public static Color CellHighlightNone = SystemColors.GradientInactiveCaption;
             public static Color CellHighlightValue = Color.Lime;
             public static Color CellHighlightSpecial = Color.MediumSeaGreen;
             public static Color CellHighlightPivot = Color.LightSeaGreen;
             public static Color CellHighlightPincer = Color.Aquamarine;
+            public static Color CellTextOnHighlightNone = Color.DimGray;
+            public static Color CellTextOnHighlightValue = Color.DarkSlateGray;
+            public static Color CellTextOnHighlightSpecial = Color.DarkSlateGray;
+            public static Color CellTextOnHighlightPivot = Color.DarkSlateGray;
+            public static Color CellTextOnHighlightPincer = Color.DarkSlateGray;
             public static Brush AnswerGiven = Brushes.Black;
             public static Brush AnswerGuess = Brushes.Blue;
             public static Brush AnswerInvalid = Brushes.Red;
-            public static Brush NoteOnEmpty = Brushes.DarkSlateGray;
+            public static Color NoteHighlightNone = Color.Transparent;
             public static Color NoteHighlightInfo = Color.Plum;
             public static Color NoteHighlightBad = Color.Red;
             public static Color NoteHighlightStrong = Color.RoyalBlue;
             public static Color NoteHighlightWeak = Color.Yellow;
-            public static Brush NoteOnHighlightInfo = Brushes.DarkSlateGray;
-            public static Brush NoteOnHighlightBad = Brushes.LightGray;
-            public static Brush NoteOnHighlightStrong = Brushes.LightGray;
-            public static Brush NoteOnHighlightWeak = Brushes.DarkSlateGray;
+            public static Color NoteTextOnHighlightNone = Color.Black;
+            public static Color NoteTextOnHighlightInfo = Color.DarkSlateGray;
+            public static Color NoteTextOnHighlightBad = Color.LightGray;
+            public static Color NoteTextOnHighlightStrong = Color.LightGray;
+            public static Color NoteTextOnHighlightWeak = Color.DarkSlateGray;
         }
 
         public static class Colors
@@ -51,22 +58,29 @@ namespace Sudoku
             public static Color CellBlank = DefaultColors.CellBlank;
             public static Color CellHouseSelect = DefaultColors.CellHouseSelect;
             public static Color CellSelectFrame = DefaultColors.CellSelectFrame;
+            public static Color CellHighlightNone = DefaultColors.CellHighlightNone;
             public static Color CellHighlightValue = DefaultColors.CellHighlightValue;
             public static Color CellHighlightSpecial = DefaultColors.CellHighlightSpecial;
             public static Color CellHighlightPivot = DefaultColors.CellHighlightPivot;
             public static Color CellHighlightPincer = DefaultColors.CellHighlightPincer;
+            public static Color CellTextOnHighlightNone = DefaultColors.CellTextOnHighlightNone;
+            public static Color CellTextOnHighlightValue = DefaultColors.CellTextOnHighlightValue;
+            public static Color CellTextOnHighlightSpecial = DefaultColors.CellTextOnHighlightSpecial;
+            public static Color CellTextOnHighlightPivot = DefaultColors.CellTextOnHighlightPivot;
+            public static Color CellTextOnHighlightPincer = DefaultColors.CellTextOnHighlightPincer;
             public static Brush AnswerGiven = DefaultColors.AnswerGiven;
             public static Brush AnswerGuess = DefaultColors.AnswerGuess;
             public static Brush AnswerInvalid = DefaultColors.AnswerInvalid;
-            public static Brush NoteOnEmpty = DefaultColors.NoteOnEmpty;
+            public static Color NoteHighlightNone = DefaultColors.NoteHighlightNone;
             public static Color NoteHighlightInfo = DefaultColors.NoteHighlightInfo;
             public static Color NoteHighlightBad = DefaultColors.NoteHighlightBad;
             public static Color NoteHighlightStrong = DefaultColors.NoteHighlightStrong;
             public static Color NoteHighlightWeak = DefaultColors.NoteHighlightWeak;
-            public static Brush NoteOnHighlightInfo = DefaultColors.NoteOnHighlightInfo;
-            public static Brush NoteOnHighlightBad = DefaultColors.NoteOnHighlightBad;
-            public static Brush NoteOnHighlightStrong = DefaultColors.NoteOnHighlightStrong;
-            public static Brush NoteOnHighlightWeak = DefaultColors.NoteOnHighlightWeak;
+            public static Color NoteTextOnHighlightNone = DefaultColors.NoteTextOnHighlightNone;
+            public static Color NoteTextOnHighlightInfo = DefaultColors.NoteTextOnHighlightInfo;
+            public static Color NoteTextOnHighlightBad = DefaultColors.NoteTextOnHighlightBad;
+            public static Color NoteTextOnHighlightStrong = DefaultColors.NoteTextOnHighlightStrong;
+            public static Color NoteTextOnHighlightWeak = DefaultColors.NoteTextOnHighlightWeak;
         }
 
         private static class DefaultFonts
@@ -96,7 +110,7 @@ namespace Sudoku
         /// Ctor
         /// </summary>
         /// <param name="cellSize">Pixel size of each cell (used in render calculations)</param>
-        public BitmapBoard(int cellSize)
+        public BitmapBoard(int cellSize) : base()
         {
             _boardSize = cellSize * 9;
             _boardImage = new Bitmap(_boardSize, _boardSize);

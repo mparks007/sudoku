@@ -47,36 +47,23 @@ namespace SudokuCustomControls
             set { chkOption.ThreeState = value; }
         }
 
+        public void SetButtonText(string text1, string text2)
+        {
+            SetButtonText(text1, text2, "");
+        }
+
         public void SetButtonText(string text1, string text2, string text3)
         {
             _stateText.Clear();
-            _stateText.AddRange(new string[] { text1, text2, text3});
+            _stateText.AddRange(new string[] { text1, text2, text3 });
+
+            // to setup the initial button's text
             chkOption_CheckStateChanged(this, new EventArgs());
         }
 
         private void chkOption_CheckStateChanged(object sender, EventArgs e)
         {
             chkOption.Text = _stateText[(int)chkOption.CheckState];
-
-            //switch (chkOption.CheckState)
-            //{
-            //    case CheckState.Unchecked:
-            //        chkOption.Text = _stateText[0];
-            //        break;
-            //    case CheckState.Checked:
-            //        chkOption.Text = _stateText[1];
-            //        break;
-            //    case CheckState.Indeterminate:
-            //        chkOption.Text = _stateText[2];
-            //        //pnlCellHighlightPicker.Visible = true;
-            //        //pnlNoteHighlightPicker.Visible = true;
-            //        //pnlNoteHighlightPicker.Top = 94;
-            //        //pnlHiNumbers.Visible = true;
-            //        //_highlightClickMode = HighlightClickMode.Manual;
-            //        break;
-            //}
-
-            //OnButtonClicked(new OptionButtonEventArgs(chkOption.CheckState));
             OnButtonClicked(e);
         }
 
@@ -86,23 +73,10 @@ namespace SudokuCustomControls
         /// </summary>
         /// <param name="e">Standard WinForms click-event args</param>
         protected virtual void OnButtonClicked(EventArgs e)
-        //protected virtual void OnButtonClicked(OptionButtonEventArgs e)
         {
             var handler = ButtonClicked;
             if (handler != null)
                 handler(this, e);
         }
     }
-
-    //public class OptionButtonEventArgs : EventArgs
-    //{
-    //    CheckState _checkState;
-
-    //    public CheckState CheckState { get; }
-
-    //    public OptionButtonEventArgs(CheckState checkState)
-    //    {
-    //        _checkState = checkState;
-    //    }
-    //}
 }

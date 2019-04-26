@@ -37,6 +37,23 @@ namespace SudokuCustomControls
         //}
 
         /// <summary>
+        /// Set Tag values for each button (will be the control's return value)
+        /// </summary>
+        /// <param name="tagX">Tag for the X (off) button</param>
+        /// <param name="tag1">Tag for button 1</param>
+        /// <param name="tag2">Tag for button 2</param>
+        /// <param name="tag3">Tag for button 3</param>
+        /// <param name="tag4">Tag for button 4</param>
+        public void SetButtonTags(int tagX, int tag1, int tag2, int tag3, int tag4)
+        {
+            radNone.Tag = tagX;
+            rad1.Tag = tag1;
+            rad2.Tag = tag2;
+            rad3.Tag = tag3;
+            rad4.Tag = tag4;
+        }
+
+        /// <summary>
         /// Set text for each button
         /// </summary>
         /// <param name="textX">Text for the X (off) button</param>

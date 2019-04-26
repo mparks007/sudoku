@@ -32,7 +32,7 @@
             this.btnSetGuess = new System.Windows.Forms.Button();
             this.cbxPatterns = new System.Windows.Forms.ComboBox();
             this.btnFind = new System.Windows.Forms.Button();
-            this.chkClearOldNotes = new SudokuCustomControls.OptionButton();
+            this.chkRemoveOldNotes = new SudokuCustomControls.OptionButton();
             this.chkValidationMode = new SudokuCustomControls.OptionButton();
             this.chkHighlightClickMode = new SudokuCustomControls.OptionButton();
             this.chkNumberKeysMode = new SudokuCustomControls.OptionButton();
@@ -104,18 +104,17 @@
             this.btnFind.UseVisualStyleBackColor = false;
             this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
-            // chkClearOldNotes
+            // chkRemoveOldNotes
             // 
-            this.chkClearOldNotes.Checked = false;
-            this.chkClearOldNotes.CheckState = System.Windows.Forms.CheckState.Unchecked;
-            this.chkClearOldNotes.Enabled = false;
-            this.chkClearOldNotes.Label = "Clear Old Notes:";
-            this.chkClearOldNotes.Location = new System.Drawing.Point(581, 508);
-            this.chkClearOldNotes.Name = "chkClearOldNotes";
-            this.chkClearOldNotes.Size = new System.Drawing.Size(242, 28);
-            this.chkClearOldNotes.TabIndex = 70;
-            this.chkClearOldNotes.TabStop = false;
-            this.chkClearOldNotes.ThreeState = false;
+            this.chkRemoveOldNotes.Checked = false;
+            this.chkRemoveOldNotes.CheckState = System.Windows.Forms.CheckState.Unchecked;
+            this.chkRemoveOldNotes.Label = "Remove Old Notes:";
+            this.chkRemoveOldNotes.Location = new System.Drawing.Point(581, 508);
+            this.chkRemoveOldNotes.Name = "chkRemoveOldNotes";
+            this.chkRemoveOldNotes.Size = new System.Drawing.Size(242, 28);
+            this.chkRemoveOldNotes.TabIndex = 70;
+            this.chkRemoveOldNotes.TabStop = false;
+            this.chkRemoveOldNotes.ThreeState = false;
             // 
             // chkValidationMode
             // 
@@ -235,7 +234,7 @@
             this.Controls.Add(this.chkNotesHold);
             this.Controls.Add(this.btnToggleNote);
             this.Controls.Add(this.chkHighlightHavingValue);
-            this.Controls.Add(this.chkClearOldNotes);
+            this.Controls.Add(this.chkRemoveOldNotes);
             this.Controls.Add(this.chkValidationMode);
             this.Controls.Add(this.chkHighlightClickMode);
             this.Controls.Add(this.chkNumberKeysMode);
@@ -275,7 +274,7 @@
         private SudokuCustomControls.OptionButton chkNumberKeysMode;
         private SudokuCustomControls.OptionButton chkHighlightClickMode;
         private SudokuCustomControls.OptionButton chkValidationMode;
-        private SudokuCustomControls.OptionButton chkClearOldNotes;
+        private SudokuCustomControls.OptionButton chkRemoveOldNotes;
         private SudokuCustomControls.OptionButton chkHighlightHavingValue;
         private System.Windows.Forms.Button btnToggleNote;
         private SudokuCustomControls.OptionButton chkNotesHold;

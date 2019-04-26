@@ -22,8 +22,6 @@ namespace Sudoku
         public bool IsInvalid { get; set; }
         public CellHighlightType HighlightType { get; set; }
         public bool IsHouseSelected { get; set; }
-        public Note SelectedNote { get { return _selectedNote; } }
-        public bool HasNoteSelected {  get { return _selectedNote != null; } }
         public int Row { get; set; }
         public int Column { get; set; }
         public int Block { get; set; }
@@ -130,6 +128,16 @@ namespace Sudoku
                 HighlightType = CellHighlightType.Value;
             else
                 HighlightType = CellHighlightType.None;
+        }
+
+        /// <summary>
+        /// Set the selected note (if one) to the specified hightlight level
+        /// </summary>
+        /// <param name="highlightType">How to highlight it</param>
+        public void HighlightSelectedNote(NoteHighlightType highlightType)
+        {
+            if (_selectedNote != null)
+                _selectedNote.HighlightType = highlightType;
         }
 
         /// <summary>

@@ -10,7 +10,7 @@ namespace Sudoku
 {
     public class BitmapNote : Note
     {
-        private int _cellPixelSize;
+        private readonly int _cellPixelSize;
 
         /// <summary>
         /// Ctor
@@ -45,19 +45,19 @@ namespace Sudoku
                 {
                     case NoteHighlightType.Info:
                         c = BitmapBoard.Colors.NoteHighlightInfo;
-                        br = BitmapBoard.Colors.NoteOnHighlightInfo;
+                        br = new SolidBrush(BitmapBoard.Colors.NoteTextOnHighlightInfo);
                         break;
                     case NoteHighlightType.Bad:
                         c = BitmapBoard.Colors.NoteHighlightBad;
-                        br = BitmapBoard.Colors.NoteOnHighlightBad;
+                        br = new SolidBrush(BitmapBoard.Colors.NoteTextOnHighlightBad);
                         break;
                     case NoteHighlightType.Strong:
                         c = BitmapBoard.Colors.NoteHighlightStrong;
-                        br = BitmapBoard.Colors.NoteOnHighlightStrong;
+                        br = new SolidBrush(BitmapBoard.Colors.NoteTextOnHighlightStrong);
                         break;
                     case NoteHighlightType.Weak:
                         c = BitmapBoard.Colors.NoteHighlightWeak;
-                        br = BitmapBoard.Colors.NoteOnHighlightWeak;
+                        br = new SolidBrush(BitmapBoard.Colors.NoteTextOnHighlightWeak);
                         break;
                 }
 

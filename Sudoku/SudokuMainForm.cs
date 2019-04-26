@@ -11,8 +11,6 @@ namespace Sudoku
         private int _xOffset = 20;                                                  // how far over from Form's left edge to start painting the board
         private int _yOffset = 20;                                                  // how far down from Form's top edge to start painting the board
         private ModifierKey _modifierKey = ModifierKey.None;                        // keeping track of alt, shift, ctrl state at the time of early key trapping and normal keypress events
-        private HighlightClickMode _highlightClickMode = HighlightClickMode.Manual; // if on manual, cell, or note mode for cell/note highlight buttons
-        private int _undoRedoIndex = -1;                                            //
 
         // components for click/doubleclick hack code :(
         private Timer _doubleClickTimer = new Timer();
@@ -31,31 +29,7 @@ namespace Sudoku
             InitializeComponent();
             _gr = CreateGraphics();
 
-            // listen for numbers clicking
-            pnlFocusNumber.NumberClicked += pnlSetNumbers_NumberClicked;
-
-            // component setup for Cell Highlight control
-            pnlCellHighlightPicker.ButtonClicked += pnlCellHighlightPicker_Clicked;
-            pnlCellHighlightPicker.SetButtonText(CellHighlightType.None.Description(), CellHighlightType.Value.Description(), CellHighlightType.Special.Description(), CellHighlightType.Pivot.Description(), CellHighlightType.Pincer.Description());
-            pnlCellHighlightPicker.SetButtonColors(SystemColors.GradientInactiveCaption, Color.Lime, Color.MediumSeaGreen, Color.LightSeaGreen, Color.Aquamarine);
-            pnlCellHighlightPicker.SetButtonFontColors(Color.DimGray, Color.DarkSlateGray, Color.DarkSlateGray, Color.DarkSlateGray, Color.DarkSlateGray);
-
-            // component setup for Note Highlight control
-            pnlNoteHighlightPicker.ButtonClicked += pnlNoteHighlightPicker_Clicked;
-            pnlNoteHighlightPicker.SetButtonText(NoteHighlightType.None.Description(), NoteHighlightType.Info.Description(), NoteHighlightType.Strong.Description(), NoteHighlightType.Weak.Description(), NoteHighlightType.Bad.Description());
-            pnlNoteHighlightPicker.SetButtonColors(SystemColors.GradientInactiveCaption, Color.Plum, Color.RoyalBlue, Color.Yellow, Color.Red);
-            pnlNoteHighlightPicker.SetButtonFontColors(Color.DimGray, Color.DarkSlateGray, Color.LightGray, Color.DarkSlateGray, Color.LightGray);
-
-            // options buttons setup
-            chkHighlightClickMode.SetButtonText(HighlightClickMode.Cell.Description(), HighlightClickMode.Note.Description(), HighlightClickMode.Manual.Description());
-            chkHighlightClickMode.ButtonClicked += chkHighlightClickMode_ButtonClicked;
-            chkNotesHold.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description(), "n/a");
-            chkNumberKeysMode.SetButtonText(NumberKeysMode.Numbers.Description(), NumberKeysMode.Notes.Description(), "n/a");
-            chkClearOldNotes.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description(), "n/a");
-            chkValidationMode.SetButtonText(ValidationMode.Numbers.Description(), ValidationMode.Notes.Description(), ValidationMode.Off.Description());
-            chkValidationMode.ButtonClicked += chkValidationMode_ButtonClicked;
-            chkHighlightHavingValue.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description(), "n/a");
-            chkHighlightHavingValue.ButtonClicked += chkHighlightHavingValue_ButtonClicked;
+            SetupUI();
 
             // load up all the "Find pattern blah" items
             LoadPatternList();
@@ -71,6 +45,41 @@ namespace Sudoku
             Game.Board.SelectCellAtRowCol(5, 5);
 
             Render();
+        }
+
+        /// <summary>
+        /// Setup various button/checkbox controls to the appropriate text and coloring
+        /// </summary>
+        private void SetupUI()
+        {
+            // listen for numbers clicking
+            pnlFocusNumber.NumberClicked += pnlSetNumbers_NumberClicked;
+
+            // component setup for Cell Highlight control
+            pnlCellHighlightPicker.SetButtonTags((int)CellHighlightType.None, (int)CellHighlightType.Value, (int)CellHighlightType.Special, (int)CellHighlightType.Pivot, (int)CellHighlightType.Pincer);
+            pnlCellHighlightPicker.SetButtonText(CellHighlightType.None.Description(), CellHighlightType.Value.Description(), CellHighlightType.Special.Description(), CellHighlightType.Pivot.Description(), CellHighlightType.Pincer.Description());
+            pnlCellHighlightPicker.SetButtonColors(BitmapBoard.Colors.CellHighlightNone, BitmapBoard.Colors.CellHighlightValue, BitmapBoard.Colors.CellHighlightSpecial, BitmapBoard.Colors.CellHighlightPivot, BitmapBoard.Colors.CellHighlightPincer);
+            pnlCellHighlightPicker.SetButtonFontColors(BitmapBoard.Colors.CellTextOnHighlightNone, BitmapBoard.Colors.CellTextOnHighlightValue, BitmapBoard.Colors.CellTextOnHighlightSpecial, BitmapBoard.Colors.CellTextOnHighlightPivot, BitmapBoard.Colors.CellTextOnHighlightPincer);
+            pnlCellHighlightPicker.ButtonClicked += pnlCellHighlightPicker_Clicked;
+
+            // component setup for Note Highlight control
+            pnlNoteHighlightPicker.SetButtonTags((int)NoteHighlightType.None, (int)NoteHighlightType.Info, (int)NoteHighlightType.Strong, (int)NoteHighlightType.Weak, (int)NoteHighlightType.Bad);
+            pnlNoteHighlightPicker.SetButtonText(NoteHighlightType.None.Description(), NoteHighlightType.Info.Description(), NoteHighlightType.Strong.Description(), NoteHighlightType.Weak.Description(), NoteHighlightType.Bad.Description());
+            pnlNoteHighlightPicker.SetButtonColors(BitmapBoard.Colors.NoteHighlightNone, BitmapBoard.Colors.NoteHighlightInfo, BitmapBoard.Colors.NoteHighlightStrong, BitmapBoard.Colors.NoteHighlightWeak, BitmapBoard.Colors.NoteHighlightBad);
+            pnlNoteHighlightPicker.SetButtonFontColors(BitmapBoard.Colors.NoteTextOnHighlightNone, BitmapBoard.Colors.NoteTextOnHighlightInfo, BitmapBoard.Colors.NoteTextOnHighlightStrong, BitmapBoard.Colors.NoteTextOnHighlightWeak, BitmapBoard.Colors.NoteTextOnHighlightBad);
+            pnlNoteHighlightPicker.ButtonClicked += pnlNoteHighlightPicker_Clicked;
+
+            // options buttons setup
+            chkHighlightClickMode.SetButtonText(HighlightClickMode.Cell.Description(), HighlightClickMode.Note.Description(), HighlightClickMode.Manual.Description());
+            chkHighlightClickMode.ButtonClicked += chkHighlightClickMode_ButtonClicked;
+            chkNotesHold.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description());
+            chkNumberKeysMode.SetButtonText(NumberKeysMode.Numbers.Description(), NumberKeysMode.Notes.Description());
+            chkRemoveOldNotes.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description());
+            chkRemoveOldNotes.ButtonClicked += chkRemoveOldNotes_ButtonClicked;
+            chkValidationMode.SetButtonText(ValidationMode.Numbers.Description(), ValidationMode.Notes.Description(), ValidationMode.Off.Description());
+            chkValidationMode.ButtonClicked += chkValidationMode_ButtonClicked;
+            chkHighlightHavingValue.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description());
+            chkHighlightHavingValue.ButtonClicked += chkHighlightHavingValue_ButtonClicked;
         }
 
         /// <summary>
@@ -113,21 +122,18 @@ namespace Sudoku
                     pnlCellHighlightPicker.Visible = true;
                     pnlNoteHighlightPicker.Visible = false;
                     pnlHiNumbersList.Visible = false;
-                    _highlightClickMode = HighlightClickMode.Cell;
                     break;
                 case CheckState.Checked:
                     pnlNoteHighlightPicker.Visible = true;
                     pnlNoteHighlightPicker.Top = 48;
                     pnlCellHighlightPicker.Visible = false;
                     pnlHiNumbersList.Visible = false;
-                    _highlightClickMode = HighlightClickMode.Note;
                     break;
                 case CheckState.Indeterminate:
                     pnlCellHighlightPicker.Visible = true;
                     pnlNoteHighlightPicker.Visible = true;
                     pnlNoteHighlightPicker.Top = 79;
                     pnlHiNumbersList.Visible = true;
-                    _highlightClickMode = HighlightClickMode.Manual;
                     break;
             }
         }
@@ -141,13 +147,17 @@ namespace Sudoku
         {
             // if shift click on the X, clear all cell hightlights
             if (pnlCellHighlightPicker.ClearSelected && (Control.ModifierKeys == Keys.Shift))
+            {
                 Game.Board.HighlightCellsWithNoteOrNumber(0);
-            else if (_highlightClickMode == HighlightClickMode.Manual)
+                Render();
+            }
+            else if (chkHighlightClickMode.CheckState == (CheckState)HighlightClickMode.Manual)
+            {
                 Game.Board.HighlightCell((CellHighlightType)pnlCellHighlightPicker.ActiveValue);
-
-            Render();
+                Render();
+            }
         }
-
+ 
         /// <summary>
         /// Callback/Event from Note Highlight control to maybe trigger highlighting
         /// </summary>
@@ -157,11 +167,15 @@ namespace Sudoku
         {
             // if shift click on the X, clear all note hightlights
             if (pnlNoteHighlightPicker.ClearSelected && (Control.ModifierKeys == Keys.Shift))
+            {
                 Game.Board.ClearNoteHighlights();
-            else if ((_highlightClickMode == HighlightClickMode.Manual) && !Game.Board.SelectedCell.HasAnswer) // if every click needs to update the selected cell (manual mode) && the cell has note visable (no answer set)
+                Render();
+            }
+            else if ((chkHighlightClickMode.CheckState == (CheckState)HighlightClickMode.Manual) && !Game.Board.SelectedCell.HasAnswer) // if every click needs to update the selected cell (manual mode) && the cell has note visable (no answer set)
+            {
                 Game.Board.HighlightNote(pnlHiNumbersList.ActiveValue, (NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
-
-            Render();
+                Render();
+            }
         }
 
         /// <summary>
@@ -187,13 +201,22 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void pnlSetNumbers_NumberClicked(object sender, EventArgs e)
         {
+            bool render = false;
+
             if (chkNotesHold.Checked)
+            {
                 btnToggleNote_Click(sender, e);
+                render = true;
+            }
 
             if (chkHighlightHavingValue.Checked)
+            {
                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
-
-            Render();
+                render = true;
+            }
+        
+            if (render)
+                Render();
         }
 
         /// <summary>
@@ -236,39 +259,9 @@ namespace Sudoku
         {
             Pattern pattern = ((KeyValuePair<string, Pattern>)cbxPatterns.SelectedItem).Value;
 
-            // FORCED TEST CODE!!!!!!! 
-            //switch (pattern)
-            //{
-            //    case Pattern.XWing:
-            //        // xwing (corners)
-            //        Game.Board.HighlightCell(2, 2, CellHighlightType.Special);
-            //        Game.Board.HighlightCell(2, 8, CellHighlightType.Special);
-            //        Game.Board.HighlightCell(6, 2, CellHighlightType.Special);
-            //        Game.Board.HighlightCell(6, 8, CellHighlightType.Special);
-            //        // xwing eliminations
-            //        Game.Board.HighlightNote(1, 2, 1, NoteHighlightType.Bad);
-            //        Game.Board.HighlightNote(3, 2, 1, NoteHighlightType.Bad);
-            //        Game.Board.HighlightNote(9, 8, 1, NoteHighlightType.Bad);
-            //        // undo xy wing elimination
-            //        Game.Board.HighlightNote(8, 9, 9, NoteHighlightType.None);
-            //        break;
-            //    case Pattern.XYWing:
-            //        Game.Board.HighlightCell(3, 5, CellHighlightType.Pivot);
-            //        Game.Board.HighlightCell(3, 9, CellHighlightType.Pincer);
-            //        Game.Board.HighlightCell(8, 5, CellHighlightType.Pincer);
-            //        // xy wing elimination
-            //        Game.Board.HighlightNote(8, 9, 9, NoteHighlightType.Bad);
-            //        // undo xwing eliminations
-            //        Game.Board.HighlightNote(1, 2, 1, NoteHighlightType.None);
-            //        Game.Board.HighlightNote(3, 2, 1, NoteHighlightType.None);
-            //        Game.Board.HighlightNote(9, 8, 1, NoteHighlightType.None);
-            //        break;
-            //}
 
-            Render();
+            //Render();
         }
-
-        ////////////////////NOTE HOLD GOES HERE//////////////////////////////
 
         /// <summary>
         /// Callback/Event from Value Highlight control
@@ -285,7 +278,20 @@ namespace Sudoku
             Render();
         }
 
-        /////////////////////CLEAR OLD NOTES GOES HERE/////////////////////////
+        /// <summary>
+        /// Callback/Event from option to remove old notes or not
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void chkRemoveOldNotes_ButtonClicked(Object sender, EventArgs e)
+        {
+            Board.RemoveOldNotes = (YesNo)chkRemoveOldNotes.CheckState;
+            if ((Game.Board != null) && (Board.RemoveOldNotes != YesNo.No))
+            {
+                Game.Board.RemoveNotes();
+                Render();
+            }
+        }
 
         /// <summary>
         /// Callback/Event from validation options changing
@@ -295,13 +301,10 @@ namespace Sudoku
         private void chkValidationMode_ButtonClicked(Object sender, EventArgs e)
         {
             Board.ValidationMode = (ValidationMode)chkValidationMode.CheckState;
-            if (Game.Board != null)
+            if ((Game.Board != null) && (Board.ValidationMode != ValidationMode.Off))
             {
-                if (Board.ValidationMode != ValidationMode.Off)
-                {
-                    Game.Board.CheckAndMarkDupes();
-                    Render();
-                }
+                Game.Board.CheckAndMarkDupes();
+                Render();
             }
         }
 
@@ -351,9 +354,9 @@ namespace Sudoku
             int numPressed;
 
             // if a non-zero number key, remember it (any better way to do this check?)
-            if (int.TryParse(((char)e.KeyValue).ToString(), out numPressed) && numPressed != 0)
+            if (int.TryParse(((char)e.KeyValue).ToString(), out numPressed) && (numPressed != 0))
             {
-                // convert to my custom number enum
+                // convert to custom number enum
                 UserInput[] possibleNums = { UserInput.One, UserInput.Two, UserInput.Three, UserInput.Four, UserInput.Five, UserInput.Six, UserInput.Seven, UserInput.Eight, UserInput.Nine };
                 input = possibleNums[numPressed - 1];
             }
@@ -398,14 +401,14 @@ namespace Sudoku
                 _modifierKey = ModifierKey.None;
                 if (e.Shift)
                 {
-                    // Shift while in Numbers mode is Notes mode (so turn shift on in my modifiers flags)
+                    // Shift while in Numbers mode is Notes mode (so turn shift on in the modifiers flags)
                     if (!chkNumberKeysMode.Checked)
                         _modifierKey |= ModifierKey.Shift;
                 }
                 else
                 {
-                    // Non-Shift while in Notes mode means do note (so turn shift on in my modifiers flags)
-                    if (chkNumberKeysMode.Checked)    
+                    // Non-Shift while in Notes mode means do note (so turn shift on in the modifiers flags)
+                    if (chkNumberKeysMode.Checked)
                         _modifierKey |= ModifierKey.Shift;
                 }
 
@@ -417,7 +420,7 @@ namespace Sudoku
                     _modifierKey |= ModifierKey.Control;
 
                     // For Control-#, pretend the user selected that # as focus number
-                    if (input >= UserInput.One && input <= UserInput.Nine)
+                    if ((input >= UserInput.One) && (input <= UserInput.Nine))
                     {
                         pnlFocusNumber.SimulateClick((int)input);
 
@@ -425,6 +428,7 @@ namespace Sudoku
                         return;
                     }
 
+                    // ctrl-z and ctrl-y
                     if (input == UserInput.Z)
                         Undo();
                     else if (input == UserInput.Y)
@@ -438,9 +442,7 @@ namespace Sudoku
                     Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
                 Render();
-
-                if (numPressed != 0)
-                    CheckForSolved();
+                CheckForSolved();
             }
         }
 
@@ -451,9 +453,11 @@ namespace Sudoku
             Render();
         }
 
+        // dabbling with undo/redo.  no major plans yet
         private void Redo()
         {
-
+            ActionManager.Redo();
+            Render();
         }
 
         /// <summary>
@@ -520,7 +524,7 @@ namespace Sudoku
                 BitmapBoard board = (BitmapBoard)Game.Board;
 
                 // if clicked in the board area of the form
-                if (_clickX >= 0 && _clickX < board.BoardSize && _clickY >= 0 && _clickY < board.BoardSize)
+                if ((_clickX >= 0) && (_clickX < board.BoardSize) && (_clickY >= 0) && (_clickY < board.BoardSize))
                 {
                     if (_isDoubleClick)
                     {
@@ -530,6 +534,10 @@ namespace Sudoku
                         if (chkHighlightHavingValue.Checked && (Game.Board.SelectedCell.Answer != pnlFocusNumber.ActiveValue))
                             Game.Board.HighlightCell(CellHighlightType.None);
 
+                        // if has a guess/given and old notes are to be cleared, do that
+                        if (Game.Board.SelectedCell.HasAnswer && (Board.RemoveOldNotes == YesNo.Yes))
+                            Game.Board.RemoveNotes(Game.Board.SelectedCell.Answer);
+
                         Render();
                         CheckForSolved();
                     }
@@ -537,7 +545,7 @@ namespace Sudoku
                     {
                         ((BitmapBoard)Game.Board).HandlePixelXYClick(UserInput.RightClick, _modifierKey, _clickX, _clickY);
 
-                        // why note allow right-click to simulate Delete of a Guess, ya?
+                        // if has a guess value, delete it
                         if (Game.Board.SelectedCell.HasAnswer && (Game.Board.SelectedCell.IsGiven.HasValue && !Game.Board.SelectedCell.IsGiven.Value))
                             frmMain_KeyDown(this, new KeyEventArgs(Keys.Delete));
                             
@@ -556,20 +564,13 @@ namespace Sudoku
                                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
                         }
 
-                         Move ALL THIS TO BOARD YA?  highlightclick mode as static in board class?
-
                         // do special highlighting if Control WASN'T clicked (Control-Left click is for special strong/week coloring done in HandleXYClick)
                         if ((_modifierKey & ModifierKey.Control) == 0)
                         {
-                            if (_highlightClickMode == HighlightClickMode.Cell)
+                            if (chkHighlightClickMode.CheckState == (CheckState)HighlightClickMode.Cell)
                                 Game.Board.HighlightCell((CellHighlightType)pnlCellHighlightPicker.ActiveValue);
-                            else if ((_highlightClickMode == HighlightClickMode.Note) && !Game.Board.SelectedCell.HasAnswer)
-                            {
-                                int selectedNote = (Game.Board.SelectedCell.HasNoteSelected ? Game.Board.SelectedCell.SelectedNote.Candidate : 0);
-                                // if even clicked a note area that had a note set
-                                if (selectedNote != 0)
-                                    Game.Board.HighlightNote(selectedNote, (NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
-                            }
+                            else if ((chkHighlightClickMode.CheckState == (CheckState)HighlightClickMode.Note) && !Game.Board.SelectedCell.HasAnswer)
+                                Game.Board.HighlightSelectedNote((NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
                         }
 
                         Render();

@@ -289,6 +289,10 @@ namespace Sudoku
             if ((Game.Board != null) && (Board.RemoveOldNotes != YesNo.No))
             {
                 Game.Board.RemoveNotes();
+
+                if (chkHighlightHavingValue.Checked)
+                    Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+
                 Render();
             }
         }
@@ -536,7 +540,12 @@ namespace Sudoku
 
                         // if has a guess/given and old notes are to be cleared, do that
                         if (Game.Board.SelectedCell.HasAnswer && (Board.RemoveOldNotes == YesNo.Yes))
+                        {
                             Game.Board.RemoveNotes(Game.Board.SelectedCell.Answer);
+
+                            if (chkHighlightHavingValue.Checked)
+                                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+                        }
 
                         Render();
                         CheckForSolved();

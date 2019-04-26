@@ -42,7 +42,7 @@ namespace Sudoku
             public static Color NoteHighlightBad = Color.Red;
             public static Color NoteHighlightStrong = Color.RoyalBlue;
             public static Color NoteHighlightWeak = Color.Yellow;
-            public static Color NoteTextOnHighlightNone = Color.Black;
+            public static Color NoteTextOnHighlightNone = Color.DimGray;
             public static Color NoteTextOnHighlightInfo = Color.DarkSlateGray;
             public static Color NoteTextOnHighlightBad = Color.LightGray;
             public static Color NoteTextOnHighlightStrong = Color.LightGray;

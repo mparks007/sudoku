@@ -115,6 +115,17 @@ namespace Sudoku
         }
 
         /// <summary>
+        /// Clear the note specified
+        /// </summary>
+        /// <param name="note">Note to clear</param>
+        public void RemoveNote(int note)
+        {
+            // clear potential highlight on it too
+            HighlightNote(note, NoteHighlightType.None);
+            _notes[note - 1].Candidate = 0;
+        }
+
+        /// <summary>
         /// Highlight either an answer number or a note based on the passed in value
         /// </summary>
         /// <param name="value">Number or note to check against and highlight</param>
@@ -153,6 +164,16 @@ namespace Sudoku
             // if note is set
             if (_notes[note - 1].IsNoted)
                 _notes[note - 1].HighlightType = highlightType;
+        }
+
+        /// <summary>
+        /// Determine if the cell has a particular note
+        /// </summary>
+        /// <param name="note">Note to check for</param>
+        /// <returns></returns>
+        public bool HasNote(int note)
+        {
+            return _notes[note - 1].IsNoted;
         }
 
         /// <summary>

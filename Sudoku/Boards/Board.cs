@@ -134,29 +134,7 @@ namespace Sudoku
 
             _selectedCell.SetGuess(num);
 
-            if (Board.RemoveOldNotes == YesNo.Yes)
-                RemoveNotes(num);
-
-            CheckAndMarkDupes();
-        }
-
-        /// <summary>
-        /// Places an answer/guess/solve main number in the cell at row/col
-        /// </summary>
-        /// <param name="row">Row to update</param>
-        /// <param name="col">Column to update</param>
-        /// <param name="num">Number to try and set</param>
-        private void SetGuess(int row, int col, int num)
-        {
-            if (row < 1 || row > 9 || col < 1 || col > 9)
-                throw new ArgumentException(String.Format("Invalid value row/column requested for setting Guess: {0}/{1}", row, col));
-
-            if (num < 0 || num > 9)
-                throw new ArgumentException(String.Format("Invalid solution number being set: {0}", num));
-
-            _cells[row - 1][col - 1].SetGuess(num);
-
-            if (Board.RemoveOldNotes == YesNo.Yes)
+            if ((Board.RemoveOldNotes == YesNo.Yes) && (num != 0))
                 RemoveNotes(num);
 
             CheckAndMarkDupes();
@@ -372,41 +350,52 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Remove all notes in houses of selected cell for the given note
+        /// Remove all notes of the given note value
+        /// Ugly waste of time to do all the cells when only might need to do selected cell houses
         /// </summary>
-        /// <param name="note">Note to remove, if has it</param>
+        /// <param name="note">Note to remove, if has it (0 means check all note values)</param>
         public void RemoveNotes(int note)
         {
-            //// flatten the cells multidimmensional array
-            //IEnumerable<Cell> allCells = _cells.SelectMany(list => list);
+            // assume clearing every single old note
+            int min = 1;
+            int max = 9;
 
-            //// do rows
-            //for (int r = 1; r <= 9; r++)
-            //    for (int n = 1; n <= 9; n++) // while on a row, pick each number
-            //    {
-            //        IEnumerable<Cell> filteredCells = allCells.Where(cell => cell.Row == r && cell.Answer == n);
-            //        int count = filteredCells.Count();
-            //        if (filteredCells.Count() > 1)
-            //            filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
-            //    }
+            // but use really desired note if passed in
+            if (note != 0)
+            {
+                min = note;
+                max = note;
+            }
 
-            //// do columns
-            //for (int c = 1; c <= 9; c++)
-            //    for (int n = 1; n <= 9; n++) // while on a column, pick each number
-            //    {
-            //        IEnumerable<Cell> filteredCells = allCells.Where(cell => cell.Column == c && cell.Answer == n);
-            //        if (filteredCells.Count() > 1)
-            //            filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
-            //    }
+            // flatten the cells multidimmensional array
+            IEnumerable<Cell> allCells = _cells.SelectMany(list => list);
 
-            //// do blocks
-            //for (int b = 1; b <= 9; b++)
-            //    for (int n = 1; n <= 9; n++) // while on a block, pick each number
-            //    {
-            //        IEnumerable<Cell> filteredCells = allCells.Where(cell => cell.Block == b && cell.Answer == n);
-            //        if (filteredCells.Count() > 1)
-            //            filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
-            //    }
+            // do rows
+            for (int r = 1; r <= 9; r++)
+                for (int n = min; n <= max; n++) // while on a column, pick each number (or ONE specific note if one was passed in)
+                {
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Row == r) && (cell.HasNote(n) || (cell.Answer == n)));
+                    if (filteredCells.Where(cell => (cell.Answer == n)).Count() > 0)
+                        filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.RemoveNote(n));
+                }
+
+            // do columns
+            for (int c = 1; c <= 9; c++)
+                for (int n = min; n <= max; n++) // while on a column, pick each number (or ONE specific note if one was passed in)
+                {
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Column == c) && (cell.HasNote(n) || (cell.Answer == n)));
+                    if (filteredCells.Where(cell => (cell.Answer == n)).Count() > 0)
+                        filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.RemoveNote(n));
+                }
+
+            // do blocks
+            for (int b = 1; b <= 9; b++)
+                for (int n = min; n <= max; n++) // while on a block, pick each number (or ONE specific note if one was passed in)
+                {
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Block == b) && (cell.HasNote(n) || (cell.Answer == n)));
+                    if (filteredCells.Where(cell => (cell.Answer == n)).Count() > 0)
+                        filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.RemoveNote(n));
+                }
         }
 
         /// <summary>
@@ -427,8 +416,7 @@ namespace Sudoku
             for (int r = 1; r <= 9; r++)
                 for (int n = 1; n <= 9; n++) // while on a row, pick each number
                 {
-                    IEnumerable<Cell> filteredCells = allCells.Where(cell => cell.Row == r && cell.Answer == n);
-                    int count = filteredCells.Count();
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Row == r) && (cell.Answer == n));
                     if (filteredCells.Count() > 1)
                     {
                         filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
@@ -440,7 +428,7 @@ namespace Sudoku
             for (int c = 1; c <= 9; c++)
                 for (int n = 1; n <= 9; n++) // while on a column, pick each number
                 {
-                    IEnumerable<Cell> filteredCells = allCells.Where(cell => cell.Column == c && cell.Answer == n);
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Column == c) && (cell.Answer == n));
                     if (filteredCells.Count() > 1)
                     {
                         filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
@@ -452,7 +440,7 @@ namespace Sudoku
             for (int b = 1; b <= 9; b++)
                 for (int n = 1; n <= 9; n++) // while on a block, pick each number
                 {
-                    IEnumerable<Cell> filteredCells = allCells.Where(cell => cell.Block == b && cell.Answer == n);
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Block == b) && (cell.Answer == n));
                     if (filteredCells.Count() > 1)
                     {
                         filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);

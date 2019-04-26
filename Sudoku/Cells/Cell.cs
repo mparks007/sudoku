@@ -131,6 +131,10 @@ namespace Sudoku
         /// <param name="value">Number or note to check against and highlight</param>
         public void HighlightHavingNoteOrNumber(int value)
         {
+            // convert the forced value override to the 'clear highlight' value
+            if (value == -1)
+                value = 0;
+
             if (value < 0 || value > 9)
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 

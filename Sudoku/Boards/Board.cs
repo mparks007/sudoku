@@ -21,6 +21,7 @@ namespace Sudoku
         public Board()
         {
             Board.RemoveOldNotes = YesNo.No;
+            Board.ValidationMode = ValidationMode.Off;
         }
 
         /// <summary>
@@ -188,13 +189,17 @@ namespace Sudoku
         /// <param name="value">Number or note to check against and highlight</param>
         public void HighlightCellsWithNoteOrNumber(int value)
         {
-            if (value < 0 || value > 9)
+            if (value < -1 || value > 9)
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
             // paw through all cells
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
-                    _cells[r][c].HighlightHavingNoteOrNumber(value);
+                {
+                    // if special (unhighlight no matter what)...OR not a special highlight
+                    if ((value == -1) || ((_cells[r][c].HighlightType == CellHighlightType.Value)) || (_cells[r][c].HighlightType == CellHighlightType.None))
+                        _cells[r][c].HighlightHavingNoteOrNumber(value);
+                }
         }
 
         /// <summary>

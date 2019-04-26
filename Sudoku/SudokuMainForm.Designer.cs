@@ -104,13 +104,13 @@
             this.btnFind.UseVisualStyleBackColor = false;
             this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
-            // chkRemoveOldNotes
+            // chkClearOldNotes
             // 
             this.chkRemoveOldNotes.Checked = false;
             this.chkRemoveOldNotes.CheckState = System.Windows.Forms.CheckState.Unchecked;
-            this.chkRemoveOldNotes.Label = "Remove Old Notes:";
+            this.chkRemoveOldNotes.Label = "Clear Old Notes:";
             this.chkRemoveOldNotes.Location = new System.Drawing.Point(581, 508);
-            this.chkRemoveOldNotes.Name = "chkRemoveOldNotes";
+            this.chkRemoveOldNotes.Name = "chkClearOldNotes";
             this.chkRemoveOldNotes.Size = new System.Drawing.Size(242, 28);
             this.chkRemoveOldNotes.TabIndex = 70;
             this.chkRemoveOldNotes.TabStop = false;

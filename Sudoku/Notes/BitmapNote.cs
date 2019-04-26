@@ -40,7 +40,7 @@ namespace Sudoku
 
                 // setup note background and font coloring based on highlight or not
                 Color c = Color.Transparent;
-                Brush br = Brushes.Black;
+                Brush br = new SolidBrush(BitmapBoard.Colors.NoteTextOnHighlightNone);
                 switch (HighlightType)
                 {
                     case NoteHighlightType.Info:

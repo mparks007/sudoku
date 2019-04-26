@@ -11,6 +11,7 @@ namespace Sudoku
         private int _xOffset = 20;                                                  // how far over from Form's left edge to start painting the board
         private int _yOffset = 20;                                                  // how far down from Form's top edge to start painting the board
         private ModifierKey _modifierKey = ModifierKey.None;                        // keeping track of alt, shift, ctrl state at the time of early key trapping and normal keypress events
+        private frmColorDialog frmColors = new frmColorDialog();
 
         // components for click/doubleclick hack code :(
         private Timer _doubleClickTimer = new Timer();
@@ -76,15 +77,18 @@ namespace Sudoku
             chkNotesHold.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description());
             //  for number keys mode
             chkNumberKeysMode.SetButtonText(NumberKeysMode.Numbers.Description(), NumberKeysMode.Notes.Description());
+            //  for highlight value selected value mode
+            chkHighlightHavingValue.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description());
+            chkHighlightHavingValue.ButtonClicked += chkHighlightHavingValue_ButtonClicked;
             //  for remove old notes mode
             chkRemoveOldNotes.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description());
             chkRemoveOldNotes.ButtonClicked += chkRemoveOldNotes_ButtonClicked;
             //  for validation mode
             chkValidationMode.SetButtonText(ValidationMode.Numbers.Description(), ValidationMode.Notes.Description(), ValidationMode.Off.Description());
             chkValidationMode.ButtonClicked += chkValidationMode_ButtonClicked;
-            //  for highlight value selected value mode
-            chkHighlightHavingValue.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description());
-            chkHighlightHavingValue.ButtonClicked += chkHighlightHavingValue_ButtonClicked;
+            //  for validation mode
+            chkColorScheme.SetButtonText(ColorScheme.Light.Description(), ColorScheme.Dark.Description(), ColorScheme.Custom.Description());
+            chkColorScheme.ButtonClicked += chkColorScheme_ButtonClicked;
         }
 
         /// <summary>
@@ -309,6 +313,37 @@ namespace Sudoku
             if ((Game.Board != null) && (Board.ValidationMode != ValidationMode.Off))
             {
                 Game.Board.CheckAndMarkDupes();
+                Render();
+            }
+        }
+
+        /// <summary>
+        /// Callback/Event from color scheme options changing
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void chkColorScheme_ButtonClicked(Object sender, EventArgs e)
+        {
+            if (Game.Board != null)
+            {
+                switch (chkColorScheme.CheckState)
+                {
+                    case CheckState.Unchecked:
+                        BitmapBoard.Colors.SetLight();
+                        break;
+                    case CheckState.Checked:
+                        BitmapBoard.Colors.SetDark();
+                        break;
+                    case CheckState.Indeterminate:
+                        frmColors.ShowDialog();
+                        break;
+                }
+            
+                pnlCellHighlightPicker.SetButtonColors(BitmapBoard.Colors.CellHighlightNone, BitmapBoard.Colors.CellHighlightValue, BitmapBoard.Colors.CellHighlightSpecial, BitmapBoard.Colors.CellHighlightPivot, BitmapBoard.Colors.CellHighlightPincer);
+                pnlCellHighlightPicker.SetButtonFontColors(BitmapBoard.Colors.CellTextOnHighlightNone, BitmapBoard.Colors.CellTextOnHighlightValue, BitmapBoard.Colors.CellTextOnHighlightSpecial, BitmapBoard.Colors.CellTextOnHighlightPivot, BitmapBoard.Colors.CellTextOnHighlightPincer);
+                pnlNoteHighlightPicker.SetButtonColors(BitmapBoard.Colors.NoteHighlightNone, BitmapBoard.Colors.NoteHighlightInfo, BitmapBoard.Colors.NoteHighlightStrong, BitmapBoard.Colors.NoteHighlightWeak, BitmapBoard.Colors.NoteHighlightBad);
+                pnlNoteHighlightPicker.SetButtonFontColors(BitmapBoard.Colors.NoteTextOnHighlightNone, BitmapBoard.Colors.NoteTextOnHighlightInfo, BitmapBoard.Colors.NoteTextOnHighlightStrong, BitmapBoard.Colors.NoteTextOnHighlightWeak, BitmapBoard.Colors.NoteTextOnHighlightBad);
+
                 Render();
             }
         }

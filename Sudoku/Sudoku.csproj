@@ -53,8 +53,15 @@
     <Compile Include="Boards\BitmapBoard.cs" />
     <Compile Include="Boards\Board.cs" />
     <Compile Include="Cells\BitmapCell.cs" />
+    <Compile Include="FormColorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormColorDialog.Designer.cs">
+      <DependentUpon>FormColorDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Enums\ActionType.cs" />
     <Compile Include="Enums\EnumExtensions.cs" />
+    <Compile Include="Enums\ColorScheme.cs" />
     <Compile Include="Enums\YesNo.cs" />
     <Compile Include="Enums\ValidationMode.cs" />
     <Compile Include="Enums\NumberKeysMode.cs" />
@@ -67,19 +74,22 @@
     <Compile Include="Enums\NoteHighlightType.cs" />
     <Compile Include="Notes\BitmapNote.cs" />
     <Compile Include="Notes\Note.cs" />
-    <Compile Include="SudokuMainForm.cs">
+    <Compile Include="FormSudokuMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SudokuMainForm.Designer.cs">
-      <DependentUpon>SudokuMainForm.cs</DependentUpon>
+    <Compile Include="FormSudokuMain.Designer.cs">
+      <DependentUpon>FormSudokuMain.cs</DependentUpon>
     </Compile>
     <Compile Include="Game.cs" />
     <Compile Include="Enums\UserInput.cs" />
     <Compile Include="Boards\HtmlBoard.cs" />
     <Compile Include="Sudoku.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="SudokuMainForm.resx">
-      <DependentUpon>SudokuMainForm.cs</DependentUpon>
+    <EmbeddedResource Include="FormColorDialog.resx">
+      <DependentUpon>FormColorDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSudokuMain.resx">
+      <DependentUpon>FormSudokuMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

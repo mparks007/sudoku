@@ -43,6 +43,7 @@
             this.chkHighlightHavingValue = new SudokuCustomControls.OptionButton();
             this.btnToggleNote = new System.Windows.Forms.Button();
             this.chkNotesHold = new SudokuCustomControls.OptionButton();
+            this.chkColorScheme = new SudokuCustomControls.OptionButton();
             this.SuspendLayout();
             // 
             // btnSetGiven
@@ -104,13 +105,13 @@
             this.btnFind.UseVisualStyleBackColor = false;
             this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
-            // chkClearOldNotes
+            // chkRemoveOldNotes
             // 
             this.chkRemoveOldNotes.Checked = false;
             this.chkRemoveOldNotes.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.chkRemoveOldNotes.Label = "Clear Old Notes:";
-            this.chkRemoveOldNotes.Location = new System.Drawing.Point(581, 508);
-            this.chkRemoveOldNotes.Name = "chkClearOldNotes";
+            this.chkRemoveOldNotes.Location = new System.Drawing.Point(581, 487);
+            this.chkRemoveOldNotes.Name = "chkRemoveOldNotes";
             this.chkRemoveOldNotes.Size = new System.Drawing.Size(242, 28);
             this.chkRemoveOldNotes.TabIndex = 70;
             this.chkRemoveOldNotes.TabStop = false;
@@ -121,7 +122,7 @@
             this.chkValidationMode.Checked = true;
             this.chkValidationMode.CheckState = System.Windows.Forms.CheckState.Indeterminate;
             this.chkValidationMode.Label = "Validation Mode:";
-            this.chkValidationMode.Location = new System.Drawing.Point(581, 535);
+            this.chkValidationMode.Location = new System.Drawing.Point(581, 514);
             this.chkValidationMode.Name = "chkValidationMode";
             this.chkValidationMode.Size = new System.Drawing.Size(242, 28);
             this.chkValidationMode.TabIndex = 69;
@@ -145,7 +146,7 @@
             this.chkNumberKeysMode.Checked = false;
             this.chkNumberKeysMode.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.chkNumberKeysMode.Label = "Number Keys Mode:";
-            this.chkNumberKeysMode.Location = new System.Drawing.Point(581, 481);
+            this.chkNumberKeysMode.Location = new System.Drawing.Point(581, 460);
             this.chkNumberKeysMode.Name = "chkNumberKeysMode";
             this.chkNumberKeysMode.Size = new System.Drawing.Size(242, 28);
             this.chkNumberKeysMode.TabIndex = 67;
@@ -191,7 +192,7 @@
             this.chkHighlightHavingValue.Checked = false;
             this.chkHighlightHavingValue.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.chkHighlightHavingValue.Label = "Highlight Numbers:";
-            this.chkHighlightHavingValue.Location = new System.Drawing.Point(581, 454);
+            this.chkHighlightHavingValue.Location = new System.Drawing.Point(581, 433);
             this.chkHighlightHavingValue.Name = "chkHighlightHavingValue";
             this.chkHighlightHavingValue.Size = new System.Drawing.Size(242, 28);
             this.chkHighlightHavingValue.TabIndex = 71;
@@ -218,12 +219,24 @@
             this.chkNotesHold.Checked = false;
             this.chkNotesHold.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.chkNotesHold.Label = "Note Lock:";
-            this.chkNotesHold.Location = new System.Drawing.Point(581, 427);
+            this.chkNotesHold.Location = new System.Drawing.Point(581, 406);
             this.chkNotesHold.Name = "chkNotesHold";
             this.chkNotesHold.Size = new System.Drawing.Size(242, 28);
             this.chkNotesHold.TabIndex = 73;
             this.chkNotesHold.TabStop = false;
             this.chkNotesHold.ThreeState = false;
+            // 
+            // chkColorScheme
+            // 
+            this.chkColorScheme.Checked = false;
+            this.chkColorScheme.CheckState = System.Windows.Forms.CheckState.Unchecked;
+            this.chkColorScheme.Label = "Color Scheme:";
+            this.chkColorScheme.Location = new System.Drawing.Point(581, 542);
+            this.chkColorScheme.Name = "chkColorScheme";
+            this.chkColorScheme.Size = new System.Drawing.Size(242, 28);
+            this.chkColorScheme.TabIndex = 74;
+            this.chkColorScheme.TabStop = false;
+            this.chkColorScheme.ThreeState = true;
             // 
             // frmMain
             // 
@@ -231,6 +244,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(840, 577);
+            this.Controls.Add(this.chkColorScheme);
             this.Controls.Add(this.chkNotesHold);
             this.Controls.Add(this.btnToggleNote);
             this.Controls.Add(this.chkHighlightHavingValue);
@@ -278,6 +292,7 @@
         private SudokuCustomControls.OptionButton chkHighlightHavingValue;
         private System.Windows.Forms.Button btnToggleNote;
         private SudokuCustomControls.OptionButton chkNotesHold;
+        private SudokuCustomControls.OptionButton chkColorScheme;
     }
 }
 

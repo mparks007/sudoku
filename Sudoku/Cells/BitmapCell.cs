@@ -70,11 +70,11 @@ namespace Sudoku
                 Brush br;
                 // only turn red when invalid if....validating full number option and that number isn't a given
                 if (IsInvalid && (Board.ValidationMode == ValidationMode.Numbers) && (IsGiven.HasValue && !IsGiven.Value))
-                    br = BitmapBoard.Colors.AnswerInvalid;
+                    br = new SolidBrush(BitmapBoard.Colors.AnswerInvalid);
                 else if (IsGiven.HasValue && IsGiven.Value)
-                    br = BitmapBoard.Colors.AnswerGiven;
+                    br = new SolidBrush(BitmapBoard.Colors.AnswerGiven);
                 else
-                    br = BitmapBoard.Colors.AnswerGuess;
+                    br = new SolidBrush(BitmapBoard.Colors.AnswerGuess);
 
                 StringFormat format = new StringFormat()
                 {

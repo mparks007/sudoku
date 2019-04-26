@@ -15,86 +15,125 @@ namespace Sudoku
 
         public static Graphics Graphics;    // sharing common graphics object for board, its children cells, and their notes vs. asking for a new one at each level
 
-        private static class DefaultColors
-        {
-            public static Color BoardBorder = Color.Black;
-            public static Color BlockBorder = Color.Black;
-            public static Color BlockAltShade = Color.GhostWhite;
-            public static Color CellBorder = Color.DarkGray;
-            public static Color CellBlank = Color.White;
-            public static Color CellHouseSelect = Color.LavenderBlush;
-            public static Color CellSelectFrame = Color.Coral;
-            public static Color CellHighlightNone = SystemColors.GradientInactiveCaption;
-            public static Color CellHighlightValue = Color.Lime;
-            public static Color CellHighlightSpecial = Color.MediumSeaGreen;
-            public static Color CellHighlightPivot = Color.LightSeaGreen;
-            public static Color CellHighlightPincer = Color.Aquamarine;
-            public static Color CellTextOnHighlightNone = Color.DimGray;
-            public static Color CellTextOnHighlightValue = Color.DarkSlateGray;
-            public static Color CellTextOnHighlightSpecial = Color.DarkSlateGray;
-            public static Color CellTextOnHighlightPivot = Color.DarkSlateGray;
-            public static Color CellTextOnHighlightPincer = Color.DarkSlateGray;
-            public static Brush AnswerGiven = Brushes.Black;
-            public static Brush AnswerGuess = Brushes.Blue;
-            public static Brush AnswerInvalid = Brushes.Red;
-            public static Color NoteHighlightNone = Color.Transparent;
-            public static Color NoteHighlightInfo = Color.Plum;
-            public static Color NoteHighlightBad = Color.Red;
-            public static Color NoteHighlightStrong = Color.RoyalBlue;
-            public static Color NoteHighlightWeak = Color.Yellow;
-            public static Color NoteTextOnHighlightNone = Color.DimGray;
-            public static Color NoteTextOnHighlightInfo = Color.DarkSlateGray;
-            public static Color NoteTextOnHighlightBad = Color.LightGray;
-            public static Color NoteTextOnHighlightStrong = Color.LightGray;
-            public static Color NoteTextOnHighlightWeak = Color.DarkSlateGray;
-        }
-
         public static class Colors
         {
-            public static Color BoardBorder = DefaultColors.BoardBorder;
-            public static Color BlockBorder = DefaultColors.BlockBorder;
-            public static Color BlockAltShade = DefaultColors.BlockAltShade;
-            public static Color CellBorder = DefaultColors.CellBorder;
-            public static Color CellBlank = DefaultColors.CellBlank;
-            public static Color CellHouseSelect = DefaultColors.CellHouseSelect;
-            public static Color CellSelectFrame = DefaultColors.CellSelectFrame;
-            public static Color CellHighlightNone = DefaultColors.CellHighlightNone;
-            public static Color CellHighlightValue = DefaultColors.CellHighlightValue;
-            public static Color CellHighlightSpecial = DefaultColors.CellHighlightSpecial;
-            public static Color CellHighlightPivot = DefaultColors.CellHighlightPivot;
-            public static Color CellHighlightPincer = DefaultColors.CellHighlightPincer;
-            public static Color CellTextOnHighlightNone = DefaultColors.CellTextOnHighlightNone;
-            public static Color CellTextOnHighlightValue = DefaultColors.CellTextOnHighlightValue;
-            public static Color CellTextOnHighlightSpecial = DefaultColors.CellTextOnHighlightSpecial;
-            public static Color CellTextOnHighlightPivot = DefaultColors.CellTextOnHighlightPivot;
-            public static Color CellTextOnHighlightPincer = DefaultColors.CellTextOnHighlightPincer;
-            public static Brush AnswerGiven = DefaultColors.AnswerGiven;
-            public static Brush AnswerGuess = DefaultColors.AnswerGuess;
-            public static Brush AnswerInvalid = DefaultColors.AnswerInvalid;
-            public static Color NoteHighlightNone = DefaultColors.NoteHighlightNone;
-            public static Color NoteHighlightInfo = DefaultColors.NoteHighlightInfo;
-            public static Color NoteHighlightBad = DefaultColors.NoteHighlightBad;
-            public static Color NoteHighlightStrong = DefaultColors.NoteHighlightStrong;
-            public static Color NoteHighlightWeak = DefaultColors.NoteHighlightWeak;
-            public static Color NoteTextOnHighlightNone = DefaultColors.NoteTextOnHighlightNone;
-            public static Color NoteTextOnHighlightInfo = DefaultColors.NoteTextOnHighlightInfo;
-            public static Color NoteTextOnHighlightBad = DefaultColors.NoteTextOnHighlightBad;
-            public static Color NoteTextOnHighlightStrong = DefaultColors.NoteTextOnHighlightStrong;
-            public static Color NoteTextOnHighlightWeak = DefaultColors.NoteTextOnHighlightWeak;
-        }
+            public static Color BoardBorder;
+            public static Color BlockBorder;
+            public static Color BlockAltShade;
+            public static Color CellBorder;
+            public static Color CellBlank;
+            public static Color CellHouseSelect;
+            public static Color CellSelectFrame;
+            public static Color CellHighlightNone;
+            public static Color CellHighlightValue;
+            public static Color CellHighlightSpecial;
+            public static Color CellHighlightPivot;
+            public static Color CellHighlightPincer;
+            public static Color CellTextOnHighlightNone;
+            public static Color CellTextOnHighlightValue;
+            public static Color CellTextOnHighlightSpecial;
+            public static Color CellTextOnHighlightPivot;
+            public static Color CellTextOnHighlightPincer;
+            public static Color AnswerGiven;
+            public static Color AnswerGuess;
+            public static Color AnswerInvalid;
+            public static Color NoteHighlightNone;
+            public static Color NoteHighlightInfo;
+            public static Color NoteHighlightBad;
+            public static Color NoteHighlightStrong;
+            public static Color NoteHighlightWeak;
+            public static Color NoteTextOnHighlightNone;
+            public static Color NoteTextOnHighlightInfo;
+            public static Color NoteTextOnHighlightBad;
+            public static Color NoteTextOnHighlightStrong;
+            public static Color NoteTextOnHighlightWeak;
 
-        private static class DefaultFonts
-        {
-            public static string Answer = "Century Gothic";
-            public static string Note = "Arial";
+            static Colors()
+            {
+                SetLight();
+            }
+
+            public static void SetLight()
+            {
+                BoardBorder = Color.Black;
+                BlockBorder = Color.Black;
+                BlockAltShade = Color.GhostWhite;
+                CellBorder = Color.DarkGray;
+                CellBlank = Color.White;
+                CellHouseSelect = Color.LavenderBlush;
+                CellSelectFrame = Color.Coral;
+                CellHighlightNone = SystemColors.GradientInactiveCaption;
+                CellHighlightValue = Color.Lime;
+                CellHighlightSpecial = Color.MediumSeaGreen;
+                CellHighlightPivot = Color.LightSeaGreen;
+                CellHighlightPincer = Color.Aquamarine;
+                CellTextOnHighlightNone = Color.DimGray;
+                CellTextOnHighlightValue = Color.DarkSlateGray;
+                CellTextOnHighlightSpecial = Color.DarkSlateGray;
+                CellTextOnHighlightPivot = Color.DarkSlateGray;
+                CellTextOnHighlightPincer = Color.DarkSlateGray;
+                AnswerGiven = Color.Black;
+                AnswerGuess = Color.Blue;
+                AnswerInvalid = Color.Red;
+                NoteHighlightNone = Color.Transparent;
+                NoteHighlightInfo = Color.Plum;
+                NoteHighlightBad = Color.Red;
+                NoteHighlightStrong = Color.RoyalBlue;
+                NoteHighlightWeak = Color.Yellow;
+                NoteTextOnHighlightNone = Color.DarkSlateGray;
+                NoteTextOnHighlightInfo = Color.DarkSlateGray;
+                NoteTextOnHighlightBad = Color.LightGray;
+                NoteTextOnHighlightStrong = Color.LightGray;
+                NoteTextOnHighlightWeak = Color.DarkSlateGray;
+            }
+
+            public static void SetDark()
+            {
+                BoardBorder = Color.DarkViolet;
+                BlockBorder = Color.DarkViolet;
+                BlockAltShade = Color.FromArgb(15, 15, 15);
+                CellBorder = Color.DarkSlateBlue;
+                CellBlank = Color.Black;
+                CellHouseSelect = Color.FromArgb(30,30,30);
+                CellSelectFrame = Color.DarkOliveGreen;
+                CellHighlightNone = SystemColors.GradientInactiveCaption;
+                CellHighlightValue = Color.Lime;
+                CellHighlightSpecial = Color.MediumSeaGreen;
+                CellHighlightPivot = Color.LightSeaGreen;
+                CellHighlightPincer = Color.Aquamarine;
+                CellTextOnHighlightNone = Color.DimGray;
+                CellTextOnHighlightValue = Color.DarkSlateGray;
+                CellTextOnHighlightSpecial = Color.DarkSlateGray;
+                CellTextOnHighlightPivot = Color.DarkSlateGray;
+                CellTextOnHighlightPincer = Color.DarkSlateGray;
+                AnswerGiven = Color.DarkOliveGreen;
+                AnswerGuess = Color.DarkMagenta;
+                AnswerInvalid = Color.Red;
+                NoteHighlightNone = Color.Transparent;
+                NoteHighlightInfo = Color.Plum;
+                NoteHighlightBad = Color.Red;
+                NoteHighlightStrong = Color.RoyalBlue;
+                NoteHighlightWeak = Color.Yellow;
+                NoteTextOnHighlightNone = Color.DarkSlateGray;
+                NoteTextOnHighlightInfo = Color.DarkSlateGray;
+                NoteTextOnHighlightBad = Color.LightGray;
+                NoteTextOnHighlightStrong = Color.LightGray;
+                NoteTextOnHighlightWeak = Color.DarkSlateGray;
+            }
         }
 
         public static class Fonts
         {
-            public static string Answer = DefaultFonts.Answer;
-            public static string Note = DefaultFonts.Note;
-        }
+            public static string Answer;
+            public static string Note;
 
+            static Fonts()
+            {
+                Answer = "Century Gothic";
+                Note = "Arial";
+            }
+        }
+        
         public Bitmap Image
         {
             get

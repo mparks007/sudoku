@@ -93,10 +93,7 @@ namespace Sudoku
         {
             var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
 
-            // BUT HOW TO GET NOTES TO DESERIALIZE AS BITMAPNOTES?????
-            // BUT HOW TO GET NOTES TO DESERIALIZE AS BITMAPNOTES?????
-            // BUT HOW TO GET NOTES TO DESERIALIZE AS BITMAPNOTES?????
-            _cells = JsonConvert.DeserializeObject<BitmapCell[][]>(cellJSON);
+            _cells = JsonConvert.DeserializeObject<BitmapCell[][]>(cellJSON, settings);
 
             SelectCellAtRowCol(5, 5);
         }

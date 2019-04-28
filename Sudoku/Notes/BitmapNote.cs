@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
@@ -10,6 +11,7 @@ namespace Sudoku
 {
     public class BitmapNote : Note
     {
+        [JsonProperty]
         private readonly int _cellPixelSize;
 
         /// <summary>

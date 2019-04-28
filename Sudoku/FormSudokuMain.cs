@@ -727,7 +727,7 @@ namespace Sudoku
         {
             if (dlgImport.ShowDialog() == DialogResult.OK)
             {
-                Game.Board.LoadCells(File.ReadAllText(dlgImport.FileName));
+                ((BitmapBoard)Game.Board).LoadCells(File.ReadAllText(dlgImport.FileName));
                 Render();
             }
         }

@@ -36,10 +36,10 @@ namespace Sudoku
             _boardImage = new Bitmap(_boardSize, _boardSize);
 
             // create all the child cells as two-dimensional array
-            _cells = new Cell[9][];
+            _cells = new BitmapCell[9][];
             for (int r = 0; r < 9; r++)
             {
-                _cells[r] = new Cell[9];
+                _cells[r] = new BitmapCell[9];
                 for (int c = 0; c < 9; c++)
                 {
                     int v = (r / 3);
@@ -83,6 +83,20 @@ namespace Sudoku
                 if (input == UserInput.DoubleClick && _selectedCell.HasAnswer)
                     CheckAndMarkDupes();
             }
+        }
+
+        /// <summary>
+        /// Load JSON version of cell data into the board's cell data
+        /// </summary>
+        /// <param name="cellJSON"></param>
+        public void LoadCells(string cellJSON)
+        {
+            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+
+            // BUT HOW TO GET NOTES TO SERIALIZE AS BITMAP NOTES THEN BACK INTO NOTES?????
+            _cells = JsonConvert.DeserializeObject<BitmapCell[][]>(cellJSON);
+
+            SelectCellAtRowCol(5, 5);
         }
 
         /// <summary>

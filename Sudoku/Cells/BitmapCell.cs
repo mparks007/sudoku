@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -12,6 +13,7 @@ namespace Sudoku
 {
     public class BitmapCell : Cell
     {
+        [JsonProperty]
         private readonly int _cellSize;
 
         /// <summary>
@@ -24,6 +26,7 @@ namespace Sudoku
         public BitmapCell(int cellSize, int row, int column, int block) : base(row, column, block)
         {
             _cellSize = cellSize;
+            _notes = new BitmapNote[9];
 
             // making as derived class here vs. just Note
             for (int i = 0; i < 9; i++)
@@ -121,7 +124,7 @@ namespace Sudoku
             _selectedNote = null;
             if (_notes[noteNum].IsNoted)
             {
-                _selectedNote = _notes[noteNum];
+                _selectedNote = (BitmapNote)_notes[noteNum];
 
                 if ((modifierKey & ModifierKey.Control) != 0)
                 {

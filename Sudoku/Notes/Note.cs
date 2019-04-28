@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace Sudoku
 {
     public abstract class Note
     {
+        [JsonProperty]
         protected int _candidate;
 
         /// <summary>

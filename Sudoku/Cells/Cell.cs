@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -12,12 +13,16 @@ namespace Sudoku
 {
     public abstract class Cell
     {
+        [JsonProperty]
         protected int _answer;
-        protected Note[] _notes = new Note[9];
+        //[JsonProperty]
+        protected Note[] _notes;// = new Note[9];
+        //[JsonProperty]
         protected Note _selectedNote;
         
         public int Answer { get { return _answer; } }
         public bool? IsGiven { get; set; }
+        [JsonIgnore]
         public bool IsSelected { get; set; }
         public bool IsInvalid { get; set; }
         public CellHighlightType HighlightType { get; set; }

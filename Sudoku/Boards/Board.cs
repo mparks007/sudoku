@@ -84,10 +84,6 @@ namespace Sudoku
         /// <param name="col">Column of the cell to select</param>
         public void SelectCellAtRowCol(int row, int col)
         {
-            // if no change, bail
-            if ((_selectedCell != null) && ((_selectedCell.Row == row) && (_selectedCell.Column == col)))
-                return;
-
             if (row < 1 || row > 9)
                 throw new ArgumentException(String.Format("Invalid row requested for selection: {0}", row));
 
@@ -506,18 +502,9 @@ namespace Sudoku
         /// <returns>JSON string of current cell data</returns>
         public string CellsAsJSON()
         {
-            // BUT HOW TO GET THIS AS BITMAPCELL WITH ITS FIELDS AND BASE CLASS FIELDS (INCLUDING PRIVATE)
-            return JsonConvert.SerializeObject(_cells, Newtonsoft.Json.Formatting.None);
-        }
+            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
 
-        /// <summary>
-        /// Load JSON version of cell data into the board's cell data
-        /// </summary>
-        /// <param name="cellJSON"></param>
-        public void LoadCells(string cellJSON)
-        {
-            // BUT HOW TO GET THIS BACK INTO BITMAPCELL VS. CELL
-            _cells = JsonConvert.DeserializeObject<BitmapCell[][]>(cellJSON);
+            return JsonConvert.SerializeObject(_cells, Newtonsoft.Json.Formatting.None, settings);
         }
 
         /// <summary>

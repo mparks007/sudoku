@@ -19,11 +19,6 @@ namespace Sudoku
             set { _instance = value;  }
         }
 
-        //public void SetInstance(Colors instance)
-        //{
-        //    lazy.
-        //}
-
         public Color BoardBorder { get; set; }
         public Color BlockBorder { get; set; }
         public Color CellBorder { get; set; }

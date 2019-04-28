@@ -146,6 +146,8 @@ namespace Sudoku
             if ((Board.RemoveOldNotes == YesNo.Yes) && (num != 0))
                 RemoveNotes(num);
 
+            ActionManager.AddState(CellsAsJSON());
+
             CheckAndMarkDupes();
         }
 
@@ -165,6 +167,8 @@ namespace Sudoku
 
             if (Board.RemoveOldNotes == YesNo.Yes)
                 RemoveNotes(num);
+
+            ActionManager.AddState(CellsAsJSON());
 
             CheckAndMarkDupes();
         }
@@ -188,6 +192,8 @@ namespace Sudoku
             if (Board.RemoveOldNotes == YesNo.Yes)
                 RemoveNotes(num);
 
+            ActionManager.AddState(CellsAsJSON());
+
             CheckAndMarkDupes();
         }
 
@@ -208,6 +214,8 @@ namespace Sudoku
                     if ((value == -1) || ((_cells[r][c].HighlightType == CellHighlightType.Value)) || (_cells[r][c].HighlightType == CellHighlightType.None))
                         _cells[r][c].HighlightHavingNoteOrNumber(value);
                 }
+
+            ActionManager.AddState(CellsAsJSON());
         }
 
         /// <summary>
@@ -222,6 +230,8 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid value row/column requested for cell highlight: {0}/{1}", row, col));
 
             _cells[row-1][col-1].HighlightType = highlightType;
+
+            ActionManager.AddState(CellsAsJSON());
         }
 
         /// <summary>
@@ -234,6 +244,8 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("No cell is selected for highlight: {0}", highlightType.Description()));
 
             _selectedCell.HighlightType = highlightType;
+
+            ActionManager.AddState(CellsAsJSON());
         }
 
         /// <summary>
@@ -249,6 +261,9 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid note requested for note toggle: {0}", note));
 
             _selectedCell.ToggleNote(note);
+
+            ActionManager.AddState(CellsAsJSON());
+
             CheckAndMarkDupes();
         }
 
@@ -262,6 +277,8 @@ namespace Sudoku
                 throw new ArgumentException("No cell is selected for note highlight update");
 
             _selectedCell.HighlightSelectedNote(highlightType);
+
+            ActionManager.AddState(CellsAsJSON());
         }
 
         /// <summary>
@@ -277,7 +294,11 @@ namespace Sudoku
             if (note < 1 || note > 9)
                 throw new ArgumentException(String.Format("Invalid note having highlight updated: {0}", note));
 
-            _selectedCell.HighlightNote(note, highlightType);
+            if (_selectedCell.HasNote(note))
+            {
+                _selectedCell.HighlightNote(note, highlightType);
+                ActionManager.AddState(CellsAsJSON());
+            }
         }
 
         /// <summary>
@@ -289,6 +310,8 @@ namespace Sudoku
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
                     _cells[r][c].ClearNoteHighlights();
+
+            ActionManager.AddState(CellsAsJSON());
         }
 
         /// <summary>
@@ -383,6 +406,8 @@ namespace Sudoku
         /// <param name="note">Note to remove, if has it (0 means check all note values)</param>
         public void RemoveNotes(int note)
         {
+            bool didRemove = false;
+
             // assume clearing every single old note
             int min = 1;
             int max = 9;
@@ -403,7 +428,13 @@ namespace Sudoku
                 {
                     IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Row == r) && (cell.HasNote(n) || (cell.Answer == n)));
                     if (filteredCells.Where(cell => (cell.Answer == n)).Count() > 0)
-                        filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.RemoveNote(n));
+                    {
+                        if (filteredCells.Where(cell => (cell.HasNote(n))).Count() > 0)
+                        {
+                            filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.RemoveNote(n));
+                            didRemove = true;
+                        }
+                    }
                 }
 
             // do columns
@@ -412,7 +443,13 @@ namespace Sudoku
                 {
                     IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Column == c) && (cell.HasNote(n) || (cell.Answer == n)));
                     if (filteredCells.Where(cell => (cell.Answer == n)).Count() > 0)
-                        filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.RemoveNote(n));
+                    {
+                        if (filteredCells.Where(cell => (cell.HasNote(n))).Count() > 0)
+                        {
+                            filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.RemoveNote(n));
+                            didRemove = true;
+                        }
+                    }
                 }
 
             // do blocks
@@ -421,8 +458,17 @@ namespace Sudoku
                 {
                     IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Block == b) && (cell.HasNote(n) || (cell.Answer == n)));
                     if (filteredCells.Where(cell => (cell.Answer == n)).Count() > 0)
-                        filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.RemoveNote(n));
+                    {
+                        if (filteredCells.Where(cell => (cell.HasNote(n))).Count() > 0)
+                        {
+                            filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.RemoveNote(n));
+                            didRemove = true;
+                        }
+                    }
                 }
+
+            if (didRemove)
+                ActionManager.AddState(CellsAsJSON());
         }
 
         /// <summary>

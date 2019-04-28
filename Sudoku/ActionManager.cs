@@ -6,60 +6,62 @@ using System.Threading.Tasks;
 
 namespace Sudoku
 {
-    public class BoardAction
-    {
-        public int Row { get; set; }
-        public int Column { get; set; }
-        public int Number { get; set; }
-        public ActionType ActionType { get; set; }
-    }
-
+    /// <summary>
+    /// Pretty ineffecient undo/redo approach, but it was super simple
+    /// </summary>
     public static class ActionManager
     {
-        public static int Index { get; set; }
-        private static List<BoardAction> _actions = new List<BoardAction>();
+        private static int Index { get; set; }                          // where in the list of actions we are referencing
+        private static List<string> _cellStates = new List<string>();   // list of states to play back and forth per undo/redo call
 
-        public static void Add(BoardAction action)
+        public static bool Paused { get; set; }
+        /// <summary>
+        /// Ctor to setup index to deal with the first time the board is loaded (that acts as a action to store at Index 0
+        /// </summary>
+        static ActionManager()
         {
+            Index = -1;
+        }
+
+        /// <summary>
+        /// Add another cell state to the history (but clearing future if undo/redo were being done between the last add and this one)
+        /// </summary>
+        /// <param name="cellState">JSON of the cells state</param>
+        public static void AddState(string cellState)
+        {
+            if (Paused)
+                return;
+            
+            // if another action, chop off the redo future since this would branch it and I don't want to deal with that
+            if ((Index > -1) && (_cellStates.Count-1 > Index))
+                _cellStates.RemoveRange(Index+1, _cellStates.Count - 1 - Index );
+
+            _cellStates.Add(cellState);
             Index++;
-            _actions.Add(action);
         }
 
-        public static void Undo()
+        /// <summary>
+        /// Uwind the state pointer and return that JSON
+        /// </summary>
+        /// <returns>New state to use and render</returns>
+        public static string Undo()
         {
-            Index--;
-            if (Index < 0)
-            { 
+            if (--Index < 0)
                 Index = 0;
-                return;
-            }
-
-            var lastAction = _actions[Index];
-            switch (lastAction.ActionType)
-            {
-                case ActionType.SetGuess:
-                    Game.Board.SelectCellAtRowCol(lastAction.Row, lastAction.Column);
-                    Game.Board.HandleKeyUserInput(UserInput.Delete, 0);
-                    break;
-            }
+                
+            return _cellStates[Index];
         }
 
-        public static void Redo()
+        /// <summary>
+        /// Advance the state pointer and return that JSON
+        /// </summary>
+        /// <returns>New state to use and render</returns>
+        public static string Redo()
         {
-            if (Index > _actions.Count - 1)
-            {
-                Index = _actions.Count - 1;
-                return;
-            }
+            if (++Index > _cellStates.Count - 1)
+                Index = _cellStates.Count - 1;
 
-            var lastAction = _actions[Index];
-            switch (lastAction.ActionType)
-            {
-                case ActionType.Delete:
-                    //Game.Board.SelectCellAtRowCol(lastAction.Row, lastAction.Column);
-                    //Game.Board.HandleKeyUserInput(UserInput.Delete, 0);
-                    break;
-            }
+            return _cellStates[Index];
         }
     }
 }

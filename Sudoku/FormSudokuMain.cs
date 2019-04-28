@@ -44,7 +44,15 @@ namespace Sudoku
             _doubleClickTimer.Tick += new EventHandler(doubleClickTimer_Tick);
 
             Game.CreateInstance(BoardType.Bitmap, cellSize: 60);
+
+            // start with some hard-coded board (but don't count towards undo/redo)
+            ActionManager.Paused = true;
             Game.Board.SetDefaultState();
+            ActionManager.Paused = false;
+
+            // NOW can save final starting board as first image of undo/redo
+            ActionManager.AddState(((BitmapBoard)Game.Board).CellsAsJSON());
+
             Game.Board.SelectCellAtRowCol(5, 5);
 
             Render();
@@ -414,8 +422,49 @@ namespace Sudoku
         {
             _modifierKey = ModifierKey.None;
 
+            // convert 10-key numbers to normal number keys
             switch (keyData)
             {
+                case Keys.NumPad1:
+                    keyData = Keys.D1;
+                    break;
+                case Keys.NumPad2:
+                    keyData = Keys.D2;
+                    break;
+                case Keys.NumPad3:
+                    keyData = Keys.D3;
+                    break;
+                case Keys.NumPad4:
+                    keyData = Keys.D4;
+                    break;
+                case Keys.NumPad5:
+                    keyData = Keys.D5;
+                    break;
+                case Keys.NumPad6:
+                    keyData = Keys.D6;
+                    break;
+                case Keys.NumPad7:
+                    keyData = Keys.D7;
+                    break;
+                case Keys.NumPad8:
+                    keyData = Keys.D8;
+                    break;
+                case Keys.NumPad9:
+                    keyData = Keys.D9;
+                    break;
+            }
+
+            switch (keyData)
+            {
+                case Keys.D1:
+                case Keys.D2:
+                case Keys.D3:
+                case Keys.D4:
+                case Keys.D5:
+                case Keys.D6:
+                case Keys.D7:
+                case Keys.D8:
+                case Keys.D9:
                 case Keys.Up:
                 case Keys.Down:
                 case Keys.Left:
@@ -546,14 +595,14 @@ namespace Sudoku
         // dabbling with undo/redo.  no major plans yet
         private void Undo()
         {
-            ActionManager.Undo();
+            ((BitmapBoard)Game.Board).LoadCells(ActionManager.Undo());
             Render();
         }
 
         // dabbling with undo/redo.  no major plans yet
         private void Redo()
         {
-            ActionManager.Redo();
+            ((BitmapBoard)Game.Board).LoadCells(ActionManager.Redo());
             Render();
         }
 
@@ -727,8 +776,15 @@ namespace Sudoku
         {
             if (dlgImport.ShowDialog() == DialogResult.OK)
             {
-                ((BitmapBoard)Game.Board).LoadCells(File.ReadAllText(dlgImport.FileName));
-                Render();
+                try
+                {
+                    ((BitmapBoard)Game.Board).LoadCells(File.ReadAllText(dlgImport.FileName));
+                    Render();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to load saved board.\n\nException: " + ex.Message, "Import Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
         }
     }

@@ -77,11 +77,16 @@ namespace Sudoku
             // if notes are visible (no answer set), trigger special cell-level events
             if (!_selectedCell.HasAnswer)
             {
-                ((BitmapCell)_selectedCell).HandlePixelXYClick(input, modifierKey, x, y);
+                bool didSomething = ((BitmapCell)_selectedCell).HandlePixelXYClick(input, modifierKey, x, y);
 
-                // if now has answer, must have been a double-click of note to promote to answer, so check for dupes
-                if (input == UserInput.DoubleClick && _selectedCell.HasAnswer)
-                    CheckAndMarkDupes();
+                if (didSomething)
+                {
+                    // if now has answer, must have been a double-click of note to promote to answer, so check for dupes
+                    if (input == UserInput.DoubleClick && _selectedCell.HasAnswer)
+                        CheckAndMarkDupes();
+
+                    ActionManager.AddState(CellsAsJSON());
+                }
             }
         }
 
@@ -93,9 +98,11 @@ namespace Sudoku
         {
             var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
 
+            var selectedCell = _selectedCell;
+
             _cells = JsonConvert.DeserializeObject<BitmapCell[][]>(cellJSON, settings);
 
-            SelectCellAtRowCol(5, 5);
+            SelectCellAtRowCol(selectedCell.Row, selectedCell.Column);
         }
 
         /// <summary>

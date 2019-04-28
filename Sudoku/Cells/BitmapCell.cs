@@ -108,10 +108,13 @@ namespace Sudoku
         /// <param name="modifierKey">Key modifier (shift, alt, control)</param>
         /// <param name="x">X pixel location clicked in the main board</param>
         /// <param name="y">Y pixel location clicked in the main board</param>
-        public void HandlePixelXYClick(UserInput input, ModifierKey modifierKey, int x, int y)
+        /// <returns>True if something affecting undo/redo history happened</returns>        
+        public bool HandlePixelXYClick(UserInput input, ModifierKey modifierKey, int x, int y)
         {
             if (x < 0 || x > (_cellSize * 9 - 1) || y < 0 || y > (_cellSize * 9 - 1))
                 throw new ArgumentException(String.Format("Invalid point requested (x:{0}, y:{1})", x, y));
+
+            bool didSomething = false;
 
             int noteRowInBoard = y / (_cellSize / 3);
             int noteColInBoard = x / (_cellSize / 3);
@@ -132,13 +135,19 @@ namespace Sudoku
                     {
                         // if notes visible
                         if (!HasAnswer)
-                            HighlightNote(noteNum+1, NoteHighlightType.Strong);
+                        {
+                            HighlightNote(noteNum + 1, NoteHighlightType.Strong);
+                            didSomething = true;
+                        }
                     }
                     else if (input == UserInput.RightClick)
                     {
                         // if notes visible
                         if (!HasAnswer)
+                        { 
                             HighlightNote(noteNum+1, NoteHighlightType.Weak);
+                            didSomething = true;
+                        }
                     }
                 }
                 else
@@ -148,10 +157,15 @@ namespace Sudoku
                     {
                         // if notes visible
                         if (!HasAnswer)
+                        { 
                             SetGuess(noteNum+1);
+                            didSomething = true;
+                        }
                     }
                 }
             }
+
+            return didSomething;
         }
     }
 }

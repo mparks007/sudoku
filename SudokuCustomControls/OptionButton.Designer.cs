@@ -39,18 +39,20 @@
             this.pnlOption.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.pnlOption.Controls.Add(this.lbOption);
             this.pnlOption.Controls.Add(this.chkOption);
+            this.pnlOption.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlOption.Location = new System.Drawing.Point(0, 0);
             this.pnlOption.Name = "pnlOption";
-            this.pnlOption.Size = new System.Drawing.Size(239, 26);
+            this.pnlOption.Size = new System.Drawing.Size(242, 28);
             this.pnlOption.TabIndex = 58;
             // 
             // lbOption
             // 
+            this.lbOption.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbOption.Font = new System.Drawing.Font("Yu Gothic", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbOption.ForeColor = System.Drawing.Color.DimGray;
-            this.lbOption.Location = new System.Drawing.Point(3, 5);
+            this.lbOption.Location = new System.Drawing.Point(0, 0);
             this.lbOption.Name = "lbOption";
-            this.lbOption.Size = new System.Drawing.Size(123, 15);
+            this.lbOption.Size = new System.Drawing.Size(132, 24);
             this.lbOption.TabIndex = 2;
             this.lbOption.Tag = "0";
             this.lbOption.Text = "Option Label:";
@@ -62,12 +64,13 @@
             this.chkOption.BackColor = System.Drawing.SystemColors.Highlight;
             this.chkOption.Checked = true;
             this.chkOption.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+            this.chkOption.Dock = System.Windows.Forms.DockStyle.Right;
             this.chkOption.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.chkOption.Font = new System.Drawing.Font("Yu Gothic", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkOption.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.chkOption.Location = new System.Drawing.Point(126, 1);
+            this.chkOption.Location = new System.Drawing.Point(132, 0);
             this.chkOption.Name = "chkOption";
-            this.chkOption.Size = new System.Drawing.Size(106, 20);
+            this.chkOption.Size = new System.Drawing.Size(106, 24);
             this.chkOption.TabIndex = 48;
             this.chkOption.TabStop = false;
             this.chkOption.Text = "Option";

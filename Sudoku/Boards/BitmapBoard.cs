@@ -19,9 +19,9 @@ namespace Sudoku
         {
             public static Color BoardBorder;
             public static Color BlockBorder;
-            public static Color BlockAltShade;
             public static Color CellBorder;
             public static Color CellBlank;
+            public static Color CellBlockAlternate;
             public static Color CellHouseSelect;
             public static Color CellSelectFrame;
             public static Color CellHighlightNone;
@@ -39,14 +39,14 @@ namespace Sudoku
             public static Color AnswerInvalid;
             public static Color NoteHighlightNone;
             public static Color NoteHighlightInfo;
-            public static Color NoteHighlightBad;
             public static Color NoteHighlightStrong;
             public static Color NoteHighlightWeak;
+            public static Color NoteHighlightBad;
             public static Color NoteTextOnHighlightNone;
             public static Color NoteTextOnHighlightInfo;
-            public static Color NoteTextOnHighlightBad;
             public static Color NoteTextOnHighlightStrong;
             public static Color NoteTextOnHighlightWeak;
+            public static Color NoteTextOnHighlightBad;
 
             static Colors()
             {
@@ -57,9 +57,9 @@ namespace Sudoku
             {
                 BoardBorder = Color.Black;
                 BlockBorder = Color.Black;
-                BlockAltShade = Color.GhostWhite;
                 CellBorder = Color.DarkGray;
                 CellBlank = Color.White;
+                CellBlockAlternate = Color.GhostWhite;
                 CellHouseSelect = Color.LavenderBlush;
                 CellSelectFrame = Color.Coral;
                 CellHighlightNone = SystemColors.GradientInactiveCaption;
@@ -77,23 +77,23 @@ namespace Sudoku
                 AnswerInvalid = Color.Red;
                 NoteHighlightNone = Color.Transparent;
                 NoteHighlightInfo = Color.Plum;
-                NoteHighlightBad = Color.Red;
                 NoteHighlightStrong = Color.RoyalBlue;
                 NoteHighlightWeak = Color.Yellow;
+                NoteHighlightBad = Color.Red;
                 NoteTextOnHighlightNone = Color.DarkSlateGray;
                 NoteTextOnHighlightInfo = Color.DarkSlateGray;
-                NoteTextOnHighlightBad = Color.LightGray;
                 NoteTextOnHighlightStrong = Color.LightGray;
                 NoteTextOnHighlightWeak = Color.DarkSlateGray;
+                NoteTextOnHighlightBad = Color.LightGray;
             }
 
             public static void SetDark()
             {
                 BoardBorder = Color.DarkViolet;
                 BlockBorder = Color.DarkViolet;
-                BlockAltShade = Color.FromArgb(15, 15, 15);
                 CellBorder = Color.DarkSlateBlue;
                 CellBlank = Color.Black;
+                CellBlockAlternate = Color.FromArgb(15, 15, 15);
                 CellHouseSelect = Color.FromArgb(30,30,30);
                 CellSelectFrame = Color.DarkOliveGreen;
                 CellHighlightNone = SystemColors.GradientInactiveCaption;
@@ -111,14 +111,14 @@ namespace Sudoku
                 AnswerInvalid = Color.Red;
                 NoteHighlightNone = Color.Transparent;
                 NoteHighlightInfo = Color.Plum;
-                NoteHighlightBad = Color.Red;
                 NoteHighlightStrong = Color.RoyalBlue;
                 NoteHighlightWeak = Color.Yellow;
-                NoteTextOnHighlightNone = Color.DarkSlateGray;
+                NoteHighlightBad = Color.Red;
+                NoteTextOnHighlightNone = Color.DimGray;
                 NoteTextOnHighlightInfo = Color.DarkSlateGray;
-                NoteTextOnHighlightBad = Color.LightGray;
                 NoteTextOnHighlightStrong = Color.LightGray;
                 NoteTextOnHighlightWeak = Color.DarkSlateGray;
+                NoteTextOnHighlightBad = Color.LightGray;
             }
         }
 
@@ -218,9 +218,6 @@ namespace Sudoku
                     for (int c = 0; c < 9; c++)
                         _cells[r][c].Render();
 
-                // render board border
-                BitmapBoard.Graphics.DrawRectangle(new Pen(BitmapBoard.Colors.BoardBorder, 4), 0, 0, _boardImage.Width, _boardImage.Height);
-
                 // render block borders
                 Pen p = new Pen(BitmapBoard.Colors.BlockBorder, 2);
                 int blockSize = cellSize * 3;
@@ -231,6 +228,9 @@ namespace Sudoku
                 BitmapBoard.Graphics.DrawLine(p, blockSize, 0, blockSize, _boardImage.Height);
                 BitmapBoard.Graphics.DrawLine(p, blockSize * 2, 0, blockSize * 2, _boardImage.Height);
                 BitmapBoard.Graphics.Flush();
+
+                // render board border
+                BitmapBoard.Graphics.DrawRectangle(new Pen(BitmapBoard.Colors.BoardBorder, 4), 0, 0, _boardImage.Width, _boardImage.Height);
             }
         }
     }

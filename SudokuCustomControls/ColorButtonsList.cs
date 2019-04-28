@@ -27,15 +27,6 @@ namespace SudokuCustomControls
 
         public bool ClearSelected {  get { return radNone.Checked; } }
 
-        //[Description("Text for all the buttons")]
-        ////[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        //[Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design", "System.Drawing.Design.UITypeEditor, System.Drawing")]
-        //public List<string> ButtonText
-        //{
-        //    get { return _buttonText; }
-        //    set { radNone.Text = value[0]; }
-        //}
-
         /// <summary>
         /// Set Tag values for each button (will be the control's return value)
         /// </summary>

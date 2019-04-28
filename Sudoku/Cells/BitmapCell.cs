@@ -54,7 +54,7 @@ namespace Sudoku
             {
                 // make a subtle checkerboard pattern on the blocks
                 if (Block % 2 == 0)
-                    BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.BlockAltShade), rect);
+                    BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.CellBlockAlternate), rect);
                 else
                     BitmapBoard.Graphics.FillRectangle(new SolidBrush(BitmapBoard.Colors.CellBlank), rect);
             }

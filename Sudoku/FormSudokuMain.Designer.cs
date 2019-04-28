@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.btnSetGiven = new System.Windows.Forms.Button();
             this.btnSetGuess = new System.Windows.Forms.Button();
             this.cbxPatterns = new System.Windows.Forms.ComboBox();
@@ -44,6 +45,7 @@
             this.btnToggleNote = new System.Windows.Forms.Button();
             this.chkNotesHold = new SudokuCustomControls.OptionButton();
             this.chkColorScheme = new SudokuCustomControls.OptionButton();
+            this.btnColorDialog = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnSetGiven
@@ -52,7 +54,7 @@
             this.btnSetGiven.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnSetGiven.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSetGiven.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.btnSetGiven.Location = new System.Drawing.Point(581, 277);
+            this.btnSetGiven.Location = new System.Drawing.Point(581, 272);
             this.btnSetGiven.Name = "btnSetGiven";
             this.btnSetGiven.Size = new System.Drawing.Size(239, 33);
             this.btnSetGiven.TabIndex = 0;
@@ -67,7 +69,7 @@
             this.btnSetGuess.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnSetGuess.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSetGuess.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.btnSetGuess.Location = new System.Drawing.Point(581, 169);
+            this.btnSetGuess.Location = new System.Drawing.Point(581, 164);
             this.btnSetGuess.Name = "btnSetGuess";
             this.btnSetGuess.Size = new System.Drawing.Size(239, 33);
             this.btnSetGuess.TabIndex = 49;
@@ -84,7 +86,7 @@
             this.cbxPatterns.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.cbxPatterns.Font = new System.Drawing.Font("Yu Gothic", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbxPatterns.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.cbxPatterns.Location = new System.Drawing.Point(636, 327);
+            this.cbxPatterns.Location = new System.Drawing.Point(636, 322);
             this.cbxPatterns.Name = "cbxPatterns";
             this.cbxPatterns.Size = new System.Drawing.Size(183, 25);
             this.cbxPatterns.TabIndex = 59;
@@ -96,7 +98,7 @@
             this.btnFind.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnFind.Font = new System.Drawing.Font("Yu Gothic", 10F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnFind.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.btnFind.Location = new System.Drawing.Point(581, 328);
+            this.btnFind.Location = new System.Drawing.Point(581, 323);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(55, 23);
             this.btnFind.TabIndex = 60;
@@ -110,7 +112,7 @@
             this.chkRemoveOldNotes.Checked = false;
             this.chkRemoveOldNotes.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.chkRemoveOldNotes.Label = "Clear Old Notes:";
-            this.chkRemoveOldNotes.Location = new System.Drawing.Point(581, 487);
+            this.chkRemoveOldNotes.Location = new System.Drawing.Point(581, 483);
             this.chkRemoveOldNotes.Name = "chkRemoveOldNotes";
             this.chkRemoveOldNotes.Size = new System.Drawing.Size(242, 28);
             this.chkRemoveOldNotes.TabIndex = 70;
@@ -122,7 +124,7 @@
             this.chkValidationMode.Checked = true;
             this.chkValidationMode.CheckState = System.Windows.Forms.CheckState.Indeterminate;
             this.chkValidationMode.Label = "Validation Mode:";
-            this.chkValidationMode.Location = new System.Drawing.Point(581, 514);
+            this.chkValidationMode.Location = new System.Drawing.Point(581, 510);
             this.chkValidationMode.Name = "chkValidationMode";
             this.chkValidationMode.Size = new System.Drawing.Size(242, 28);
             this.chkValidationMode.TabIndex = 69;
@@ -134,7 +136,7 @@
             this.chkHighlightClickMode.Checked = true;
             this.chkHighlightClickMode.CheckState = System.Windows.Forms.CheckState.Indeterminate;
             this.chkHighlightClickMode.Label = "Highlight Click Mode:";
-            this.chkHighlightClickMode.Location = new System.Drawing.Point(581, 22);
+            this.chkHighlightClickMode.Location = new System.Drawing.Point(581, 17);
             this.chkHighlightClickMode.Name = "chkHighlightClickMode";
             this.chkHighlightClickMode.Size = new System.Drawing.Size(242, 28);
             this.chkHighlightClickMode.TabIndex = 68;
@@ -146,7 +148,7 @@
             this.chkNumberKeysMode.Checked = false;
             this.chkNumberKeysMode.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.chkNumberKeysMode.Label = "Number Keys Mode:";
-            this.chkNumberKeysMode.Location = new System.Drawing.Point(581, 460);
+            this.chkNumberKeysMode.Location = new System.Drawing.Point(581, 456);
             this.chkNumberKeysMode.Name = "chkNumberKeysMode";
             this.chkNumberKeysMode.Size = new System.Drawing.Size(242, 28);
             this.chkNumberKeysMode.TabIndex = 67;
@@ -155,7 +157,7 @@
             // 
             // pnlCellHighlightPicker
             // 
-            this.pnlCellHighlightPicker.Location = new System.Drawing.Point(580, 48);
+            this.pnlCellHighlightPicker.Location = new System.Drawing.Point(580, 43);
             this.pnlCellHighlightPicker.Name = "pnlCellHighlightPicker";
             this.pnlCellHighlightPicker.Size = new System.Drawing.Size(240, 31);
             this.pnlCellHighlightPicker.TabIndex = 65;
@@ -163,7 +165,7 @@
             // 
             // pnlNoteHighlightPicker
             // 
-            this.pnlNoteHighlightPicker.Location = new System.Drawing.Point(580, 79);
+            this.pnlNoteHighlightPicker.Location = new System.Drawing.Point(580, 74);
             this.pnlNoteHighlightPicker.Name = "pnlNoteHighlightPicker";
             this.pnlNoteHighlightPicker.Size = new System.Drawing.Size(240, 32);
             this.pnlNoteHighlightPicker.TabIndex = 64;
@@ -171,7 +173,7 @@
             // 
             // pnlFocusNumber
             // 
-            this.pnlFocusNumber.Location = new System.Drawing.Point(581, 203);
+            this.pnlFocusNumber.Location = new System.Drawing.Point(581, 198);
             this.pnlFocusNumber.Name = "pnlFocusNumber";
             this.pnlFocusNumber.Size = new System.Drawing.Size(240, 37);
             this.pnlFocusNumber.TabIndex = 63;
@@ -180,7 +182,7 @@
             // 
             // pnlHiNumbersList
             // 
-            this.pnlHiNumbersList.Location = new System.Drawing.Point(581, 109);
+            this.pnlHiNumbersList.Location = new System.Drawing.Point(581, 104);
             this.pnlHiNumbersList.Name = "pnlHiNumbersList";
             this.pnlHiNumbersList.Size = new System.Drawing.Size(240, 43);
             this.pnlHiNumbersList.TabIndex = 62;
@@ -192,7 +194,7 @@
             this.chkHighlightHavingValue.Checked = false;
             this.chkHighlightHavingValue.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.chkHighlightHavingValue.Label = "Highlight Numbers:";
-            this.chkHighlightHavingValue.Location = new System.Drawing.Point(581, 433);
+            this.chkHighlightHavingValue.Location = new System.Drawing.Point(581, 429);
             this.chkHighlightHavingValue.Name = "chkHighlightHavingValue";
             this.chkHighlightHavingValue.Size = new System.Drawing.Size(242, 28);
             this.chkHighlightHavingValue.TabIndex = 71;
@@ -205,7 +207,7 @@
             this.btnToggleNote.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnToggleNote.Font = new System.Drawing.Font("Yu Gothic", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnToggleNote.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.btnToggleNote.Location = new System.Drawing.Point(581, 242);
+            this.btnToggleNote.Location = new System.Drawing.Point(581, 237);
             this.btnToggleNote.Name = "btnToggleNote";
             this.btnToggleNote.Size = new System.Drawing.Size(239, 33);
             this.btnToggleNote.TabIndex = 72;
@@ -219,7 +221,7 @@
             this.chkNotesHold.Checked = false;
             this.chkNotesHold.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.chkNotesHold.Label = "Note Lock:";
-            this.chkNotesHold.Location = new System.Drawing.Point(581, 406);
+            this.chkNotesHold.Location = new System.Drawing.Point(581, 402);
             this.chkNotesHold.Name = "chkNotesHold";
             this.chkNotesHold.Size = new System.Drawing.Size(242, 28);
             this.chkNotesHold.TabIndex = 73;
@@ -231,27 +233,41 @@
             this.chkColorScheme.Checked = false;
             this.chkColorScheme.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.chkColorScheme.Label = "Color Scheme:";
-            this.chkColorScheme.Location = new System.Drawing.Point(581, 542);
+            this.chkColorScheme.Location = new System.Drawing.Point(581, 537);
             this.chkColorScheme.Name = "chkColorScheme";
             this.chkColorScheme.Size = new System.Drawing.Size(242, 28);
             this.chkColorScheme.TabIndex = 74;
             this.chkColorScheme.TabStop = false;
             this.chkColorScheme.ThreeState = true;
             // 
+            // btnColorDialog
+            // 
+            this.btnColorDialog.BackColor = System.Drawing.SystemColors.Highlight;
+            this.btnColorDialog.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.btnColorDialog.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnColorDialog.Font = new System.Drawing.Font("Yu Gothic", 5F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnColorDialog.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.btnColorDialog.Location = new System.Drawing.Point(820, 539);
+            this.btnColorDialog.Margin = new System.Windows.Forms.Padding(0);
+            this.btnColorDialog.Name = "btnColorDialog";
+            this.btnColorDialog.Size = new System.Drawing.Size(21, 23);
+            this.btnColorDialog.TabIndex = 75;
+            this.btnColorDialog.TabStop = false;
+            this.btnColorDialog.Text = "...";
+            this.btnColorDialog.UseVisualStyleBackColor = false;
+            this.btnColorDialog.Visible = false;
+            this.btnColorDialog.Click += new System.EventHandler(this.btnColorDialog_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.ClientSize = new System.Drawing.Size(840, 577);
-            this.Controls.Add(this.chkColorScheme);
+            this.ClientSize = new System.Drawing.Size(845, 577);
             this.Controls.Add(this.chkNotesHold);
-            this.Controls.Add(this.btnToggleNote);
             this.Controls.Add(this.chkHighlightHavingValue);
-            this.Controls.Add(this.chkRemoveOldNotes);
-            this.Controls.Add(this.chkValidationMode);
+            this.Controls.Add(this.btnToggleNote);
             this.Controls.Add(this.chkHighlightClickMode);
-            this.Controls.Add(this.chkNumberKeysMode);
             this.Controls.Add(this.pnlCellHighlightPicker);
             this.Controls.Add(this.pnlNoteHighlightPicker);
             this.Controls.Add(this.pnlFocusNumber);
@@ -260,11 +276,17 @@
             this.Controls.Add(this.cbxPatterns);
             this.Controls.Add(this.btnSetGuess);
             this.Controls.Add(this.btnSetGiven);
+            this.Controls.Add(this.chkNumberKeysMode);
+            this.Controls.Add(this.chkRemoveOldNotes);
+            this.Controls.Add(this.chkValidationMode);
+            this.Controls.Add(this.chkColorScheme);
+            this.Controls.Add(this.btnColorDialog);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(860, 620);
-            this.MinimumSize = new System.Drawing.Size(860, 620);
+            this.MaximumSize = new System.Drawing.Size(865, 620);
+            this.MinimumSize = new System.Drawing.Size(865, 620);
             this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Woofus Sudoku";
@@ -293,6 +315,7 @@
         private System.Windows.Forms.Button btnToggleNote;
         private SudokuCustomControls.OptionButton chkNotesHold;
         private SudokuCustomControls.OptionButton chkColorScheme;
+        private System.Windows.Forms.Button btnColorDialog;
     }
 }
 

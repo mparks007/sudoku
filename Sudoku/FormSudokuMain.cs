@@ -7,11 +7,11 @@ namespace Sudoku
 {
     public partial class frmMain : Form
     {
-        private Graphics _gr;                                                       // to snag the Form's graphics object for use in Render call vs. snagging it every time Render is called
-        private int _xOffset = 20;                                                  // how far over from Form's left edge to start painting the board
-        private int _yOffset = 20;                                                  // how far down from Form's top edge to start painting the board
-        private ModifierKey _modifierKey = ModifierKey.None;                        // keeping track of alt, shift, ctrl state at the time of early key trapping and normal keypress events
-        private frmColorDialog frmColors = new frmColorDialog();
+        private Graphics _gr;                                       // to snag the Form's graphics object for use in Render call vs. snagging it every time Render is called
+        private int _xOffset = 20;                                  // how far over from Form's left edge to start painting the board
+        private int _yOffset = 20;                                  // how far down from Form's top edge to start painting the board
+        private ModifierKey _modifierKey = ModifierKey.None;        // keeping track of alt, shift, ctrl state at the time of early key trapping and normal keypress events
+        private frmColorDialog _frmColors = new frmColorDialog();   // form to allow selection of custom colors
 
         // components for click/doubleclick hack code :(
         private Timer _doubleClickTimer = new Timer();
@@ -29,6 +29,8 @@ namespace Sudoku
         {
             InitializeComponent();
             _gr = CreateGraphics();
+
+            _frmColors.SetCallBack(ColorUIUpdateAndRender);
 
             SetupUI();
 
@@ -329,23 +331,45 @@ namespace Sudoku
                 switch (chkColorScheme.CheckState)
                 {
                     case CheckState.Unchecked:
+                        btnColorDialog.Visible = false;
                         BitmapBoard.Colors.SetLight();
                         break;
                     case CheckState.Checked:
+                        btnColorDialog.Visible = false;
                         BitmapBoard.Colors.SetDark();
                         break;
                     case CheckState.Indeterminate:
-                        frmColors.ShowDialog();
+                        btnColorDialog.Visible = true;
+                        _frmColors.SetCustom();
                         break;
                 }
-            
-                pnlCellHighlightPicker.SetButtonColors(BitmapBoard.Colors.CellHighlightNone, BitmapBoard.Colors.CellHighlightValue, BitmapBoard.Colors.CellHighlightSpecial, BitmapBoard.Colors.CellHighlightPivot, BitmapBoard.Colors.CellHighlightPincer);
-                pnlCellHighlightPicker.SetButtonFontColors(BitmapBoard.Colors.CellTextOnHighlightNone, BitmapBoard.Colors.CellTextOnHighlightValue, BitmapBoard.Colors.CellTextOnHighlightSpecial, BitmapBoard.Colors.CellTextOnHighlightPivot, BitmapBoard.Colors.CellTextOnHighlightPincer);
-                pnlNoteHighlightPicker.SetButtonColors(BitmapBoard.Colors.NoteHighlightNone, BitmapBoard.Colors.NoteHighlightInfo, BitmapBoard.Colors.NoteHighlightStrong, BitmapBoard.Colors.NoteHighlightWeak, BitmapBoard.Colors.NoteHighlightBad);
-                pnlNoteHighlightPicker.SetButtonFontColors(BitmapBoard.Colors.NoteTextOnHighlightNone, BitmapBoard.Colors.NoteTextOnHighlightInfo, BitmapBoard.Colors.NoteTextOnHighlightStrong, BitmapBoard.Colors.NoteTextOnHighlightWeak, BitmapBoard.Colors.NoteTextOnHighlightBad);
 
-                Render();
+                // do some common UI element color updates then render boad based on latest choices
+                ColorUIUpdateAndRender();
             }
+        }
+
+        /// <summary>
+        /// Do some common UI element color updates then render boad based on latest choices
+        /// </summary>
+        public void ColorUIUpdateAndRender()
+        {
+            pnlCellHighlightPicker.SetButtonColors(BitmapBoard.Colors.CellHighlightNone, BitmapBoard.Colors.CellHighlightValue, BitmapBoard.Colors.CellHighlightSpecial, BitmapBoard.Colors.CellHighlightPivot, BitmapBoard.Colors.CellHighlightPincer);
+            pnlCellHighlightPicker.SetButtonFontColors(BitmapBoard.Colors.CellTextOnHighlightNone, BitmapBoard.Colors.CellTextOnHighlightValue, BitmapBoard.Colors.CellTextOnHighlightSpecial, BitmapBoard.Colors.CellTextOnHighlightPivot, BitmapBoard.Colors.CellTextOnHighlightPincer);
+            pnlNoteHighlightPicker.SetButtonColors(BitmapBoard.Colors.NoteHighlightNone, BitmapBoard.Colors.NoteHighlightInfo, BitmapBoard.Colors.NoteHighlightStrong, BitmapBoard.Colors.NoteHighlightWeak, BitmapBoard.Colors.NoteHighlightBad);
+            pnlNoteHighlightPicker.SetButtonFontColors(BitmapBoard.Colors.NoteTextOnHighlightNone, BitmapBoard.Colors.NoteTextOnHighlightInfo, BitmapBoard.Colors.NoteTextOnHighlightStrong, BitmapBoard.Colors.NoteTextOnHighlightWeak, BitmapBoard.Colors.NoteTextOnHighlightBad);
+
+            Render();
+        }
+
+        /// <summary>
+        /// Click the color dialog ellipsis button to pop up the custom colors form (as Modal)
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void btnColorDialog_Click(object sender, EventArgs e)
+        {
+            _frmColors.ShowDialog();
         }
 
         /// <summary>

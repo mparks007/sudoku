@@ -15,9 +15,9 @@ namespace Sudoku
     {
         [JsonProperty]
         protected int _answer;
-        //[JsonProperty]
-        protected Note[] _notes;// = new Note[9];
-        //[JsonProperty]
+        [JsonProperty]
+        protected Note[] _notes;
+        [JsonProperty]
         protected Note _selectedNote;
         
         public int Answer { get { return _answer; } }

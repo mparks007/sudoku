@@ -124,7 +124,7 @@ namespace Sudoku
             _selectedNote = null;
             if (_notes[noteNum].IsNoted)
             {
-                _selectedNote = (BitmapNote)_notes[noteNum];
+                _selectedNote = _notes[noteNum];
 
                 if ((modifierKey & ModifierKey.Control) != 0)
                 {

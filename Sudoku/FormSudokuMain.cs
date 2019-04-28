@@ -141,14 +141,14 @@ namespace Sudoku
                     break;
                 case CheckState.Checked:
                     pnlNoteHighlightPicker.Visible = true;
-                    pnlNoteHighlightPicker.Top = 48;
+                    pnlNoteHighlightPicker.Top = 43;
                     pnlCellHighlightPicker.Visible = false;
                     pnlHiNumbersList.Visible = false;
                     break;
                 case CheckState.Indeterminate:
                     pnlCellHighlightPicker.Visible = true;
                     pnlNoteHighlightPicker.Visible = true;
-                    pnlNoteHighlightPicker.Top = 79;
+                    pnlNoteHighlightPicker.Top = 74;
                     pnlHiNumbersList.Visible = true;
                     break;
             }
@@ -285,9 +285,13 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void cbxFindResults_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // clear prior pattern highlighting 
+            // clear prior highlighting, even patterns
             Game.Board.HighlightCellsWithNoteOrNumber(-1);
-            
+
+            // maybe re-highlight the focus number
+            if (chkHighlightHavingValue.Checked)
+                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+
             // go through all the cells involved in the found pattern selected and highlight accordingly
             foreach (KeyValuePair<Cell, CellHighlightType> cellFound in ((KeyValuePair<string, FindResult>)cbxFindResults.SelectedItem).Value.CellsFound)
                 Game.Board.HighlightCell(cellFound.Key.Row, cellFound.Key.Column, cellFound.Value);

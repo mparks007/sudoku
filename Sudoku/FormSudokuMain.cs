@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Sudoku
@@ -701,6 +703,31 @@ namespace Sudoku
                 _modifierKey |= ModifierKey.Control;
             if ((ModifierKeys & Keys.Alt) == Keys.Alt)
                 _modifierKey |= ModifierKey.Alt;
+        }
+
+        /// <summary>
+        /// Save the current board
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            if (dlgExport.ShowDialog() == DialogResult.OK)
+                File.WriteAllText(dlgExport.FileName, Game.Board.CellsAsJSON());
+        }
+
+        /// <summary>
+        /// Load a board
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            if (dlgImport.ShowDialog() == DialogResult.OK)
+            {
+                Game.Board.LoadCells(File.ReadAllText(dlgImport.FileName));
+                Render();
+            }
         }
     }
 }

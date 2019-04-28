@@ -47,6 +47,12 @@
             this.chkRemoveOldNotes = new SudokuCustomControls.OptionButton();
             this.chkValidationMode = new SudokuCustomControls.OptionButton();
             this.chkColorScheme = new SudokuCustomControls.OptionButton();
+            this.pnlButtons = new System.Windows.Forms.Panel();
+            this.btnExport = new System.Windows.Forms.Button();
+            this.btnImport = new System.Windows.Forms.Button();
+            this.dlgExport = new System.Windows.Forms.SaveFileDialog();
+            this.dlgImport = new System.Windows.Forms.OpenFileDialog();
+            this.pnlButtons.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnSetGiven
@@ -130,7 +136,7 @@
             this.btnColorDialog.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnColorDialog.Font = new System.Drawing.Font("Yu Gothic", 5F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnColorDialog.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.btnColorDialog.Location = new System.Drawing.Point(820, 539);
+            this.btnColorDialog.Location = new System.Drawing.Point(820, 517);
             this.btnColorDialog.Margin = new System.Windows.Forms.Padding(0);
             this.btnColorDialog.Name = "btnColorDialog";
             this.btnColorDialog.Size = new System.Drawing.Size(21, 23);
@@ -161,7 +167,7 @@
             this.chkNotesHold.Checked = false;
             this.chkNotesHold.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.chkNotesHold.Label = "Note Lock:";
-            this.chkNotesHold.Location = new System.Drawing.Point(581, 418);
+            this.chkNotesHold.Location = new System.Drawing.Point(581, 396);
             this.chkNotesHold.Name = "chkNotesHold";
             this.chkNotesHold.Size = new System.Drawing.Size(242, 25);
             this.chkNotesHold.TabIndex = 73;
@@ -173,7 +179,7 @@
             this.chkHighlightHavingValue.Checked = false;
             this.chkHighlightHavingValue.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.chkHighlightHavingValue.Label = "Highlight Numbers:";
-            this.chkHighlightHavingValue.Location = new System.Drawing.Point(581, 442);
+            this.chkHighlightHavingValue.Location = new System.Drawing.Point(581, 420);
             this.chkHighlightHavingValue.Name = "chkHighlightHavingValue";
             this.chkHighlightHavingValue.Size = new System.Drawing.Size(242, 25);
             this.chkHighlightHavingValue.TabIndex = 71;
@@ -231,7 +237,7 @@
             this.chkNumberKeysMode.Checked = false;
             this.chkNumberKeysMode.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.chkNumberKeysMode.Label = "Number Keys Mode:";
-            this.chkNumberKeysMode.Location = new System.Drawing.Point(581, 466);
+            this.chkNumberKeysMode.Location = new System.Drawing.Point(581, 444);
             this.chkNumberKeysMode.Name = "chkNumberKeysMode";
             this.chkNumberKeysMode.Size = new System.Drawing.Size(242, 25);
             this.chkNumberKeysMode.TabIndex = 67;
@@ -243,7 +249,7 @@
             this.chkRemoveOldNotes.Checked = false;
             this.chkRemoveOldNotes.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.chkRemoveOldNotes.Label = "Clear Old Notes:";
-            this.chkRemoveOldNotes.Location = new System.Drawing.Point(581, 490);
+            this.chkRemoveOldNotes.Location = new System.Drawing.Point(581, 468);
             this.chkRemoveOldNotes.Name = "chkRemoveOldNotes";
             this.chkRemoveOldNotes.Size = new System.Drawing.Size(242, 25);
             this.chkRemoveOldNotes.TabIndex = 70;
@@ -255,7 +261,7 @@
             this.chkValidationMode.Checked = true;
             this.chkValidationMode.CheckState = System.Windows.Forms.CheckState.Indeterminate;
             this.chkValidationMode.Label = "Validation Mode:";
-            this.chkValidationMode.Location = new System.Drawing.Point(581, 514);
+            this.chkValidationMode.Location = new System.Drawing.Point(581, 492);
             this.chkValidationMode.Name = "chkValidationMode";
             this.chkValidationMode.Size = new System.Drawing.Size(242, 25);
             this.chkValidationMode.TabIndex = 69;
@@ -267,12 +273,69 @@
             this.chkColorScheme.Checked = false;
             this.chkColorScheme.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.chkColorScheme.Label = "Color Scheme:";
-            this.chkColorScheme.Location = new System.Drawing.Point(581, 538);
+            this.chkColorScheme.Location = new System.Drawing.Point(581, 516);
             this.chkColorScheme.Name = "chkColorScheme";
             this.chkColorScheme.Size = new System.Drawing.Size(242, 25);
             this.chkColorScheme.TabIndex = 74;
             this.chkColorScheme.TabStop = false;
             this.chkColorScheme.ThreeState = true;
+            // 
+            // pnlButtons
+            // 
+            this.pnlButtons.Controls.Add(this.btnExport);
+            this.pnlButtons.Controls.Add(this.btnImport);
+            this.pnlButtons.Location = new System.Drawing.Point(581, 543);
+            this.pnlButtons.Name = "pnlButtons";
+            this.pnlButtons.Size = new System.Drawing.Size(241, 21);
+            this.pnlButtons.TabIndex = 77;
+            // 
+            // btnExport
+            // 
+            this.btnExport.BackColor = System.Drawing.SystemColors.Highlight;
+            this.btnExport.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnExport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnExport.Font = new System.Drawing.Font("Yu Gothic", 8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExport.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.btnExport.Location = new System.Drawing.Point(121, 0);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(120, 21);
+            this.btnExport.TabIndex = 62;
+            this.btnExport.TabStop = false;
+            this.btnExport.Text = "Export";
+            this.btnExport.UseVisualStyleBackColor = false;
+            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            // 
+            // btnImport
+            // 
+            this.btnImport.BackColor = System.Drawing.SystemColors.Highlight;
+            this.btnImport.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnImport.Font = new System.Drawing.Font("Yu Gothic", 8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnImport.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.btnImport.Location = new System.Drawing.Point(0, 0);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(120, 21);
+            this.btnImport.TabIndex = 61;
+            this.btnImport.TabStop = false;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = false;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            // 
+            // dlgExport
+            // 
+            this.dlgExport.DefaultExt = "json";
+            this.dlgExport.FileName = "board.json";
+            this.dlgExport.Filter = "JSON files|*.json|All files|*.*";
+            this.dlgExport.InitialDirectory = ".";
+            this.dlgExport.Title = "Export Board";
+            // 
+            // dlgImport
+            // 
+            this.dlgImport.DefaultExt = "json";
+            this.dlgImport.FileName = "board.json";
+            this.dlgImport.Filter = "JSON files|*.json|All files|*.*";
+            this.dlgImport.InitialDirectory = ".";
+            this.dlgImport.Title = "Import Board";
             // 
             // frmMain
             // 
@@ -280,6 +343,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(845, 577);
+            this.Controls.Add(this.pnlButtons);
             this.Controls.Add(this.cbxFindResults);
             this.Controls.Add(this.chkNotesHold);
             this.Controls.Add(this.chkHighlightHavingValue);
@@ -311,6 +375,7 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmMain_KeyDown);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseDown);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseUp);
+            this.pnlButtons.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -334,6 +399,11 @@
         private SudokuCustomControls.OptionButton chkColorScheme;
         private System.Windows.Forms.Button btnColorDialog;
         private System.Windows.Forms.ComboBox cbxFindResults;
+        private System.Windows.Forms.Panel pnlButtons;
+        private System.Windows.Forms.Button btnExport;
+        private System.Windows.Forms.Button btnImport;
+        private System.Windows.Forms.SaveFileDialog dlgExport;
+        private System.Windows.Forms.OpenFileDialog dlgImport;
     }
 }
 

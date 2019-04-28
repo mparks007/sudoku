@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -497,6 +498,26 @@ namespace Sudoku
                         return false;
 
            return true;
+        }
+
+        /// <summary>
+        /// Return JSON of the current cells
+        /// </summary>
+        /// <returns>JSON string of current cell data</returns>
+        public string CellsAsJSON()
+        {
+            // BUT HOW TO GET THIS AS BITMAPCELL WITH ITS FIELDS AND BASE CLASS FIELDS (INCLUDING PRIVATE)
+            return JsonConvert.SerializeObject(_cells, Newtonsoft.Json.Formatting.None);
+        }
+
+        /// <summary>
+        /// Load JSON version of cell data into the board's cell data
+        /// </summary>
+        /// <param name="cellJSON"></param>
+        public void LoadCells(string cellJSON)
+        {
+            // BUT HOW TO GET THIS BACK INTO BITMAPCELL VS. CELL
+            _cells = JsonConvert.DeserializeObject<BitmapCell[][]>(cellJSON);
         }
 
         /// <summary>

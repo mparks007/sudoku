@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 
 namespace Sudoku
 {
-    public static class Fonts
+    public sealed class Fonts
     {
-        public static string Answer;
-        public static string Note;
+        private static readonly Lazy<Fonts> lazy = new Lazy<Fonts>(() => new Fonts());
 
-        static Fonts()
+        public static Fonts Instance { get { return lazy.Value; } }
+
+        public string Answer { get; set; }
+        public string Note { get; set; }
+
+        private Fonts()
         {
             Answer = "Century Gothic";
             Note = "Arial";

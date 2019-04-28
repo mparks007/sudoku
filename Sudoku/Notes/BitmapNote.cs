@@ -40,24 +40,24 @@ namespace Sudoku
 
                 // setup note background and font coloring based on highlight or not
                 Color c = Color.Transparent;
-                Brush br = new SolidBrush(Colors.NoteTextOnHighlightNone);
+                Brush br = new SolidBrush(Colors.Instance.NoteTextOnHighlightNone);
                 switch (HighlightType)
                 {
                     case NoteHighlightType.Info:
-                        c = Colors.NoteHighlightInfo;
-                        br = new SolidBrush(Colors.NoteTextOnHighlightInfo);
+                        c = Colors.Instance.NoteHighlightInfo;
+                        br = new SolidBrush(Colors.Instance.NoteTextOnHighlightInfo);
                         break;
                     case NoteHighlightType.Bad:
-                        c = Colors.NoteHighlightBad;
-                        br = new SolidBrush(Colors.NoteTextOnHighlightBad);
+                        c = Colors.Instance.NoteHighlightBad;
+                        br = new SolidBrush(Colors.Instance.NoteTextOnHighlightBad);
                         break;
                     case NoteHighlightType.Strong:
-                        c = Colors.NoteHighlightStrong;
-                        br = new SolidBrush(Colors.NoteTextOnHighlightStrong);
+                        c = Colors.Instance.NoteHighlightStrong;
+                        br = new SolidBrush(Colors.Instance.NoteTextOnHighlightStrong);
                         break;
                     case NoteHighlightType.Weak:
-                        c = Colors.NoteHighlightWeak;
-                        br = new SolidBrush(Colors.NoteTextOnHighlightWeak);
+                        c = Colors.Instance.NoteHighlightWeak;
+                        br = new SolidBrush(Colors.Instance.NoteTextOnHighlightWeak);
                         break;
                 }
 
@@ -66,7 +66,7 @@ namespace Sudoku
                 string candidate = _candidate.ToString();
 
                 // prep for drawing the text onto the image
-                Font f = new Font(Fonts.Note, _cellPixelSize / 3 / 2);
+                Font f = new Font(Fonts.Instance.Note, _cellPixelSize / 3 / 2);
                 SizeF fSize = BitmapBoard.Graphics.MeasureString(candidate, f);
                 StringFormat format = new StringFormat()
                 {

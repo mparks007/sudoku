@@ -59,15 +59,15 @@ namespace Sudoku
             // component setup for Cell Highlight control
             pnlCellHighlightPicker.SetButtonTags((int)CellHighlightType.None, (int)CellHighlightType.Value, (int)CellHighlightType.Special, (int)CellHighlightType.Pivot, (int)CellHighlightType.Pincer);
             pnlCellHighlightPicker.SetButtonText(CellHighlightType.None.Description(), CellHighlightType.Value.Description(), CellHighlightType.Special.Description(), CellHighlightType.Pivot.Description(), CellHighlightType.Pincer.Description());
-            pnlCellHighlightPicker.SetButtonColors(Colors.CellHighlightNone, Colors.CellHighlightValue, Colors.CellHighlightSpecial, Colors.CellHighlightPivot, Colors.CellHighlightPincer);
-            pnlCellHighlightPicker.SetButtonFontColors(Colors.CellTextOnHighlightNone, Colors.CellTextOnHighlightValue, Colors.CellTextOnHighlightSpecial, Colors.CellTextOnHighlightPivot, Colors.CellTextOnHighlightPincer);
+            pnlCellHighlightPicker.SetButtonColors(Colors.Instance.CellHighlightNone, Colors.Instance.CellHighlightValue, Colors.Instance.CellHighlightSpecial, Colors.Instance.CellHighlightPivot, Colors.Instance.CellHighlightPincer);
+            pnlCellHighlightPicker.SetButtonFontColors(Colors.Instance.CellTextOnHighlightNone, Colors.Instance.CellTextOnHighlightValue, Colors.Instance.CellTextOnHighlightSpecial, Colors.Instance.CellTextOnHighlightPivot, Colors.Instance.CellTextOnHighlightPincer);
             pnlCellHighlightPicker.ButtonClicked += pnlCellHighlightPicker_Clicked;
 
             // component setup for Note Highlight control
             pnlNoteHighlightPicker.SetButtonTags((int)NoteHighlightType.None, (int)NoteHighlightType.Info, (int)NoteHighlightType.Strong, (int)NoteHighlightType.Weak, (int)NoteHighlightType.Bad);
             pnlNoteHighlightPicker.SetButtonText(NoteHighlightType.None.Description(), NoteHighlightType.Info.Description(), NoteHighlightType.Strong.Description(), NoteHighlightType.Weak.Description(), NoteHighlightType.Bad.Description());
-            pnlNoteHighlightPicker.SetButtonColors(Colors.NoteHighlightNone, Colors.NoteHighlightInfo, Colors.NoteHighlightStrong, Colors.NoteHighlightWeak, Colors.NoteHighlightBad);
-            pnlNoteHighlightPicker.SetButtonFontColors(Colors.NoteTextOnHighlightNone, Colors.NoteTextOnHighlightInfo, Colors.NoteTextOnHighlightStrong, Colors.NoteTextOnHighlightWeak, Colors.NoteTextOnHighlightBad);
+            pnlNoteHighlightPicker.SetButtonColors(Colors.Instance.NoteHighlightNone, Colors.Instance.NoteHighlightInfo, Colors.Instance.NoteHighlightStrong, Colors.Instance.NoteHighlightWeak, Colors.Instance.NoteHighlightBad);
+            pnlNoteHighlightPicker.SetButtonFontColors(Colors.Instance.NoteTextOnHighlightNone, Colors.Instance.NoteTextOnHighlightInfo, Colors.Instance.NoteTextOnHighlightStrong, Colors.Instance.NoteTextOnHighlightWeak, Colors.Instance.NoteTextOnHighlightBad);
             pnlNoteHighlightPicker.ButtonClicked += pnlNoteHighlightPicker_Clicked;
 
             // [options buttons setup]
@@ -141,14 +141,14 @@ namespace Sudoku
                     break;
                 case CheckState.Checked:
                     pnlNoteHighlightPicker.Visible = true;
-                    pnlNoteHighlightPicker.Top = 43;
+                    pnlNoteHighlightPicker.Top = 40;
                     pnlCellHighlightPicker.Visible = false;
                     pnlHiNumbersList.Visible = false;
                     break;
                 case CheckState.Indeterminate:
                     pnlCellHighlightPicker.Visible = true;
                     pnlNoteHighlightPicker.Visible = true;
-                    pnlNoteHighlightPicker.Top = 74;
+                    pnlNoteHighlightPicker.Top = 71;
                     pnlHiNumbersList.Visible = true;
                     break;
             }
@@ -361,11 +361,11 @@ namespace Sudoku
                 {
                     case CheckState.Unchecked:
                         btnColorDialog.Visible = false;
-                        Colors.SetLight();
+                        Colors.Instance.SetLight();
                         break;
                     case CheckState.Checked:
                         btnColorDialog.Visible = false;
-                        Colors.SetDark();
+                        Colors.Instance.SetDark();
                         break;
                     case CheckState.Indeterminate:
                         btnColorDialog.Visible = true;
@@ -383,10 +383,10 @@ namespace Sudoku
         /// </summary>
         public void ColorUIUpdateAndRender()
         {
-            pnlCellHighlightPicker.SetButtonColors(Colors.CellHighlightNone, Colors.CellHighlightValue, Colors.CellHighlightSpecial, Colors.CellHighlightPivot, Colors.CellHighlightPincer);
-            pnlCellHighlightPicker.SetButtonFontColors(Colors.CellTextOnHighlightNone, Colors.CellTextOnHighlightValue, Colors.CellTextOnHighlightSpecial, Colors.CellTextOnHighlightPivot, Colors.CellTextOnHighlightPincer);
-            pnlNoteHighlightPicker.SetButtonColors(Colors.NoteHighlightNone, Colors.NoteHighlightInfo, Colors.NoteHighlightStrong, Colors.NoteHighlightWeak, Colors.NoteHighlightBad);
-            pnlNoteHighlightPicker.SetButtonFontColors(Colors.NoteTextOnHighlightNone, Colors.NoteTextOnHighlightInfo, Colors.NoteTextOnHighlightStrong, Colors.NoteTextOnHighlightWeak, Colors.NoteTextOnHighlightBad);
+            pnlCellHighlightPicker.SetButtonColors(Colors.Instance.CellHighlightNone, Colors.Instance.CellHighlightValue, Colors.Instance.CellHighlightSpecial, Colors.Instance.CellHighlightPivot, Colors.Instance.CellHighlightPincer);
+            pnlCellHighlightPicker.SetButtonFontColors(Colors.Instance.CellTextOnHighlightNone, Colors.Instance.CellTextOnHighlightValue, Colors.Instance.CellTextOnHighlightSpecial, Colors.Instance.CellTextOnHighlightPivot, Colors.Instance.CellTextOnHighlightPincer);
+            pnlNoteHighlightPicker.SetButtonColors(Colors.Instance.NoteHighlightNone, Colors.Instance.NoteHighlightInfo, Colors.Instance.NoteHighlightStrong, Colors.Instance.NoteHighlightWeak, Colors.Instance.NoteHighlightBad);
+            pnlNoteHighlightPicker.SetButtonFontColors(Colors.Instance.NoteTextOnHighlightNone, Colors.Instance.NoteTextOnHighlightInfo, Colors.Instance.NoteTextOnHighlightStrong, Colors.Instance.NoteTextOnHighlightWeak, Colors.Instance.NoteTextOnHighlightBad);
 
             Render();
         }

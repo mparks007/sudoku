@@ -43,7 +43,7 @@
             this.pnlOption.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlOption.Location = new System.Drawing.Point(0, 0);
             this.pnlOption.Name = "pnlOption";
-            this.pnlOption.Size = new System.Drawing.Size(242, 28);
+            this.pnlOption.Size = new System.Drawing.Size(242, 25);
             this.pnlOption.TabIndex = 58;
             // 
             // lbOption
@@ -53,7 +53,7 @@
             this.lbOption.ForeColor = System.Drawing.SystemColors.Highlight;
             this.lbOption.Location = new System.Drawing.Point(0, 0);
             this.lbOption.Name = "lbOption";
-            this.lbOption.Size = new System.Drawing.Size(132, 24);
+            this.lbOption.Size = new System.Drawing.Size(132, 21);
             this.lbOption.TabIndex = 2;
             this.lbOption.Tag = "0";
             this.lbOption.Text = "Option Label:";
@@ -71,7 +71,7 @@
             this.chkOption.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.chkOption.Location = new System.Drawing.Point(132, 0);
             this.chkOption.Name = "chkOption";
-            this.chkOption.Size = new System.Drawing.Size(106, 24);
+            this.chkOption.Size = new System.Drawing.Size(106, 21);
             this.chkOption.TabIndex = 48;
             this.chkOption.TabStop = false;
             this.chkOption.Text = "Option";
@@ -86,7 +86,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pnlOption);
             this.Name = "OptionButton";
-            this.Size = new System.Drawing.Size(242, 28);
+            this.Size = new System.Drawing.Size(242, 25);
             this.pnlOption.ResumeLayout(false);
             this.ResumeLayout(false);
 

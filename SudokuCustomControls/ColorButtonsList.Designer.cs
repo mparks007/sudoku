@@ -143,7 +143,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pnlHiCellInner);
             this.Name = "ColorButtonsList";
-            this.Size = new System.Drawing.Size(243, 32);
+            this.Size = new System.Drawing.Size(244, 32);
             this.pnlHiCellInner.ResumeLayout(false);
             this.ResumeLayout(false);
 

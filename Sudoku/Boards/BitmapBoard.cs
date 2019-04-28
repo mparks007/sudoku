@@ -100,7 +100,7 @@ namespace Sudoku
                         _cells[r][c].Render();
 
                 // render block borders
-                Pen p = new Pen(Colors.BlockBorder, 2);
+                Pen p = new Pen(Colors.Instance.BlockBorder, 2);
                 int blockSize = cellSize * 3;
                 // horizontal bars
                 BitmapBoard.Graphics.DrawLine(p, 0, blockSize, _boardImage.Width, blockSize);
@@ -111,7 +111,7 @@ namespace Sudoku
                 BitmapBoard.Graphics.Flush();
 
                 // render board border
-                BitmapBoard.Graphics.DrawRectangle(new Pen(Colors.BoardBorder, 4), 0, 0, _boardImage.Width, _boardImage.Height);
+                BitmapBoard.Graphics.DrawRectangle(new Pen(Colors.Instance.BoardBorder, 4), 0, 0, _boardImage.Width, _boardImage.Height);
             }
         }
     }

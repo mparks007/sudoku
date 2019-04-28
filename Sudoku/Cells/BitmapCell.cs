@@ -41,22 +41,22 @@ namespace Sudoku
             Rectangle rect = new Rectangle(left, top, _cellSize, _cellSize);
 
             if (HighlightType == CellHighlightType.Pivot)
-                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.CellHighlightPivot), rect);
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.Instance.CellHighlightPivot), rect);
             else if (HighlightType == CellHighlightType.Pincer)
-                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.CellHighlightPincer), rect);
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.Instance.CellHighlightPincer), rect);
             else if (HighlightType == CellHighlightType.Special)
-                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.CellHighlightSpecial), rect);
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.Instance.CellHighlightSpecial), rect);
             else if (HighlightType == CellHighlightType.Value)
-                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.CellHighlightValue), rect);
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.Instance.CellHighlightValue), rect);
             else if (IsHouseSelected)
-                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.CellHouseSelect), rect);
+                BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.Instance.CellHouseSelect), rect);
             else
             {
                 // make a subtle checkerboard pattern on the blocks
                 if (Block % 2 == 0)
-                    BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.CellBlockAlternate), rect);
+                    BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.Instance.CellBlockAlternate), rect);
                 else
-                    BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.CellBlank), rect);
+                    BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.Instance.CellBlank), rect);
             }
 
             // if solved, render solved number
@@ -64,17 +64,17 @@ namespace Sudoku
             {
                 string num = _answer.ToString();
 
-                Font f = new Font(Fonts.Answer, _cellSize / 2);
+                Font f = new Font(Fonts.Instance.Answer, _cellSize / 2);
                 SizeF fSize = BitmapBoard.Graphics.MeasureString(num, f);
 
                 Brush br;
                 // only turn red when invalid if....validating full number option and that number isn't a given
                 if (IsInvalid && (Board.ValidationMode == ValidationMode.Numbers) && (IsGiven.HasValue && !IsGiven.Value))
-                    br = new SolidBrush(Colors.AnswerInvalid);
+                    br = new SolidBrush(Colors.Instance.AnswerInvalid);
                 else if (IsGiven.HasValue && IsGiven.Value)
-                    br = new SolidBrush(Colors.AnswerGiven);
+                    br = new SolidBrush(Colors.Instance.AnswerGiven);
                 else
-                    br = new SolidBrush(Colors.AnswerGuess);
+                    br = new SolidBrush(Colors.Instance.AnswerGuess);
 
                 StringFormat format = new StringFormat()
                 {
@@ -92,10 +92,10 @@ namespace Sudoku
             
             // maybe render selection box
             if (IsSelected)
-                BitmapBoard.Graphics.DrawRectangle(new Pen(Colors.CellSelectFrame, 3), rect.X+2, rect.Y+2, rect.Width-4, rect.Height-4);
+                BitmapBoard.Graphics.DrawRectangle(new Pen(Colors.Instance.CellSelectFrame, 3), rect.X+2, rect.Y+2, rect.Width-4, rect.Height-4);
 
             // render cell border
-            BitmapBoard.Graphics.DrawRectangle(new Pen(Colors.CellBorder, 1), rect);
+            BitmapBoard.Graphics.DrawRectangle(new Pen(Colors.Instance.CellBorder, 1), rect);
         }
 
         /// <summary>

@@ -7,45 +7,60 @@ using System.Threading.Tasks;
 
 namespace Sudoku
 {
-    public static class Colors
+    public sealed class Colors
     {
-        public static Color BoardBorder;
-        public static Color BlockBorder;
-        public static Color CellBorder;
-        public static Color CellBlank;
-        public static Color CellBlockAlternate;
-        public static Color CellHouseSelect;
-        public static Color CellSelectFrame;
-        public static Color CellHighlightNone;
-        public static Color CellHighlightValue;
-        public static Color CellHighlightSpecial;
-        public static Color CellHighlightPivot;
-        public static Color CellHighlightPincer;
-        public static Color CellTextOnHighlightNone;
-        public static Color CellTextOnHighlightValue;
-        public static Color CellTextOnHighlightSpecial;
-        public static Color CellTextOnHighlightPivot;
-        public static Color CellTextOnHighlightPincer;
-        public static Color AnswerGiven;
-        public static Color AnswerGuess;
-        public static Color AnswerInvalid;
-        public static Color NoteHighlightNone;
-        public static Color NoteHighlightInfo;
-        public static Color NoteHighlightStrong;
-        public static Color NoteHighlightWeak;
-        public static Color NoteHighlightBad;
-        public static Color NoteTextOnHighlightNone;
-        public static Color NoteTextOnHighlightInfo;
-        public static Color NoteTextOnHighlightStrong;
-        public static Color NoteTextOnHighlightWeak;
-        public static Color NoteTextOnHighlightBad;
+        //private static readonly Lazy<Colors> lazy = new Lazy<Colors>(() => new Colors());
+        private static Colors _instance = new Colors();
 
-        static Colors()
+        // public static Colors Instance { get { return lazy.Value; } }
+        public static Colors Instance
+        {
+            get { return _instance; } 
+            set { _instance = value;  }
+        }
+
+        //public void SetInstance(Colors instance)
+        //{
+        //    lazy.
+        //}
+
+        public Color BoardBorder { get; set; }
+        public Color BlockBorder { get; set; }
+        public Color CellBorder { get; set; }
+        public Color CellBlank { get; set; }
+        public Color CellBlockAlternate { get; set; }
+        public Color CellHouseSelect { get; set; }
+        public Color CellSelectFrame { get; set; }
+        public Color CellHighlightNone { get; set; }
+        public Color CellHighlightValue { get; set; }
+        public Color CellHighlightSpecial { get; set; }
+        public Color CellHighlightPivot { get; set; }
+        public Color CellHighlightPincer { get; set; }
+        public Color CellTextOnHighlightNone { get; set; }
+        public Color CellTextOnHighlightValue { get; set; }
+        public Color CellTextOnHighlightSpecial { get; set; }
+        public Color CellTextOnHighlightPivot { get; set; }
+        public Color CellTextOnHighlightPincer { get; set; }
+        public Color AnswerGiven { get; set; }
+        public Color AnswerGuess { get; set; }
+        public Color AnswerInvalid { get; set; }
+        public Color NoteHighlightNone { get; set; }
+        public Color NoteHighlightInfo { get; set; }
+        public Color NoteHighlightStrong { get; set; }
+        public Color NoteHighlightWeak { get; set; }
+        public Color NoteHighlightBad { get; set; }
+        public Color NoteTextOnHighlightNone { get; set; }
+        public Color NoteTextOnHighlightInfo { get; set; }
+        public Color NoteTextOnHighlightStrong { get; set; }
+        public Color NoteTextOnHighlightWeak { get; set; }
+        public Color NoteTextOnHighlightBad { get; set; }
+
+        private Colors()
         {
             SetLight();
         }
 
-        public static void SetLight()
+        public void SetLight()
         {
             BoardBorder = Color.Black;
             BlockBorder = Color.Black;
@@ -79,7 +94,7 @@ namespace Sudoku
             NoteTextOnHighlightBad = Color.LightGray;
         }
 
-        public static void SetDark()
+        public void SetDark()
         {
             BoardBorder = Color.DarkViolet;
             BlockBorder = Color.DarkViolet;

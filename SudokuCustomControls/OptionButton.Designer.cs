@@ -36,6 +36,7 @@
             // 
             // pnlOption
             // 
+            this.pnlOption.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.pnlOption.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.pnlOption.Controls.Add(this.lbOption);
             this.pnlOption.Controls.Add(this.chkOption);
@@ -49,7 +50,7 @@
             // 
             this.lbOption.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbOption.Font = new System.Drawing.Font("Yu Gothic", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbOption.ForeColor = System.Drawing.Color.DimGray;
+            this.lbOption.ForeColor = System.Drawing.SystemColors.Highlight;
             this.lbOption.Location = new System.Drawing.Point(0, 0);
             this.lbOption.Name = "lbOption";
             this.lbOption.Size = new System.Drawing.Size(132, 24);

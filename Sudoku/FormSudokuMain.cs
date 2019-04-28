@@ -404,7 +404,7 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Arrow Keys act funky on Forms and move through various controls regardless of tabstop settings so I am trapping them early, pretending was KeyDown, then eating the key to avoid further form processing 
+        /// Some keys act funky on Forms and move through various controls regardless of tabstop settings so I am trapping them early, pretending was KeyDown, then eating the key to avoid further form processing 
         /// Also, I am having to remember (but not trap/eat) the modifier keys (alt, shift, ctrl) to pass them down to mouse click events
         /// </summary>
         /// <param name="msg">Don't care, just passed along</param>
@@ -420,6 +420,8 @@ namespace Sudoku
                 case Keys.Down:
                 case Keys.Left:
                 case Keys.Right:
+                case Keys.End:
+                case Keys.Home:
                     // send directly to KeyDown since returning True here would prevent KeyDown from getting these keystrokes
                     frmMain_KeyDown(this, new KeyEventArgs(keyData));
                     return true;

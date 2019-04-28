@@ -56,6 +56,12 @@
     <Compile Include="Boards\BitmapBoard.cs" />
     <Compile Include="Boards\Board.cs" />
     <Compile Include="Cells\BitmapCell.cs" />
+    <Compile Include="Colors.cs" />
+    <Compile Include="Enums\ColorScheme.cs" />
+    <Compile Include="Finders\DefaultFinder.cs" />
+    <Compile Include="Finders\FindResult.cs" />
+    <Compile Include="Finders\IFinder.cs" />
+    <Compile Include="Fonts.cs" />
     <Compile Include="FormColorDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -64,7 +70,6 @@
     </Compile>
     <Compile Include="Enums\ActionType.cs" />
     <Compile Include="Enums\EnumExtensions.cs" />
-    <Compile Include="Enums\ColorScheme.cs" />
     <Compile Include="Enums\YesNo.cs" />
     <Compile Include="Enums\ValidationMode.cs" />
     <Compile Include="Enums\NumberKeysMode.cs" />

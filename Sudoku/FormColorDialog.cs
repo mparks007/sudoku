@@ -23,36 +23,36 @@ namespace Sudoku
             lbxChoices.ValueMember = "Value";
 
             // load up the list box with every custom color option
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Board Outer Boarder", BitmapBoard.Colors.BoardBorder));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Board Block Boarders", BitmapBoard.Colors.BlockBorder));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Border", BitmapBoard.Colors.CellBorder));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Background (Normal)", BitmapBoard.Colors.CellBlank));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Background (Block Alternate)", BitmapBoard.Colors.CellBlockAlternate));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Background (House Select)", BitmapBoard.Colors.CellHouseSelect));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Selection Box", BitmapBoard.Colors.CellSelectFrame));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Highlight (X)", BitmapBoard.Colors.CellHighlightNone));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Highlight (Value)", BitmapBoard.Colors.CellHighlightValue));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Highlight (Special)", BitmapBoard.Colors.CellHighlightSpecial));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Highlight (Pivot)", BitmapBoard.Colors.CellHighlightPivot));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Highlight (Pincer)", BitmapBoard.Colors.CellHighlightPincer));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Text When Highlighted (X)", BitmapBoard.Colors.CellTextOnHighlightNone));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Text When Highlighted (Value)", BitmapBoard.Colors.CellTextOnHighlightValue));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Text When Highlighted (Special)", BitmapBoard.Colors.CellTextOnHighlightSpecial));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Text When Highlighted (Pivot)", BitmapBoard.Colors.CellTextOnHighlightPivot));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Text When Highlighted (Pincer)", BitmapBoard.Colors.CellTextOnHighlightPincer));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Answer (Given)", BitmapBoard.Colors.AnswerGiven));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Answer (Guess)", BitmapBoard.Colors.AnswerGuess));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Answer (Invalid)", BitmapBoard.Colors.AnswerInvalid));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Highlight (X)", BitmapBoard.Colors.NoteHighlightNone));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Highlight (Info)", BitmapBoard.Colors.NoteHighlightInfo));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Highlight (Strong)", BitmapBoard.Colors.NoteHighlightStrong));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Highlight (Weak)", BitmapBoard.Colors.NoteHighlightWeak));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Highlight (Bad)", BitmapBoard.Colors.NoteHighlightBad));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Text When Highlighted (None)", BitmapBoard.Colors.NoteTextOnHighlightNone));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Text When Highlighted (Info)", BitmapBoard.Colors.NoteTextOnHighlightInfo));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Text When Highlighted (Strong)", BitmapBoard.Colors.NoteTextOnHighlightStrong));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Text When Highlighted (Weak)", BitmapBoard.Colors.NoteTextOnHighlightWeak));
-            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Text When Highlighted (Bad)", BitmapBoard.Colors.NoteTextOnHighlightBad));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Board Outer Boarder", Colors.BoardBorder));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Board Block Boarders", Colors.BlockBorder));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Border", Colors.CellBorder));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Background (Normal)", Colors.CellBlank));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Background (Block Alternate)", Colors.CellBlockAlternate));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Background (House Select)", Colors.CellHouseSelect));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Selection Box", Colors.CellSelectFrame));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Highlight (X)", Colors.CellHighlightNone));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Highlight (Value)", Colors.CellHighlightValue));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Highlight (Special)", Colors.CellHighlightSpecial));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Highlight (Pivot)", Colors.CellHighlightPivot));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Highlight (Pincer)", Colors.CellHighlightPincer));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Text When Highlighted (X)", Colors.CellTextOnHighlightNone));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Text When Highlighted (Value)", Colors.CellTextOnHighlightValue));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Text When Highlighted (Special)", Colors.CellTextOnHighlightSpecial));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Text When Highlighted (Pivot)", Colors.CellTextOnHighlightPivot));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Cell Text When Highlighted (Pincer)", Colors.CellTextOnHighlightPincer));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Answer (Given)", Colors.AnswerGiven));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Answer (Guess)", Colors.AnswerGuess));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Answer (Invalid)", Colors.AnswerInvalid));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Highlight (X)", Colors.NoteHighlightNone));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Highlight (Info)", Colors.NoteHighlightInfo));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Highlight (Strong)", Colors.NoteHighlightStrong));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Highlight (Weak)", Colors.NoteHighlightWeak));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Highlight (Bad)", Colors.NoteHighlightBad));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Text When Highlighted (None)", Colors.NoteTextOnHighlightNone));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Text When Highlighted (Info)", Colors.NoteTextOnHighlightInfo));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Text When Highlighted (Strong)", Colors.NoteTextOnHighlightStrong));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Text When Highlighted (Weak)", Colors.NoteTextOnHighlightWeak));
+            lbxChoices.Items.Add(new KeyValuePair<string, Color>("Note Text When Highlighted (Bad)", Colors.NoteTextOnHighlightBad));
         }
 
         /// <summary>
@@ -70,36 +70,36 @@ namespace Sudoku
         public void SetCustom()
         {
             
-            BitmapBoard.Colors.BoardBorder = ((KeyValuePair<string, Color>)lbxChoices.Items[0]).Value;
-            BitmapBoard.Colors.BlockBorder = ((KeyValuePair<string, Color>)lbxChoices.Items[1]).Value;
-            BitmapBoard.Colors.CellBorder = ((KeyValuePair<string, Color>)lbxChoices.Items[2]).Value;
-            BitmapBoard.Colors.CellBlank = ((KeyValuePair<string, Color>)lbxChoices.Items[3]).Value;
-            BitmapBoard.Colors.CellBlockAlternate = ((KeyValuePair<string, Color>)lbxChoices.Items[4]).Value;
-            BitmapBoard.Colors.CellHouseSelect = ((KeyValuePair<string, Color>)lbxChoices.Items[5]).Value;
-            BitmapBoard.Colors.CellSelectFrame = ((KeyValuePair<string, Color>)lbxChoices.Items[6]).Value;
-            BitmapBoard.Colors.CellHighlightNone = ((KeyValuePair<string, Color>)lbxChoices.Items[7]).Value;
-            BitmapBoard.Colors.CellHighlightValue = ((KeyValuePair<string, Color>)lbxChoices.Items[8]).Value;
-            BitmapBoard.Colors.CellHighlightSpecial = ((KeyValuePair<string, Color>)lbxChoices.Items[9]).Value;
-            BitmapBoard.Colors.CellHighlightPivot = ((KeyValuePair<string, Color>)lbxChoices.Items[10]).Value;
-            BitmapBoard.Colors.CellHighlightPincer = ((KeyValuePair<string, Color>)lbxChoices.Items[11]).Value;
-            BitmapBoard.Colors.CellTextOnHighlightNone = ((KeyValuePair<string, Color>)lbxChoices.Items[12]).Value;
-            BitmapBoard.Colors.CellTextOnHighlightValue = ((KeyValuePair<string, Color>)lbxChoices.Items[13]).Value;
-            BitmapBoard.Colors.CellTextOnHighlightSpecial = ((KeyValuePair<string, Color>)lbxChoices.Items[14]).Value;
-            BitmapBoard.Colors.CellTextOnHighlightPivot = ((KeyValuePair<string, Color>)lbxChoices.Items[15]).Value;
-            BitmapBoard.Colors.CellTextOnHighlightPincer = ((KeyValuePair<string, Color>)lbxChoices.Items[16]).Value;
-            BitmapBoard.Colors.AnswerGiven = ((KeyValuePair<string, Color>)lbxChoices.Items[17]).Value;
-            BitmapBoard.Colors.AnswerGuess = ((KeyValuePair<string, Color>)lbxChoices.Items[18]).Value;
-            BitmapBoard.Colors.AnswerInvalid = ((KeyValuePair<string, Color>)lbxChoices.Items[19]).Value;
-            BitmapBoard.Colors.NoteHighlightNone = ((KeyValuePair<string, Color>)lbxChoices.Items[20]).Value;
-            BitmapBoard.Colors.NoteHighlightInfo = ((KeyValuePair<string, Color>)lbxChoices.Items[21]).Value;
-            BitmapBoard.Colors.NoteHighlightStrong = ((KeyValuePair<string, Color>)lbxChoices.Items[22]).Value;
-            BitmapBoard.Colors.NoteHighlightWeak = ((KeyValuePair<string, Color>)lbxChoices.Items[23]).Value;
-            BitmapBoard.Colors.NoteHighlightBad = ((KeyValuePair<string, Color>)lbxChoices.Items[24]).Value;
-            BitmapBoard.Colors.NoteTextOnHighlightNone = ((KeyValuePair<string, Color>)lbxChoices.Items[25]).Value;
-            BitmapBoard.Colors.NoteTextOnHighlightInfo = ((KeyValuePair<string, Color>)lbxChoices.Items[26]).Value;
-            BitmapBoard.Colors.NoteTextOnHighlightStrong = ((KeyValuePair<string, Color>)lbxChoices.Items[27]).Value;
-            BitmapBoard.Colors.NoteTextOnHighlightWeak = ((KeyValuePair<string, Color>)lbxChoices.Items[28]).Value;
-            BitmapBoard.Colors.NoteTextOnHighlightBad = ((KeyValuePair<string, Color>)lbxChoices.Items[29]).Value;
+            Colors.BoardBorder = ((KeyValuePair<string, Color>)lbxChoices.Items[0]).Value;
+            Colors.BlockBorder = ((KeyValuePair<string, Color>)lbxChoices.Items[1]).Value;
+            Colors.CellBorder = ((KeyValuePair<string, Color>)lbxChoices.Items[2]).Value;
+            Colors.CellBlank = ((KeyValuePair<string, Color>)lbxChoices.Items[3]).Value;
+            Colors.CellBlockAlternate = ((KeyValuePair<string, Color>)lbxChoices.Items[4]).Value;
+            Colors.CellHouseSelect = ((KeyValuePair<string, Color>)lbxChoices.Items[5]).Value;
+            Colors.CellSelectFrame = ((KeyValuePair<string, Color>)lbxChoices.Items[6]).Value;
+            Colors.CellHighlightNone = ((KeyValuePair<string, Color>)lbxChoices.Items[7]).Value;
+            Colors.CellHighlightValue = ((KeyValuePair<string, Color>)lbxChoices.Items[8]).Value;
+            Colors.CellHighlightSpecial = ((KeyValuePair<string, Color>)lbxChoices.Items[9]).Value;
+            Colors.CellHighlightPivot = ((KeyValuePair<string, Color>)lbxChoices.Items[10]).Value;
+            Colors.CellHighlightPincer = ((KeyValuePair<string, Color>)lbxChoices.Items[11]).Value;
+            Colors.CellTextOnHighlightNone = ((KeyValuePair<string, Color>)lbxChoices.Items[12]).Value;
+            Colors.CellTextOnHighlightValue = ((KeyValuePair<string, Color>)lbxChoices.Items[13]).Value;
+            Colors.CellTextOnHighlightSpecial = ((KeyValuePair<string, Color>)lbxChoices.Items[14]).Value;
+            Colors.CellTextOnHighlightPivot = ((KeyValuePair<string, Color>)lbxChoices.Items[15]).Value;
+            Colors.CellTextOnHighlightPincer = ((KeyValuePair<string, Color>)lbxChoices.Items[16]).Value;
+            Colors.AnswerGiven = ((KeyValuePair<string, Color>)lbxChoices.Items[17]).Value;
+            Colors.AnswerGuess = ((KeyValuePair<string, Color>)lbxChoices.Items[18]).Value;
+            Colors.AnswerInvalid = ((KeyValuePair<string, Color>)lbxChoices.Items[19]).Value;
+            Colors.NoteHighlightNone = ((KeyValuePair<string, Color>)lbxChoices.Items[20]).Value;
+            Colors.NoteHighlightInfo = ((KeyValuePair<string, Color>)lbxChoices.Items[21]).Value;
+            Colors.NoteHighlightStrong = ((KeyValuePair<string, Color>)lbxChoices.Items[22]).Value;
+            Colors.NoteHighlightWeak = ((KeyValuePair<string, Color>)lbxChoices.Items[23]).Value;
+            Colors.NoteHighlightBad = ((KeyValuePair<string, Color>)lbxChoices.Items[24]).Value;
+            Colors.NoteTextOnHighlightNone = ((KeyValuePair<string, Color>)lbxChoices.Items[25]).Value;
+            Colors.NoteTextOnHighlightInfo = ((KeyValuePair<string, Color>)lbxChoices.Items[26]).Value;
+            Colors.NoteTextOnHighlightStrong = ((KeyValuePair<string, Color>)lbxChoices.Items[27]).Value;
+            Colors.NoteTextOnHighlightWeak = ((KeyValuePair<string, Color>)lbxChoices.Items[28]).Value;
+            Colors.NoteTextOnHighlightBad = ((KeyValuePair<string, Color>)lbxChoices.Items[29]).Value;
         }
 
         /// <summary>
@@ -119,94 +119,94 @@ namespace Sudoku
                 switch (lbxChoices.SelectedIndex)
                 {
                     case 0:
-                        BitmapBoard.Colors.BoardBorder = dlgColor.Color;
+                        Colors.BoardBorder = dlgColor.Color;
                         break;
                     case 1:
-                        BitmapBoard.Colors.BlockBorder = dlgColor.Color;
+                        Colors.BlockBorder = dlgColor.Color;
                         break;
                     case 2:
-                        BitmapBoard.Colors.CellBorder = dlgColor.Color;
+                        Colors.CellBorder = dlgColor.Color;
                         break;
                     case 3:
-                        BitmapBoard.Colors.CellBlank = dlgColor.Color;
+                        Colors.CellBlank = dlgColor.Color;
                         break;
                     case 4:
-                        BitmapBoard.Colors.CellBlockAlternate = dlgColor.Color;
+                        Colors.CellBlockAlternate = dlgColor.Color;
                         break;
                     case 5:
-                        BitmapBoard.Colors.CellHouseSelect = dlgColor.Color;
+                        Colors.CellHouseSelect = dlgColor.Color;
                         break;
                     case 6:
-                        BitmapBoard.Colors.CellSelectFrame = dlgColor.Color;
+                        Colors.CellSelectFrame = dlgColor.Color;
                         break;
                     case 7:
-                        BitmapBoard.Colors.CellHighlightNone = dlgColor.Color;
+                        Colors.CellHighlightNone = dlgColor.Color;
                         break;
                     case 8:
-                        BitmapBoard.Colors.CellHighlightValue = dlgColor.Color;
+                        Colors.CellHighlightValue = dlgColor.Color;
                         break;
                     case 9:
-                        BitmapBoard.Colors.CellHighlightSpecial = dlgColor.Color;
+                        Colors.CellHighlightSpecial = dlgColor.Color;
                         break;
                     case 10:
-                        BitmapBoard.Colors.CellHighlightPivot = dlgColor.Color;
+                        Colors.CellHighlightPivot = dlgColor.Color;
                         break;
                     case 11:
-                        BitmapBoard.Colors.CellHighlightPincer = dlgColor.Color;
+                        Colors.CellHighlightPincer = dlgColor.Color;
                         break;
                     case 12:
-                        BitmapBoard.Colors.CellTextOnHighlightNone = dlgColor.Color;
+                        Colors.CellTextOnHighlightNone = dlgColor.Color;
                         break;
                     case 13:
-                        BitmapBoard.Colors.CellTextOnHighlightValue = dlgColor.Color;
+                        Colors.CellTextOnHighlightValue = dlgColor.Color;
                         break;
                     case 14:
-                        BitmapBoard.Colors.CellTextOnHighlightSpecial = dlgColor.Color;
+                        Colors.CellTextOnHighlightSpecial = dlgColor.Color;
                         break;
                     case 15:
-                        BitmapBoard.Colors.CellTextOnHighlightPivot = dlgColor.Color;
+                        Colors.CellTextOnHighlightPivot = dlgColor.Color;
                         break;
                     case 16:
-                        BitmapBoard.Colors.CellTextOnHighlightPincer = dlgColor.Color;
+                        Colors.CellTextOnHighlightPincer = dlgColor.Color;
                         break;
                     case 17:
-                        BitmapBoard.Colors.AnswerGiven = dlgColor.Color;
+                        Colors.AnswerGiven = dlgColor.Color;
                         break;
                     case 18:
-                        BitmapBoard.Colors.AnswerGuess = dlgColor.Color;
+                        Colors.AnswerGuess = dlgColor.Color;
                         break;
                     case 19:
-                        BitmapBoard.Colors.AnswerInvalid = dlgColor.Color;
+                        Colors.AnswerInvalid = dlgColor.Color;
                         break;
                     case 20:
-                        BitmapBoard.Colors.NoteHighlightNone = dlgColor.Color;
+                        Colors.NoteHighlightNone = dlgColor.Color;
                         break;
                     case 21:
-                        BitmapBoard.Colors.NoteHighlightInfo = dlgColor.Color;
+                        Colors.NoteHighlightInfo = dlgColor.Color;
                         break;
                     case 22:
-                        BitmapBoard.Colors.NoteHighlightStrong = dlgColor.Color;
+                        Colors.NoteHighlightStrong = dlgColor.Color;
                         break;
                     case 23:
-                        BitmapBoard.Colors.NoteHighlightWeak = dlgColor.Color;
+                        Colors.NoteHighlightWeak = dlgColor.Color;
                         break;
                     case 24:
-                        BitmapBoard.Colors.NoteHighlightBad = dlgColor.Color;
+                        Colors.NoteHighlightBad = dlgColor.Color;
                         break;
                     case 25:
-                        BitmapBoard.Colors.NoteTextOnHighlightNone = dlgColor.Color;
+                        Colors.NoteTextOnHighlightNone = dlgColor.Color;
                         break;
                     case 26:
-                        BitmapBoard.Colors.NoteTextOnHighlightInfo = dlgColor.Color;
+                        Colors.NoteTextOnHighlightInfo = dlgColor.Color;
                         break;
                     case 27:
-                        BitmapBoard.Colors.NoteTextOnHighlightStrong = dlgColor.Color;
+                        Colors.NoteTextOnHighlightStrong = dlgColor.Color;
                         break;
                     case 28:
-                        BitmapBoard.Colors.NoteTextOnHighlightWeak = dlgColor.Color;
+                        Colors.NoteTextOnHighlightWeak = dlgColor.Color;
                         break;
                     case 29:
-                        BitmapBoard.Colors.NoteTextOnHighlightBad = dlgColor.Color;
+                        Colors.NoteTextOnHighlightBad = dlgColor.Color;
                         break;
                 }
 

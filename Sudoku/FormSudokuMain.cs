@@ -12,6 +12,7 @@ namespace Sudoku
         private int _yOffset = 20;                                  // how far down from Form's top edge to start painting the board
         private ModifierKey _modifierKey = ModifierKey.None;        // keeping track of alt, shift, ctrl state at the time of early key trapping and normal keypress events
         private frmColorDialog _frmColors = new frmColorDialog();   // form to allow selection of custom colors
+        private IFinder _finder;
 
         // components for click/doubleclick hack code :(
         private Timer _doubleClickTimer = new Timer();
@@ -29,14 +30,12 @@ namespace Sudoku
         {
             InitializeComponent();
             _gr = CreateGraphics();
+            _finder = new DefaultFinder();
 
             _frmColors.SetCallBack(ColorUIUpdateAndRender);
 
-            SetupUI();
-
-            // load up all the "Find pattern blah" items,then select first one by default
-            LoadPatternList();
-            cbxPatterns.SelectedIndex = 0;
+            SetupCustomControls();
+            SetupPatternUI();
 
             // setup time for click/doubleclick hack code :(
             _doubleClickTimer.Interval = 35;
@@ -52,7 +51,7 @@ namespace Sudoku
         /// <summary>
         /// Setup various button/checkbox controls to the appropriate text and coloring
         /// </summary>
-        private void SetupUI()
+        private void SetupCustomControls()
         {
             // listen for numbers clicking
             pnlFocusNumber.NumberClicked += pnlSetNumbers_NumberClicked;
@@ -60,15 +59,15 @@ namespace Sudoku
             // component setup for Cell Highlight control
             pnlCellHighlightPicker.SetButtonTags((int)CellHighlightType.None, (int)CellHighlightType.Value, (int)CellHighlightType.Special, (int)CellHighlightType.Pivot, (int)CellHighlightType.Pincer);
             pnlCellHighlightPicker.SetButtonText(CellHighlightType.None.Description(), CellHighlightType.Value.Description(), CellHighlightType.Special.Description(), CellHighlightType.Pivot.Description(), CellHighlightType.Pincer.Description());
-            pnlCellHighlightPicker.SetButtonColors(BitmapBoard.Colors.CellHighlightNone, BitmapBoard.Colors.CellHighlightValue, BitmapBoard.Colors.CellHighlightSpecial, BitmapBoard.Colors.CellHighlightPivot, BitmapBoard.Colors.CellHighlightPincer);
-            pnlCellHighlightPicker.SetButtonFontColors(BitmapBoard.Colors.CellTextOnHighlightNone, BitmapBoard.Colors.CellTextOnHighlightValue, BitmapBoard.Colors.CellTextOnHighlightSpecial, BitmapBoard.Colors.CellTextOnHighlightPivot, BitmapBoard.Colors.CellTextOnHighlightPincer);
+            pnlCellHighlightPicker.SetButtonColors(Colors.CellHighlightNone, Colors.CellHighlightValue, Colors.CellHighlightSpecial, Colors.CellHighlightPivot, Colors.CellHighlightPincer);
+            pnlCellHighlightPicker.SetButtonFontColors(Colors.CellTextOnHighlightNone, Colors.CellTextOnHighlightValue, Colors.CellTextOnHighlightSpecial, Colors.CellTextOnHighlightPivot, Colors.CellTextOnHighlightPincer);
             pnlCellHighlightPicker.ButtonClicked += pnlCellHighlightPicker_Clicked;
 
             // component setup for Note Highlight control
             pnlNoteHighlightPicker.SetButtonTags((int)NoteHighlightType.None, (int)NoteHighlightType.Info, (int)NoteHighlightType.Strong, (int)NoteHighlightType.Weak, (int)NoteHighlightType.Bad);
             pnlNoteHighlightPicker.SetButtonText(NoteHighlightType.None.Description(), NoteHighlightType.Info.Description(), NoteHighlightType.Strong.Description(), NoteHighlightType.Weak.Description(), NoteHighlightType.Bad.Description());
-            pnlNoteHighlightPicker.SetButtonColors(BitmapBoard.Colors.NoteHighlightNone, BitmapBoard.Colors.NoteHighlightInfo, BitmapBoard.Colors.NoteHighlightStrong, BitmapBoard.Colors.NoteHighlightWeak, BitmapBoard.Colors.NoteHighlightBad);
-            pnlNoteHighlightPicker.SetButtonFontColors(BitmapBoard.Colors.NoteTextOnHighlightNone, BitmapBoard.Colors.NoteTextOnHighlightInfo, BitmapBoard.Colors.NoteTextOnHighlightStrong, BitmapBoard.Colors.NoteTextOnHighlightWeak, BitmapBoard.Colors.NoteTextOnHighlightBad);
+            pnlNoteHighlightPicker.SetButtonColors(Colors.NoteHighlightNone, Colors.NoteHighlightInfo, Colors.NoteHighlightStrong, Colors.NoteHighlightWeak, Colors.NoteHighlightBad);
+            pnlNoteHighlightPicker.SetButtonFontColors(Colors.NoteTextOnHighlightNone, Colors.NoteTextOnHighlightInfo, Colors.NoteTextOnHighlightStrong, Colors.NoteTextOnHighlightWeak, Colors.NoteTextOnHighlightBad);
             pnlNoteHighlightPicker.ButtonClicked += pnlNoteHighlightPicker_Clicked;
 
             // [options buttons setup]
@@ -96,7 +95,7 @@ namespace Sudoku
         /// <summary>
         /// Setup the Patterns combo box
         /// </summary>
-        private void LoadPatternList()
+        private void SetupPatternUI()
         {
             cbxPatterns.Items.Clear();
             cbxPatterns.DisplayMember = "Key";
@@ -106,6 +105,12 @@ namespace Sudoku
             cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.Skyscraper.Description(), Pattern.Skyscraper));
             cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.TwoStringKite.Description(), Pattern.TwoStringKite));
             cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.XYWing.Description(), Pattern.XYWing));
+
+            cbxPatterns.SelectedIndex = 0;
+
+            cbxFindResults.Items.Clear();
+            cbxFindResults.DisplayMember = "Key";
+            cbxFindResults.ValueMember = "Value";
         }
 
         /// <summary>
@@ -263,11 +268,31 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void btnFind_Click(object sender, EventArgs e)
         {
-            Pattern pattern = ((KeyValuePair<string, Pattern>)cbxPatterns.SelectedItem).Value;
+            cbxFindResults.Items.Clear();
 
-            // do stuff
+            // try to find patterns for the selected type
+            List<FindResult> results = _finder.Find(Game.Board, ((KeyValuePair<string, Pattern>)cbxPatterns.SelectedItem).Value);
 
-            //Render();
+            // load list of all results
+            foreach (FindResult result in results)
+                cbxFindResults.Items.Add(new KeyValuePair<string, FindResult>(result.ToString(), result));
+        }
+
+        /// <summary>
+        /// Selected a found pattern, so highlight based on the cells in the results
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void cbxFindResults_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // clear prior pattern highlighting 
+            Game.Board.HighlightCellsWithNoteOrNumber(-1);
+            
+            // go through all the cells involved in the found pattern selected and highlight accordingly
+            foreach (KeyValuePair<Cell, CellHighlightType> cellFound in ((KeyValuePair<string, FindResult>)cbxFindResults.SelectedItem).Value.CellsFound)
+                Game.Board.HighlightCell(cellFound.Key.Row, cellFound.Key.Column, cellFound.Value);
+
+            Render();
         }
 
         /// <summary>
@@ -332,11 +357,11 @@ namespace Sudoku
                 {
                     case CheckState.Unchecked:
                         btnColorDialog.Visible = false;
-                        BitmapBoard.Colors.SetLight();
+                        Colors.SetLight();
                         break;
                     case CheckState.Checked:
                         btnColorDialog.Visible = false;
-                        BitmapBoard.Colors.SetDark();
+                        Colors.SetDark();
                         break;
                     case CheckState.Indeterminate:
                         btnColorDialog.Visible = true;
@@ -354,10 +379,10 @@ namespace Sudoku
         /// </summary>
         public void ColorUIUpdateAndRender()
         {
-            pnlCellHighlightPicker.SetButtonColors(BitmapBoard.Colors.CellHighlightNone, BitmapBoard.Colors.CellHighlightValue, BitmapBoard.Colors.CellHighlightSpecial, BitmapBoard.Colors.CellHighlightPivot, BitmapBoard.Colors.CellHighlightPincer);
-            pnlCellHighlightPicker.SetButtonFontColors(BitmapBoard.Colors.CellTextOnHighlightNone, BitmapBoard.Colors.CellTextOnHighlightValue, BitmapBoard.Colors.CellTextOnHighlightSpecial, BitmapBoard.Colors.CellTextOnHighlightPivot, BitmapBoard.Colors.CellTextOnHighlightPincer);
-            pnlNoteHighlightPicker.SetButtonColors(BitmapBoard.Colors.NoteHighlightNone, BitmapBoard.Colors.NoteHighlightInfo, BitmapBoard.Colors.NoteHighlightStrong, BitmapBoard.Colors.NoteHighlightWeak, BitmapBoard.Colors.NoteHighlightBad);
-            pnlNoteHighlightPicker.SetButtonFontColors(BitmapBoard.Colors.NoteTextOnHighlightNone, BitmapBoard.Colors.NoteTextOnHighlightInfo, BitmapBoard.Colors.NoteTextOnHighlightStrong, BitmapBoard.Colors.NoteTextOnHighlightWeak, BitmapBoard.Colors.NoteTextOnHighlightBad);
+            pnlCellHighlightPicker.SetButtonColors(Colors.CellHighlightNone, Colors.CellHighlightValue, Colors.CellHighlightSpecial, Colors.CellHighlightPivot, Colors.CellHighlightPincer);
+            pnlCellHighlightPicker.SetButtonFontColors(Colors.CellTextOnHighlightNone, Colors.CellTextOnHighlightValue, Colors.CellTextOnHighlightSpecial, Colors.CellTextOnHighlightPivot, Colors.CellTextOnHighlightPincer);
+            pnlNoteHighlightPicker.SetButtonColors(Colors.NoteHighlightNone, Colors.NoteHighlightInfo, Colors.NoteHighlightStrong, Colors.NoteHighlightWeak, Colors.NoteHighlightBad);
+            pnlNoteHighlightPicker.SetButtonFontColors(Colors.NoteTextOnHighlightNone, Colors.NoteTextOnHighlightInfo, Colors.NoteTextOnHighlightStrong, Colors.NoteTextOnHighlightWeak, Colors.NoteTextOnHighlightBad);
 
             Render();
         }

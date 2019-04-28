@@ -46,6 +46,7 @@
             this.chkNotesHold = new SudokuCustomControls.OptionButton();
             this.chkColorScheme = new SudokuCustomControls.OptionButton();
             this.btnColorDialog = new System.Windows.Forms.Button();
+            this.cbxFindResults = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // btnSetGiven
@@ -258,12 +259,28 @@
             this.btnColorDialog.Visible = false;
             this.btnColorDialog.Click += new System.EventHandler(this.btnColorDialog_Click);
             // 
+            // cbxFindResults
+            // 
+            this.cbxFindResults.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.cbxFindResults.CausesValidation = false;
+            this.cbxFindResults.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxFindResults.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cbxFindResults.Font = new System.Drawing.Font("Yu Gothic", 7F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbxFindResults.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.cbxFindResults.Location = new System.Drawing.Point(581, 347);
+            this.cbxFindResults.Name = "cbxFindResults";
+            this.cbxFindResults.Size = new System.Drawing.Size(238, 20);
+            this.cbxFindResults.TabIndex = 76;
+            this.cbxFindResults.TabStop = false;
+            this.cbxFindResults.SelectedIndexChanged += new System.EventHandler(this.cbxFindResults_SelectedIndexChanged);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(845, 577);
+            this.Controls.Add(this.cbxFindResults);
             this.Controls.Add(this.chkNotesHold);
             this.Controls.Add(this.chkHighlightHavingValue);
             this.Controls.Add(this.btnToggleNote);
@@ -316,6 +333,7 @@
         private SudokuCustomControls.OptionButton chkNotesHold;
         private SudokuCustomControls.OptionButton chkColorScheme;
         private System.Windows.Forms.Button btnColorDialog;
+        private System.Windows.Forms.ComboBox cbxFindResults;
     }
 }
 

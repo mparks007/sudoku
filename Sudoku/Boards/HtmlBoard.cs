@@ -22,7 +22,7 @@ namespace Sudoku
         }
         public HtmlBoard(int size) : base()
         {
-            //_boardImage = new Bitmap(size, size);
+            
         }
 
         public override void Render()

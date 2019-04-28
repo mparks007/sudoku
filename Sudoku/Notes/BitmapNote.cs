@@ -40,24 +40,24 @@ namespace Sudoku
 
                 // setup note background and font coloring based on highlight or not
                 Color c = Color.Transparent;
-                Brush br = new SolidBrush(BitmapBoard.Colors.NoteTextOnHighlightNone);
+                Brush br = new SolidBrush(Colors.NoteTextOnHighlightNone);
                 switch (HighlightType)
                 {
                     case NoteHighlightType.Info:
-                        c = BitmapBoard.Colors.NoteHighlightInfo;
-                        br = new SolidBrush(BitmapBoard.Colors.NoteTextOnHighlightInfo);
+                        c = Colors.NoteHighlightInfo;
+                        br = new SolidBrush(Colors.NoteTextOnHighlightInfo);
                         break;
                     case NoteHighlightType.Bad:
-                        c = BitmapBoard.Colors.NoteHighlightBad;
-                        br = new SolidBrush(BitmapBoard.Colors.NoteTextOnHighlightBad);
+                        c = Colors.NoteHighlightBad;
+                        br = new SolidBrush(Colors.NoteTextOnHighlightBad);
                         break;
                     case NoteHighlightType.Strong:
-                        c = BitmapBoard.Colors.NoteHighlightStrong;
-                        br = new SolidBrush(BitmapBoard.Colors.NoteTextOnHighlightStrong);
+                        c = Colors.NoteHighlightStrong;
+                        br = new SolidBrush(Colors.NoteTextOnHighlightStrong);
                         break;
                     case NoteHighlightType.Weak:
-                        c = BitmapBoard.Colors.NoteHighlightWeak;
-                        br = new SolidBrush(BitmapBoard.Colors.NoteTextOnHighlightWeak);
+                        c = Colors.NoteHighlightWeak;
+                        br = new SolidBrush(Colors.NoteTextOnHighlightWeak);
                         break;
                 }
 
@@ -66,7 +66,7 @@ namespace Sudoku
                 string candidate = _candidate.ToString();
 
                 // prep for drawing the text onto the image
-                Font f = new Font(BitmapBoard.Fonts.Note, _cellPixelSize / 3 / 2);
+                Font f = new Font(Fonts.Note, _cellPixelSize / 3 / 2);
                 SizeF fSize = BitmapBoard.Graphics.MeasureString(candidate, f);
                 StringFormat format = new StringFormat()
                 {

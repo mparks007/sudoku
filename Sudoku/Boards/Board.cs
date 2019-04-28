@@ -66,6 +66,17 @@ namespace Sudoku
         }
 
         /// <summary>
+        /// Return the cell at the specified row/col
+        /// </summary>
+        /// <param name="row">Row of the target cell</param>
+        /// <param name="col">Column of the target cell</param>
+        /// <returns>Cell at the specified row/col</returns>
+        public Cell CellAt(int row, int col)
+        {
+            return _cells[row - 1][col - 1];
+        }
+
+        /// <summary>
         /// Select the cell at the row/col coordinates passed in
         /// </summary>
         /// <param name="row">Row of the cell to select</param>
@@ -200,6 +211,20 @@ namespace Sudoku
                     if ((value == -1) || ((_cells[r][c].HighlightType == CellHighlightType.Value)) || (_cells[r][c].HighlightType == CellHighlightType.None))
                         _cells[r][c].HighlightHavingNoteOrNumber(value);
                 }
+        }
+
+        /// <summary>
+        /// Highlight the cell at row/col with the specified type of highlight
+        /// </summary>
+        /// <param name="row">Row to highlight</param>
+        /// <param name="col">Column to highlight</param>
+        /// <param name="highlightType">Type of cell highlight</param>
+        public void HighlightCell(int row, int col, CellHighlightType highlightType)
+        {
+            if (row < 1 || row > 9 || col < 1 || col > 9)
+                throw new ArgumentException(String.Format("Invalid value row/column requested for cell highlight: {0}/{1}", row, col));
+
+            _cells[row-1][col-1].HighlightType = highlightType;
         }
 
         /// <summary>

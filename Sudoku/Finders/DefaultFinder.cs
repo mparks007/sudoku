@@ -30,7 +30,10 @@ namespace Sudoku
         /// <returns>List of found patterns</returns>
         public List<FindResult> Find(Board board, Pattern pattern)
         {
-            return _methods[pattern](board);
+            if (_methods[pattern] != null)
+                return _methods[pattern](board);
+            else
+                return new List<FindResult>();
         }
 
         #region Finders

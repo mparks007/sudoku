@@ -24,6 +24,17 @@ namespace Sudoku
         }
 
         /// <summary>
+        /// Clear the undo/redo history and set it anew as the passed in state
+        /// </summary>
+        /// <param name="cellState">State to set after clearing</param>
+        public static void Reset(string cellState)
+        {
+            Index = -1;
+            _cellStates.Clear();
+            AddState(cellState);
+        }
+
+        /// <summary>
         /// Add another cell state to the history (but clearing future if undo/redo were being done between the last add and this one)
         /// </summary>
         /// <param name="cellState">JSON of the cells state</param>

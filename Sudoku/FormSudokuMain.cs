@@ -785,6 +785,10 @@ namespace Sudoku
                 try
                 {
                     ((BitmapBoard)Game.Board).LoadCells(File.ReadAllText(dlgImport.FileName));
+
+                    // reset and setup the undo/redo list based on the newly loaded board
+                    ActionManager.Reset(((BitmapBoard)Game.Board).CellsAsJSON());
+
                     Render();
                 }
                 catch (Exception ex)

@@ -286,6 +286,12 @@ namespace Sudoku
             // load list of all results
             foreach (FindResult result in results)
                 cbxFindResults.Items.Add(new KeyValuePair<string, FindResult>(result.ToString(), result));
+
+            // if found any patterns, might as well select the first one, otherwise, clear potential highlights of last one
+            if (cbxFindResults.Items.Count > 0)
+                cbxFindResults.SelectedIndex = 0;
+            else
+                Game.Board.HighlightCellsWithNoteOrNumber(-1);
         }
 
         /// <summary>

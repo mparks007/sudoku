@@ -55,7 +55,7 @@ namespace Sudoku
                 BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.Instance.CellHouseSelect), rect);
             else
             {
-                // make a subtle checkerboard pattern on the blocks
+                // make a subtle checkerboard pattern on the nine blocks
                 if (Block % 2 == 0)
                     BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.Instance.CellBlockAlternate), rect);
                 else
@@ -65,10 +65,10 @@ namespace Sudoku
             // if solved, render solved number
             if (_answer != 0)
             {
-                string num = _answer.ToString();
+                string answer = _answer.ToString();
 
                 Font f = new Font(Fonts.Instance.Answer, _cellSize / 2);
-                SizeF fSize = BitmapBoard.Graphics.MeasureString(num, f);
+                SizeF fSize = BitmapBoard.Graphics.MeasureString(answer, f);
 
                 Brush br;
                 // only turn red when invalid if....validating full number option and that number isn't a given
@@ -84,7 +84,7 @@ namespace Sudoku
                     Alignment = StringAlignment.Center,
                     LineAlignment = StringAlignment.Center
                 };
-                BitmapBoard.Graphics.DrawString(num, f, br, rect, format);
+                BitmapBoard.Graphics.DrawString(answer, f, br, rect, format);
             }
             else
             {
@@ -108,13 +108,10 @@ namespace Sudoku
         /// <param name="modifierKey">Key modifier (shift, alt, control)</param>
         /// <param name="x">X pixel location clicked in the main board</param>
         /// <param name="y">Y pixel location clicked in the main board</param>
-        /// <returns>True if something affecting undo/redo history happened</returns>        
-        public bool HandlePixelXYClick(UserInput input, ModifierKey modifierKey, int x, int y)
+        public void HandlePixelXYClick(UserInput input, ModifierKey modifierKey, int x, int y)
         {
-            if (x < 0 || x > (_cellSize * 9 - 1) || y < 0 || y > (_cellSize * 9 - 1))
+            if ((x < 0) || (x > (_cellSize * 9 - 1)) || (y < 0) || (y > (_cellSize * 9 - 1)))
                 throw new ArgumentException(String.Format("Invalid point requested (x:{0}, y:{1})", x, y));
-
-            bool didSomething = false;
 
             int noteRowInBoard = y / (_cellSize / 3);
             int noteColInBoard = x / (_cellSize / 3);
@@ -122,50 +119,25 @@ namespace Sudoku
             int noteRowInCell = noteRowInBoard % 3; // zero-based
             int noteColInCell = noteColInBoard % 3; // zero-based
 
-            int noteNum = (3 * noteRowInCell) + noteColInCell; // zero-based
+            int noteNum = (3 * noteRowInCell) + noteColInCell; // zero-based (thank, Román!)
 
-            _selectedNote = null;
             if (_notes[noteNum].IsNoted)
             {
                 _selectedNote = _notes[noteNum];
 
-                if ((modifierKey & ModifierKey.Control) != 0)
+                // if double-clicked note, promote to guess
+                if (input == UserInput.DoubleClick)
+                    SetGuess(noteNum + 1);
+                else if (((modifierKey & ModifierKey.Control) != 0) && !HasAnswer) // ctrl-clicking a note does special strong/weak
                 {
                     if (input == UserInput.LeftClick)
-                    {
-                        // if notes visible
-                        if (!HasAnswer)
-                        {
-                            HighlightNote(noteNum + 1, NoteHighlightType.Strong);
-                            didSomething = true;
-                        }
-                    }
+                        HighlightNote(noteNum + 1, NoteHighlightType.Strong);
                     else if (input == UserInput.RightClick)
-                    {
-                        // if notes visible
-                        if (!HasAnswer)
-                        { 
-                            HighlightNote(noteNum+1, NoteHighlightType.Weak);
-                            didSomething = true;
-                        }
-                    }
-                }
-                else
-                {
-                    // if double-clicked note convert to guess
-                    if (input == UserInput.DoubleClick)
-                    {
-                        // if notes visible
-                        if (!HasAnswer)
-                        { 
-                            SetGuess(noteNum+1);
-                            didSomething = true;
-                        }
-                    }
+                        HighlightNote(noteNum + 1, NoteHighlightType.Weak);
                 }
             }
-
-            return didSomething;
+            else
+                _selectedNote = null;
         }
     }
 }

@@ -21,6 +21,7 @@ namespace Sudoku
         protected Note _selectedNote;
         
         public int Answer { get { return _answer; } }
+        public bool HasAnswer { get { return (_answer != 0); } }
         public bool? IsGiven { get; set; }
         [JsonIgnore]
         public bool IsSelected { get; set; }
@@ -45,27 +46,19 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Checks if the answer number has been set
-        /// </summary>
-        public bool HasAnswer
-        {
-            get { return _answer != 0; }
-        }
-
-        /// <summary>
         /// Places an guess number in the cell
         /// </summary>
-        /// <param name="guess">Number to try and set</param>
+        /// <param name="guess">Number to try and set (0 = clear guess)</param>
         public void SetGuess(int guess)
         {
             // if is same number as current, don't waste your time
             if (_answer == guess)
                 return;
 
-            if (guess < 0 || guess > 9)
+            if ((guess < 0) || (guess > 9))
                 throw new ArgumentException(String.Format("Invalid solution number being set: {0}", guess));
 
-            // if is trying to convert a given to a guess (unless the guess is 0 for "delete"), don't waste your time
+            // if is trying to convert a given to a guess (unless the guess is 0 for "delete"), don't
             if (IsGiven.HasValue && IsGiven.Value && (guess != 0))
                 return;
 
@@ -88,10 +81,10 @@ namespace Sudoku
             if (_answer == given)
                 return;
 
-            if (given < 1 || given > 9)
+            if ((given < 1) || (given > 9))
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", given));
 
-            // if is trying to convert a guess to a given, don't waste your time
+            // if is trying to convert a guess to a given, don't
             if (IsGiven.HasValue && !IsGiven.Value)
                 return;
 
@@ -105,16 +98,12 @@ namespace Sudoku
         /// <param name="note">Note number to toggle</param>
         public void ToggleNote(int note)
         {
-            if (note < 1 || note > 9)
+            if ((note < 1) || (note > 9))
                 throw new ArgumentException(String.Format("Invalid note being set/unset: {0}", note));
 
             // if already has this note (then remove it)
             if (_notes[note - 1].Candidate == note)
-            { 
-                // if note is going away, clear potential highlight on it too
-                HighlightNote(note, NoteHighlightType.None);
-                _notes[note - 1].Candidate = 0;
-            }
+                RemoveNote(note);
             else
                 _notes[note - 1].Candidate = note;
         }
@@ -140,11 +129,11 @@ namespace Sudoku
             if (value == -1)
                 value = 0;
 
-            if (value < 0 || value > 9)
+            if ((value < 0) || (value > 9))
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
             // if not a forced unhighlight...AND answer number is the one to highlight OR notes are visible and the requested note is present
-            if ((value != 0) && ((_answer == value) || ((_answer == 0) && (_notes[value - 1].IsNoted))))
+            if ((value != 0) && ((_answer == value) || (!HasAnswer && HasNote(value))))
                 HighlightType = CellHighlightType.Value;
             else
                 HighlightType = CellHighlightType.None;
@@ -167,11 +156,10 @@ namespace Sudoku
         /// <param name="highlightType">How to highlight it</param>
         public void HighlightNote(int note, NoteHighlightType highlightType)
         {
-            if (note < 1 || note > 9)
+            if ((note < 1) || (note > 9))
                 throw new ArgumentException(String.Format("Invalid note requested for highlight: {0}", note));
 
-            // if note is set
-            if (_notes[note - 1].IsNoted)
+            if (HasNote(note))
                 _notes[note - 1].HighlightType = highlightType;
         }
 
@@ -191,7 +179,8 @@ namespace Sudoku
         public void ClearNoteHighlights()
         {
             for (int i = 0; i < 9; i++)
-                _notes[i].HighlightType = NoteHighlightType.None;
+                if (_notes[i].HighlightType != NoteHighlightType.None)
+                    _notes[i].HighlightType = NoteHighlightType.None;
         }
 
         /// <summary>

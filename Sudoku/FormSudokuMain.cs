@@ -46,12 +46,9 @@ namespace Sudoku
             Game.CreateInstance(BoardType.Bitmap, cellSize: 60);
 
             // start with some hard-coded board (but don't count towards undo/redo)
-            ActionManager.Paused = true;
+            ActionManager.Pause();
             Game.Board.SetDefaultState();
-            ActionManager.Paused = false;
-
-            // NOW can save final starting board as first image of undo/redo
-            ActionManager.AddState(((BitmapBoard)Game.Board).CellsAsJSON());
+            ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
 
             Game.Board.SelectCellAtRowCol(5, 5);
 
@@ -174,11 +171,14 @@ namespace Sudoku
             // if shift click on the X, clear all cell hightlights
             if (pnlCellHighlightPicker.ClearSelected && (Control.ModifierKeys == Keys.Shift))
             {
+                ActionManager.Pause();
+
                 Game.Board.HighlightCellsWithNoteOrNumber(-1);
 
                 if (chkHighlightHavingValue.Checked)
                     Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
+                ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
                 Render();
             }
             else if (chkHighlightClickMode.CheckState == (CheckState)HighlightClickMode.Manual)
@@ -215,11 +215,14 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void btnSetGuess_Click(object sender, EventArgs e)
         {
+            ActionManager.Pause();
+
             Game.Board.SetGuess(pnlFocusNumber.ActiveValue);
 
             if (chkHighlightHavingValue.Checked)
                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
+            ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
             Render();
             CheckForSolved();
         }
@@ -247,11 +250,14 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void btnToggleNote_Click(object sender, EventArgs e)
         {
+            ActionManager.Pause();
+
             Game.Board.ToggleNote(pnlFocusNumber.ActiveValue);
 
             if (chkHighlightHavingValue.Checked)
                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
+            ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
             Render();
         }
 
@@ -262,11 +268,14 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void btnSetGiven_Click(object sender, EventArgs e)
         {
+            ActionManager.Pause();
+
             Game.Board.SetGiven(pnlFocusNumber.ActiveValue);
 
             if (chkHighlightHavingValue.Checked)
                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
+            ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
             Render();
             CheckForSolved();
         }
@@ -301,6 +310,8 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void cbxFindResults_SelectedIndexChanged(object sender, EventArgs e)
         {
+            ActionManager.Pause();
+
             // clear prior highlighting, even patterns
             Game.Board.HighlightCellsWithNoteOrNumber(-1);
 
@@ -312,6 +323,7 @@ namespace Sudoku
             foreach (KeyValuePair<Cell, CellHighlightType> cellFound in ((KeyValuePair<string, FindResult>)cbxFindResults.SelectedItem).Value.CellsFound)
                 Game.Board.HighlightCell(cellFound.Key.Row, cellFound.Key.Column, cellFound.Value);
 
+            ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
             Render();
         }
 
@@ -340,11 +352,14 @@ namespace Sudoku
             Board.RemoveOldNotes = (YesNo)chkRemoveOldNotes.CheckState;
             if ((Game.Board != null) && (Board.RemoveOldNotes != YesNo.No))
             {
+                ActionManager.Pause();
+
                 Game.Board.RemoveNotes();
 
                 if (chkHighlightHavingValue.Checked)
                     Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
+                ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
                 Render();
             }
         }
@@ -585,7 +600,12 @@ namespace Sudoku
                         Undo();
                     else if (input == UserInput.Y)
                         Redo();
+                    // TODO DONT PAUSE IF Z or Y
+                    // TODO DONT PAUSE IF Z or Y
+                    // TODO DONT PAUSE IF Z or Y
                 }
+
+                ActionManager.Pause();
 
                 Game.Board.HandleKeyUserInput(input, _modifierKey);
 
@@ -593,6 +613,7 @@ namespace Sudoku
                 if (chkHighlightHavingValue.Checked && ((numPressed != 0) || (input == UserInput.Delete)))
                     Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
+                ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
                 Render();
                 CheckForSolved();
             }
@@ -678,6 +699,8 @@ namespace Sudoku
                 // if clicked in the board area of the form
                 if ((_clickX >= 0) && (_clickX < board.BoardSize) && (_clickY >= 0) && (_clickY < board.BoardSize))
                 {
+                    ActionManager.Pause();
+
                     if (_isDoubleClick)
                     {
                         ((BitmapBoard)Game.Board).HandlePixelXYClick(UserInput.DoubleClick, _modifierKey, _clickX, _clickY);
@@ -700,7 +723,6 @@ namespace Sudoku
                                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
                         }
 
-                        Render();
                         CheckForSolved();
                     }
                     else if (_isRightClick)
@@ -711,7 +733,7 @@ namespace Sudoku
                         if (Game.Board.SelectedCell.HasAnswer && (Game.Board.SelectedCell.IsGiven.HasValue && !Game.Board.SelectedCell.IsGiven.Value))
                             frmMain_KeyDown(this, new KeyEventArgs(Keys.Delete));
                             
-                        Render();
+  //                      Render();
                     }
                     else // left-click
                     {
@@ -735,8 +757,11 @@ namespace Sudoku
                                 Game.Board.HighlightSelectedNote((NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
                         }
 
-                        Render();
+//                        Render();
                     }
+
+                    ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
+                    Render();
                 }
 
                 // allow the MouseDown event handler to process clicks again

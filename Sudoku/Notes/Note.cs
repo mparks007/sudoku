@@ -22,7 +22,7 @@ namespace Sudoku
 
             set
             {
-                if (value < 0 || value > 9)
+                if ((value < 0) || (value > 9))
                     throw new ArgumentException(String.Format("Invalid note value being set: {0}", value));
 
                 _candidate = value;

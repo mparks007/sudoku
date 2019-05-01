@@ -27,7 +27,7 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Ctor
+        /// Ctor to create all cells
         /// </summary>
         /// <param name="cellSize">Pixel size of each cell (used in render calculations)</param>
         public BitmapBoard(int cellSize) : base()
@@ -44,7 +44,7 @@ namespace Sudoku
                 {
                     int v = (r / 3);
                     int h = (c / 3);
-                    int block = (3 * v) + h;
+                    int block = (3 * v) + h; // thanks, Cody!
 
                     // making as derived class here vs. just Board
                     _cells[r][c] = new BitmapCell(cellSize, r + 1, c + 1, block + 1);
@@ -65,7 +65,7 @@ namespace Sudoku
                 throw new InvalidOperationException("No board exists");
 
             // make sure didn't click outside the board
-            if (x < 0 || x > _boardImage.Height || y < 0 || y > _boardImage.Width)
+            if ((x < 0) || (x > _boardImage.Height) || (y < 0) || (y > _boardImage.Width))
                 throw new ArgumentException(String.Format("Invalid point requested (x:{0}, y:{1})", x, y));
 
             // convert clicked pixels to specific row/col in main board
@@ -77,16 +77,13 @@ namespace Sudoku
             // if notes are visible (no answer set), trigger special cell-level events
             if (!_selectedCell.HasAnswer)
             {
-                bool didSomething = ((BitmapCell)_selectedCell).HandlePixelXYClick(input, modifierKey, x, y);
+                ((BitmapCell)_selectedCell).HandlePixelXYClick(input, modifierKey, x, y);
 
-                if (didSomething)
-                {
-                    // if now has answer, must have been a double-click of note to promote to answer, so check for dupes
-                    if (input == UserInput.DoubleClick && _selectedCell.HasAnswer)
-                        CheckAndMarkDupes();
+                // if now has answer, must have been a double-click of note to promote to answer, so check for dupes
+                if ((input == UserInput.DoubleClick) && _selectedCell.HasAnswer)
+                    CheckAndMarkDupes();
 
-                    ActionManager.AddState(CellsAsJSON());
-                }
+                ActionManager.AddState(CellsAsJSON());
             }
         }
 
@@ -98,11 +95,12 @@ namespace Sudoku
         {
             var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
 
-            var selectedCell = _selectedCell;
+            var selectedCellBeforeLoad = _selectedCell;
 
             _cells = JsonConvert.DeserializeObject<BitmapCell[][]>(cellJSON, settings);
 
-            SelectCellAtRowCol(selectedCell.Row, selectedCell.Column);
+            // put select on same spot to appear that nothing happened to all the cell references during the load
+            SelectCellAtRowCol(selectedCellBeforeLoad.Row, selectedCellBeforeLoad.Column);
         }
 
         /// <summary>

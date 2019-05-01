@@ -84,17 +84,15 @@ namespace Sudoku
         /// <param name="col">Column of the cell to select</param>
         public void SelectCellAtRowCol(int row, int col)
         {
-            if (row < 1 || row > 9)
+            if ((row < 1) || (row > 9))
                 throw new ArgumentException(String.Format("Invalid row requested for selection: {0}", row));
 
-            if (col < 1 || col > 9)
+            if ((col < 1) || (col > 9))
                 throw new ArgumentException(String.Format("Invalid column requested for selection: {0}", col));
 
-            // first maybe clear current selection
             if (_selectedCell != null)
                 _selectedCell.IsSelected = false;
-            
-            // select and remember new selection
+
             _selectedCell = _cells[row - 1][col - 1];
             _selectedCell.IsSelected = true;
 
@@ -109,20 +107,23 @@ namespace Sudoku
         /// <param name="col">Columm of the source cell</param>
         private void SelectHousesOfCellAtRowCol(int row, int col)
         {
-            if (row < 1 || row > 9)
+            if ((row < 1) || (row > 9))
                 throw new ArgumentException(String.Format("Invalid row requested for house selection: {0}", row));
 
-            if (col < 1 || col > 9)
+            if ((col < 1) || (col > 9))
                 throw new ArgumentException(String.Format("Invalid column requested for house selection: {0}", col));
 
-            // paw through all cells
+            int targetRow = _cells[row - 1][col - 1].Row;
+            int targetColumn = _cells[row - 1][col - 1].Column;
+            int targetBlock = _cells[row - 1][col - 1].Block;
+
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
                 {
                     // if in the same row, column, or block as the requested row/col
-                    if ((_cells[r][c].Row == _cells[row - 1][col - 1].Row) ||
-                        (_cells[r][c].Column == _cells[row - 1][col - 1].Column) ||
-                        (_cells[r][c].Block == _cells[row - 1][col - 1].Block))
+                    if ((_cells[r][c].Row == targetRow) ||
+                        (_cells[r][c].Column == targetColumn) ||
+                        (_cells[r][c].Block == targetBlock))
                         _cells[r][c].IsHouseSelected = true;
                     else
                         _cells[r][c].IsHouseSelected = false;
@@ -138,17 +139,20 @@ namespace Sudoku
             if (_selectedCell == null)
                 throw new ArgumentException(String.Format("No cell is selected for setting guess number: {0}", num));
 
-            if (num < 0 || num > 9)
+            if ((num < 0) || (num > 9))
                 throw new ArgumentException(String.Format("Invalid guess number being set: {0}", num));
 
-            _selectedCell.SetGuess(num);
+            if (_selectedCell.Answer != num)
+            {
+                _selectedCell.SetGuess(num);
 
-            if ((Board.RemoveOldNotes == YesNo.Yes) && (num != 0))
-                RemoveNotes(num);
+                if ((Board.RemoveOldNotes == YesNo.Yes) && (num != 0))
+                    RemoveNotes(num);
+                else
+                    ActionManager.AddState(CellsAsJSON());
 
-            ActionManager.AddState(CellsAsJSON());
-
-            CheckAndMarkDupes();
+                CheckAndMarkDupes();
+            }
         }
 
         /// <summary>
@@ -160,17 +164,7 @@ namespace Sudoku
             if (_selectedCell == null)
                 throw new ArgumentException(String.Format("No cell is selected for setting given: {0}", num));
 
-            if (num < 1 || num > 9)
-                throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
-
-            _selectedCell.SetGiven(num);
-
-            if (Board.RemoveOldNotes == YesNo.Yes)
-                RemoveNotes(num);
-
-            ActionManager.AddState(CellsAsJSON());
-
-            CheckAndMarkDupes();
+            SetGiven(_selectedCell.Row, _selectedCell.Column, num);
         }
 
         /// <summary>
@@ -181,20 +175,23 @@ namespace Sudoku
         /// <param name="num">Number to try and set</param>
         private void SetGiven(int row, int col, int num)
         {
-            if (row < 1 || row > 9 || col < 1 || col > 9)
+            if ((row < 1) || (row > 9) || (col < 1) || (col > 9))
                 throw new ArgumentException(String.Format("Invalid value row/column requested for setting given: {0}/{1}", row, col));
 
-            if (num < 1 || num > 9)
+            if ((num < 1) || (num > 9))
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
 
-            _cells[row - 1][col - 1].SetGiven(num);
+            if (_cells[row - 1][col - 1].Answer != num)
+            {
+                _cells[row - 1][col - 1].SetGiven(num);
 
-            if (Board.RemoveOldNotes == YesNo.Yes)
-                RemoveNotes(num);
+                if (Board.RemoveOldNotes == YesNo.Yes)
+                    RemoveNotes(num);
+                else
+                    ActionManager.AddState(CellsAsJSON());
 
-            ActionManager.AddState(CellsAsJSON());
-
-            CheckAndMarkDupes();
+                CheckAndMarkDupes();
+            }
         }
 
         /// <summary>
@@ -203,33 +200,16 @@ namespace Sudoku
         /// <param name="value">Number or note to check against and highlight</param>
         public void HighlightCellsWithNoteOrNumber(int value)
         {
-            if (value < -1 || value > 9)
+            if ((value < -1) || (value > 9))
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
-            // paw through all cells
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
                 {
-                    // if special (unhighlight no matter what)...OR not a special highlight
+                    // if special (unhighlight no matter what) value...OR not a special highlight
                     if ((value == -1) || ((_cells[r][c].HighlightType == CellHighlightType.Value)) || (_cells[r][c].HighlightType == CellHighlightType.None))
                         _cells[r][c].HighlightHavingNoteOrNumber(value);
                 }
-
-            ActionManager.AddState(CellsAsJSON());
-        }
-
-        /// <summary>
-        /// Highlight the cell at row/col with the specified type of highlight
-        /// </summary>
-        /// <param name="row">Row to highlight</param>
-        /// <param name="col">Column to highlight</param>
-        /// <param name="highlightType">Type of cell highlight</param>
-        public void HighlightCell(int row, int col, CellHighlightType highlightType)
-        {
-            if (row < 1 || row > 9 || col < 1 || col > 9)
-                throw new ArgumentException(String.Format("Invalid value row/column requested for cell highlight: {0}/{1}", row, col));
-
-            _cells[row-1][col-1].HighlightType = highlightType;
 
             ActionManager.AddState(CellsAsJSON());
         }
@@ -243,9 +223,26 @@ namespace Sudoku
             if (_selectedCell == null)
                 throw new ArgumentException(String.Format("No cell is selected for highlight: {0}", highlightType.Description()));
 
-            _selectedCell.HighlightType = highlightType;
+            HighlightCell(_selectedCell.Row, _selectedCell.Column, highlightType);
+        }
 
-            ActionManager.AddState(CellsAsJSON());
+        /// <summary>
+        /// Highlight the cell at row/col with the specified type of highlight
+        /// </summary>
+        /// <param name="row">Row to highlight</param>
+        /// <param name="col">Column to highlight</param>
+        /// <param name="highlightType">Type of cell highlight</param>
+        public void HighlightCell(int row, int col, CellHighlightType highlightType)
+        {
+            if ((row < 1) || (row > 9) || (col < 1) || (col > 9))
+                throw new ArgumentException(String.Format("Invalid value row/column requested for cell highlight: {0}/{1}", row, col));
+
+            if (_cells[row - 1][col - 1].HighlightType != highlightType)
+            {
+                _cells[row - 1][col - 1].HighlightType = highlightType;
+
+                ActionManager.AddState(CellsAsJSON());
+            }
         }
 
         /// <summary>
@@ -257,13 +254,12 @@ namespace Sudoku
             if (_selectedCell == null)
                 throw new ArgumentException(String.Format("No cell is selected for note toggle: {0}", note));
 
-            if (note < 1 || note > 9)
+            if ((note < 1) || (note > 9))
                 throw new ArgumentException(String.Format("Invalid note requested for note toggle: {0}", note));
 
             _selectedCell.ToggleNote(note);
 
             ActionManager.AddState(CellsAsJSON());
-
             CheckAndMarkDupes();
         }
 
@@ -291,7 +287,7 @@ namespace Sudoku
             if (_selectedCell == null)
                 throw new ArgumentException(String.Format("No cell is selected for note highlight update: {0}", note));
 
-            if (note < 1 || note > 9)
+            if ((note < 1) || (note > 9))
                 throw new ArgumentException(String.Format("Invalid note having highlight updated: {0}", note));
 
             if (_selectedCell.HasNote(note))
@@ -302,11 +298,10 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Clear every note in the cell of its highlight
+        /// Clear every note in every cell of its highlight
         /// </summary>
         public void ClearNoteHighlights()
         {
-            // paw through all cells
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
                     _cells[r][c].ClearNoteHighlights();
@@ -412,7 +407,7 @@ namespace Sudoku
             int min = 1;
             int max = 9;
 
-            // but use really desired note if passed in
+            // but...use specific-note-only if one was passed in
             if (note != 0)
             {
                 min = note;
@@ -525,15 +520,15 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Determine if board is solved.  Until I can do any board create with unique solve awareness, just doing a sloppy "If nothing is duped and all cells filled, must be 'valid'"
+        /// Determine if board is solved.  
+        ///   Until I can do any board create with unique solve awareness, just doing a sloppy "If nothing is duped and all cells filled, must be 'valid'"
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if board is "solved"</returns>
         public bool IsBoardSolved()
         {
             if (!CheckAndMarkDupes())
                 return false;
 
-            // paw through all cells
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
                     if (!_cells[r][c].HasAnswer) // if no number decided (given or guess)

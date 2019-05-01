@@ -30,7 +30,7 @@ namespace Sudoku
         /// <param name="parentCellColumn">Board column of the parent cell (used for render calculations)</param>
         public override void Render(int parentCellRow, int parentCellColumn)
         {
-            // if has a note, render it
+            // if even has a note
             if (_candidate != 0)
             {
                 // calculate offset of each note to find right rect by note position in the overall board image

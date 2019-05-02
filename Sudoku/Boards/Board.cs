@@ -146,9 +146,12 @@ namespace Sudoku
             {
                 _selectedCell.SetGuess(num);
 
+                bool didRemove = false;
                 if ((Board.RemoveOldNotes == YesNo.Yes) && (num != 0))
-                    RemoveNotes(num);
-                else
+                    didRemove = RemoveNotes(num);
+
+                // RemoveNotes would have added state if it removed, so don't double up here
+                if (!didRemove)
                     ActionManager.AddState(CellsAsJSON());
 
                 CheckAndMarkDupes();
@@ -185,9 +188,12 @@ namespace Sudoku
             {
                 _cells[row - 1][col - 1].SetGiven(num);
 
+                bool didRemove = false;
                 if (Board.RemoveOldNotes == YesNo.Yes)
-                    RemoveNotes(num);
-                else
+                    didRemove = RemoveNotes(num);
+
+                // RemoveNotes would have added state if it removed, so don't double up here
+                if (!didRemove)
                     ActionManager.AddState(CellsAsJSON());
 
                 CheckAndMarkDupes();
@@ -211,7 +217,7 @@ namespace Sudoku
                         _cells[r][c].HighlightHavingNoteOrNumber(value);
                 }
 
-            ActionManager.AddState(CellsAsJSON());
+            //ActionManager.AddState(CellsAsJSON());
         }
 
         /// <summary>
@@ -241,7 +247,7 @@ namespace Sudoku
             {
                 _cells[row - 1][col - 1].HighlightType = highlightType;
 
-                ActionManager.AddState(CellsAsJSON());
+                //ActionManager.AddState(CellsAsJSON());
             }
         }
 
@@ -389,9 +395,9 @@ namespace Sudoku
         /// <summary>
         /// Remove ALL old notes for all guess/given values
         /// </summary>
-        public void RemoveNotes()
+        public bool RemoveNotes()
         {
-            RemoveNotes(0);
+            return RemoveNotes(0);
         }
 
         /// <summary>
@@ -399,7 +405,7 @@ namespace Sudoku
         /// Ugly waste of time to do all the cells when only might need to do selected cell houses
         /// </summary>
         /// <param name="note">Note to remove, if has it (0 means check all note values)</param>
-        public void RemoveNotes(int note)
+        public bool RemoveNotes(int note)
         {
             bool didRemove = false;
 
@@ -464,6 +470,8 @@ namespace Sudoku
 
             if (didRemove)
                 ActionManager.AddState(CellsAsJSON());
+
+            return didRemove;
         }
 
         /// <summary>

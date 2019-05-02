@@ -597,14 +597,17 @@ namespace Sudoku
 
                     // ctrl-z and ctrl-y
                     if (input == UserInput.Z)
+                    {
                         Undo();
+                        return;
+                    }
                     else if (input == UserInput.Y)
+                    {
                         Redo();
-                    // TODO DONT PAUSE IF Z or Y
-                    // TODO DONT PAUSE IF Z or Y
-                    // TODO DONT PAUSE IF Z or Y
+                        return;
+                    }
                 }
-
+            
                 ActionManager.Pause();
 
                 Game.Board.HandleKeyUserInput(input, _modifierKey);
@@ -623,14 +626,24 @@ namespace Sudoku
         private void Undo()
         {
             ((BitmapBoard)Game.Board).LoadCells(ActionManager.Undo());
+            
+            if (chkHighlightHavingValue.Checked)
+                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+
             Render();
+            CheckForSolved();
         }
 
         // dabbling with undo/redo.  no major plans yet
         private void Redo()
         {
             ((BitmapBoard)Game.Board).LoadCells(ActionManager.Redo());
+
+            if (chkHighlightHavingValue.Checked)
+                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+
             Render();
+            CheckForSolved();
         }
 
         /// <summary>
@@ -732,14 +745,12 @@ namespace Sudoku
                         // if has a guess value, delete it
                         if (Game.Board.SelectedCell.HasAnswer && (Game.Board.SelectedCell.IsGiven.HasValue && !Game.Board.SelectedCell.IsGiven.Value))
                             frmMain_KeyDown(this, new KeyEventArgs(Keys.Delete));
-                            
-  //                      Render();
                     }
                     else // left-click
                     {
                         ((BitmapBoard)Game.Board).HandlePixelXYClick(UserInput.LeftClick, _modifierKey, _clickX, _clickY);
 
-                        // if toggle note on click is on, do that
+                        // if set note on click is on, do that
                         if (chkNotesHold.Checked)
                         {
                             Game.Board.ToggleNote(pnlFocusNumber.ActiveValue);
@@ -756,8 +767,6 @@ namespace Sudoku
                             else if ((chkHighlightClickMode.CheckState == (CheckState)HighlightClickMode.Note) && !Game.Board.SelectedCell.HasAnswer)
                                 Game.Board.HighlightSelectedNote((NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
                         }
-
-//                        Render();
                     }
 
                     ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());

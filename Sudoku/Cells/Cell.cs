@@ -26,7 +26,9 @@ namespace Sudoku
         [JsonIgnore]
         public bool IsSelected { get; set; }
         public bool IsInvalid { get; set; }
+        [JsonIgnore]
         public CellHighlightType HighlightType { get; set; }
+        [JsonIgnore]
         public bool IsHouseSelected { get; set; }
         public int Row { get; set; }
         public int Column { get; set; }

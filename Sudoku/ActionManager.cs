@@ -73,7 +73,11 @@ namespace Sudoku
         {
             if (_paused)
                 return;
-            
+
+            // if for some reason, the new state really didn't change since last (like a benign click event)
+            if ((Index >= 0) && (cellState == _cellStates[Index]))
+                return;
+
             // if another action, chop off the redo future since this would branch it and I don't want to deal with that
             if ((Index > -1) && (Index < _cellStates.Count-1))
                 _cellStates.RemoveRange(Index+1, _cellStates.Count - 1 - Index );

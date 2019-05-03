@@ -15,6 +15,7 @@ namespace Sudoku
 
         public Cell SelectedCell { get { return _selectedCell; } }
         public int BoardSize { get { return _boardSize; } }
+        public Cell[][] Cells {  get { return _cells; } }
 
         public static YesNo RemoveOldNotes { get; set; }
         public static ValidationMode ValidationMode { get; set; }

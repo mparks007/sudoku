@@ -216,8 +216,6 @@ namespace Sudoku
                     if ((value == -1) || ((_cells[r][c].HighlightType == CellHighlightType.Value)) || (_cells[r][c].HighlightType == CellHighlightType.None))
                         _cells[r][c].HighlightHavingNoteOrNumber(value);
                 }
-
-            //ActionManager.AddState(CellsAsJSON());
         }
 
         /// <summary>
@@ -244,11 +242,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid value row/column requested for cell highlight: {0}/{1}", row, col));
 
             if (_cells[row - 1][col - 1].HighlightType != highlightType)
-            {
                 _cells[row - 1][col - 1].HighlightType = highlightType;
-
-                //ActionManager.AddState(CellsAsJSON());
-            }
         }
 
         /// <summary>

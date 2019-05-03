@@ -93,6 +93,9 @@ namespace Sudoku
         /// <param name="cellJSON"></param>
         public void LoadCells(string cellJSON)
         {
+            if (cellJSON.Length == 0)
+                return;
+
             var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
 
             var selectedCellBeforeLoad = _selectedCell;

@@ -300,7 +300,13 @@ namespace Sudoku
             if (cbxFindResults.Items.Count > 0)
                 cbxFindResults.SelectedIndex = 0;
             else
+            {
                 Game.Board.HighlightCellsWithNoteOrNumber(-1);
+
+                // maybe re-highlight the focus number
+                if (chkHighlightHavingValue.Checked)
+                    Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+            }
         }
 
         /// <summary>

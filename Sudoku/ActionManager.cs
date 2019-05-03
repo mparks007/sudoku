@@ -93,7 +93,10 @@ namespace Sudoku
         public static string Undo()
         {
             if (--Index < 0)
+            {
                 Index = 0;
+                return "";
+            }
                 
             return _cellStates[Index];
         }
@@ -105,7 +108,10 @@ namespace Sudoku
         public static string Redo()
         {
             if (++Index > _cellStates.Count - 1)
+            { 
                 Index = _cellStates.Count - 1;
+                return "";
+            }
 
             return _cellStates[Index];
         }

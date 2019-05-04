@@ -29,3 +29,4 @@ C:\src\github.com\mparks007\sudoku\Sudoku\obj\Debug\Sudoku.frmMain.resources
 C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\SudokuCustomControls.dll
 C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\SudokuCustomControls.pdb
 C:\src\github.com\mparks007\sudoku\Sudoku\obj\Debug\Sudoku.frmColorDialog.resources
+C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\defaultboard.json

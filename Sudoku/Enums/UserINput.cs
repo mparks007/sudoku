@@ -30,6 +30,7 @@ namespace Sudoku
         RightClick,
         DoubleClick,
         Z,
-        Y
+        Y,
+        R
     };
 }

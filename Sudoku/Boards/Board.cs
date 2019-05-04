@@ -65,6 +65,8 @@ namespace Sudoku
             Game.Board.SetGiven(9, 6, 2);
             Game.Board.SetGiven(9, 8, 6);
             Game.Board.SetGiven(9, 9, 1);
+
+            Game.Board.SelectCellAtRowCol(5, 5);
         }
 
         /// <summary>

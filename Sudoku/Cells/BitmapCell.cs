@@ -119,21 +119,23 @@ namespace Sudoku
             int noteRowInCell = noteRowInBoard % 3; // zero-based
             int noteColInCell = noteColInBoard % 3; // zero-based
 
-            int noteNum = (3 * noteRowInCell) + noteColInCell; // zero-based (thank, Román!)
+            int noteNum = (3 * noteRowInCell) + noteColInCell + 1; // (thanks, Román!)
 
-            if (_notes[noteNum].IsNoted)
+            if (_notes[noteNum - 1].IsNoted)
             {
-                _selectedNote = _notes[noteNum];
+                _selectedNote = _notes[noteNum - 1];
 
                 // if double-clicked note, promote to guess
                 if (input == UserInput.DoubleClick)
-                    SetGuess(noteNum + 1);
+                    SetGuess(noteNum);
+                else if (input == UserInput.RightClick)
+                    ToggleNote(noteNum);
                 else if (((modifierKey & ModifierKey.Control) != 0) && !HasAnswer) // ctrl-clicking a note does special strong/weak
                 {
                     if (input == UserInput.LeftClick)
-                        HighlightNote(noteNum + 1, NoteHighlightType.Strong);
+                        HighlightNote(noteNum, NoteHighlightType.Strong);
                     else if (input == UserInput.RightClick)
-                        HighlightNote(noteNum + 1, NoteHighlightType.Weak);
+                        HighlightNote(noteNum, NoteHighlightType.Weak);
                 }
             }
             else

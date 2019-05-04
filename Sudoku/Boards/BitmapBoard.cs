@@ -102,8 +102,11 @@ namespace Sudoku
 
             _cells = JsonConvert.DeserializeObject<BitmapCell[][]>(cellJSON, settings);
 
-            // put select on same spot to appear that nothing happened to all the cell references during the load
-            SelectCellAtRowCol(selectedCellBeforeLoad.Row, selectedCellBeforeLoad.Column);
+            // if had selection before the load, put selection back on same spot to appear that nothing happened to all the cell references during the load
+            if (selectedCellBeforeLoad != null)
+                SelectCellAtRowCol(selectedCellBeforeLoad.Row, selectedCellBeforeLoad.Column);
+            else
+                SelectCellAtRowCol(5, 5);
         }
 
         /// <summary>

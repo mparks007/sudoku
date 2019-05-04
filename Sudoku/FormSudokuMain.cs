@@ -15,6 +15,10 @@ namespace Sudoku
         private ModifierKey _modifierKey = ModifierKey.None;        // keeping track of alt, shift, ctrl state at the time of early key trapping and normal keypress events
         private frmColorDialog _frmColors = new frmColorDialog();   // form to allow selection of custom colors
         private IFinder _finder;
+        private string _initialBoard;
+
+        private readonly string _lastBoard = "lastboard.json";
+        private readonly string _defaultBoard = "defaultboard.json";
 
         // components for click/doubleclick hack code :(
         private Timer _doubleClickTimer = new Timer();
@@ -47,12 +51,33 @@ namespace Sudoku
 
             // start with some hard-coded board (but don't count towards undo/redo)
             ActionManager.Pause();
-            Game.Board.SetDefaultState();
+            SetupInitialBoard();
             ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
 
-            Game.Board.SelectCellAtRowCol(5, 5);
-
             Render();
+        }
+
+        /// <summary>
+        /// Try to load last board, then try default board, then fall back to hard coded startup board
+        ///   Also, save this initial board for reset option 
+        /// </summary>
+        private void SetupInitialBoard()
+        {
+            if (File.Exists(_lastBoard))
+            {
+                _initialBoard = File.ReadAllText(_lastBoard);
+                ((BitmapBoard)Game.Board).LoadCells(_initialBoard);
+            }
+            else if (File.Exists(_defaultBoard))
+            {
+                _initialBoard = File.ReadAllText(_defaultBoard);
+                ((BitmapBoard)Game.Board).LoadCells(_initialBoard);
+            }
+            else
+            {
+                Game.Board.SetDefaultState();
+                _initialBoard = Game.Board.CellsAsJSON();
+            }
         }
 
         /// <summary>
@@ -234,9 +259,7 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void pnlSetNumbers_NumberClicked(object sender, EventArgs e)
         {
-            if (chkNotesHold.Checked)
-                btnToggleNote_Click(sender, e);
-            else if (chkHighlightHavingValue.Checked)
+            if (chkHighlightHavingValue.Checked)
             {
                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
                 Render();
@@ -564,6 +587,9 @@ namespace Sudoku
                     case Keys.Y:
                         input = UserInput.Y;
                         break;
+                    case Keys.R:
+                        input = UserInput.R;
+                        break;
                 }
             }
 
@@ -613,7 +639,14 @@ namespace Sudoku
                         return;
                     }
                 }
-            
+
+                // if special reset key state
+                if (e.Control && e.Alt && e.Shift && (input == UserInput.R))
+                {
+                    Reset();                    
+                    return;
+                }
+
                 ActionManager.Pause();
 
                 Game.Board.HandleKeyUserInput(input, _modifierKey);
@@ -644,6 +677,20 @@ namespace Sudoku
         private void Redo()
         {
             ((BitmapBoard)Game.Board).LoadCells(ActionManager.Redo());
+
+            if (chkHighlightHavingValue.Checked)
+                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+
+            Render();
+            CheckForSolved();
+        }
+
+        /// <summary>
+        /// Put board back to whatever it had on app start
+        /// </summary>
+        private void Reset()
+        {
+            ((BitmapBoard)Game.Board).LoadCells(_initialBoard);
 
             if (chkHighlightHavingValue.Checked)
                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
@@ -836,6 +883,16 @@ namespace Sudoku
                     MessageBox.Show("Failed to load saved board.\n\nException: " + ex.Message, "Import Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
             }
+        }
+
+        /// <summary>
+        /// Form is closing, so save current board behind the scenes
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms closing-event args</param>
+        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            File.WriteAllText(_lastBoard, Game.Board.CellsAsJSON());
         }
     }
 }

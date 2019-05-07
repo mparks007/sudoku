@@ -531,7 +531,7 @@ namespace Sudoku
         /// <returns>True if board is "solved"</returns>
         public bool IsBoardSolved()
         {
-            if (!CheckAndMarkDupes())
+            if (CheckAndMarkDupes())
                 return false;
 
             for (int r = 0; r < 9; r++)

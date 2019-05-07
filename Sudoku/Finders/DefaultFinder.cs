@@ -17,6 +17,7 @@ namespace Sudoku
         {
             // add in the supported find methods
             _methods[Pattern.XWing] = FindXWings;
+            _methods[Pattern.FinnedXWing] = FindFinnedXWings;
             _methods[Pattern.Skyscraper] = FindSkyscrapers;
             _methods[Pattern.XYWing] = FindXYWings;
             _methods[Pattern.TwoStringKite] = FindTwoStringKites;
@@ -59,17 +60,17 @@ namespace Sudoku
                 {
                     FindResult result = new FindResult();
 
-                    // look for two numbers (but for this query, have to also find answer matches too, which is skipped if using brain)
+                    // look for two numbers (but for this query, have to also find givens/guesses answer matches too, which is skipped if using brain)
                     IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
-                    // if found two, but they are JUST notes found (we found our note pairs)
+                    // if found two, but there are JUST notes found, no givens/guesses in the mix (we found our note pairs)
                     if ((firstPair.Count() == 2) && firstPair.Where(cell => cell.HasAnswer).Count() == 0)
                     {
                         // now scan scoot down a row and try to find another pair
                         for (int r2 = r1 + 1; r2 <= 9; r2++)
                         {
-                            // again, look for two numbers (but for this query, have to also find answer matches too, which is skipped if using brain)
+                            // again, look for two numbers (but for this query, have to also find givens/guesses answer matches too, which is skipped if using brain)
                             IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
-                            // again, if found two, but they are JUST notes found (we found our note pairs)
+                            // again, if found two, but there are JUST notes found, no givens/guesses in the mix  (we found our other note pairs)
                             if ((secondPair.Count() == 2) && secondPair.Where(cell => cell.HasAnswer).Count() == 0)
                             {
                                 // if the sets of pairs found are of the same column, they are lined up as xwing
@@ -79,6 +80,104 @@ namespace Sudoku
                                     // put all four cells involved in the single results object
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[0].Row, firstPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[1].Row, firstPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
+
+                                    results.Add(result);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // column-based xwings
+
+            // pick one number at a time
+            for (int n = 1; n <= 9; n++)
+            {
+                // from left, scan columns left to right
+                for (int c1 = 1; c1 <= 9; c1++)
+                {
+                    FindResult result = new FindResult();
+
+                    // look for two numbers (but for this query, have to also find givens/guesses answer matches too, which is skipped if using brain)
+                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
+                    // if found two, but there are JUST notes found, no givens/guesses in the mix (we found our note pairs)
+                    if ((firstPair.Count() == 2) && firstPair.Where(cell => cell.HasAnswer).Count() == 0)
+                    {
+                        // now scan scoot over a column and try to find another pair
+                        for (int c2 = c1 + 1; c2 <= 9; c2++)
+                        {
+                            // again, look for two numbers (but for this query, have to also find givens/guesses answer matches too, which is skipped if using brain)
+                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
+                            // again, if found two, but there are JUST notes found, no givens/guesses in the mix  (we found our other note pairs)
+                            if ((secondPair.Count() == 2) && secondPair.Where(cell => cell.HasAnswer).Count() == 0)
+                            {
+                                // if the sets of pairs found are of the same row, they are lined up as xwing
+                                if ((firstPair.OfType<Cell>().ToList()[0].Row == secondPair.OfType<Cell>().ToList()[0].Row) &&
+                                    (firstPair.OfType<Cell>().ToList()[1].Row == secondPair.OfType<Cell>().ToList()[1].Row))
+                                {
+                                    // put all four cells involved in the single results object
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[0].Row, firstPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[1].Row, firstPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
+
+                                    results.Add(result);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// Find Finned XWing patterns
+        ///   Very raw way to search atm (sort of searched as I search with brain)
+        /// </summary>
+        /// <param name="board">Board to search</param>
+        /// <returns>List of patterns found</returns>
+        private List<FindResult> FindFinnedXWings(Board board)
+        {
+            List<FindResult> results = new List<FindResult>();
+            IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
+
+            // row-based xwings
+
+            // pick one number at a time
+            for (int n = 1; n <= 9; n++)
+            {
+                // from top, scan rows from top to bottom
+                for (int r1 = 1; r1 <= 9; r1++)
+                {
+                    FindResult result = new FindResult();
+
+                    // look for 3 to 4 numbers (but for this query, have to also find answer matches too, which is skipped if using brain)
+                    IEnumerable<Cell> firstSet = allCells.Where(cell => (cell.Row == r1) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
+                    // if found 3 to 4 of this number, but they are JUST notes found (we found our note pairs)
+                    if (((firstSet.Count() > 2) && (firstSet.Count() <= 4)) && firstSet.Where(cell => cell.HasAnswer).Count() == 0)
+                    {
+                        // now scan scoot down a row and try to find another pair
+                        for (int r2 = r1 + 1; r2 <= 9; r2++)
+                        {
+                            // again, look for two numbers (but for this query, have to also find answer matches too, which is skipped if using brain)
+                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
+                            // if found two, but they are JUST notes found (we found our note pairs)
+                            if ((secondPair.Count() == 2) && secondPair.Where(cell => cell.HasAnswer).Count() == 0)
+                            {
+                                // if the sets of pairs found are of the same column, they are lined up as xwing
+                                if ((firstSet.OfType<Cell>().ToList()[0].Column == secondPair.OfType<Cell>().ToList()[0].Column) &&
+                                    (firstSet.OfType<Cell>().ToList()[1].Column == secondPair.OfType<Cell>().ToList()[1].Column))
+                                {
+                                    // put all four cells involved in the single results object
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstSet.OfType<Cell>().ToList()[0].Row, firstSet.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstSet.OfType<Cell>().ToList()[1].Row, firstSet.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
 

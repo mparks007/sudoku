@@ -11,6 +11,8 @@ namespace Sudoku
     {
         [Description("X-Wing")]
         XWing,
+        [Description("Finned X-Wing")]
+        FinnedXWing,
         [Description("Skyscraper")]
         Skyscraper,
         [Description("Two-String Kite")]

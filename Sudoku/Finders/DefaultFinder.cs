@@ -83,6 +83,7 @@ namespace Sudoku
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
 
+                                    result.Note = n;
                                     results.Add(result);
                                     break;
                                 }
@@ -125,6 +126,7 @@ namespace Sudoku
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
 
+                                    result.Note = n;
                                     results.Add(result);
                                     break;
                                 }
@@ -181,6 +183,7 @@ namespace Sudoku
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
 
+                                    result.Note = n;
                                     results.Add(result);
                                     break;
                                 }
@@ -223,6 +226,7 @@ namespace Sudoku
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
 
+                                    result.Note = n;
                                     results.Add(result);
                                     break;
                                 }
@@ -282,6 +286,7 @@ namespace Sudoku
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
 
+                                    result.Note = n;
                                     results.Add(result);
                                     break;
                                 }
@@ -327,6 +332,7 @@ namespace Sudoku
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
 
+                                    result.Note = n;
                                     results.Add(result);
                                     break;
                                 }

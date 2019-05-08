@@ -326,6 +326,7 @@ namespace Sudoku
             else
             {
                 Game.Board.HighlightCellsWithNoteOrNumber(-1);
+                Game.Board.ClearNoteHighlights();
 
                 // maybe re-highlight the focus number
                 if (chkHighlightHavingValue.Checked)
@@ -342,8 +343,9 @@ namespace Sudoku
         {
             ActionManager.Pause();
 
-            // clear prior highlighting, even patterns
+            // clear prior highlighting, even patterns.   and clear all note highlights
             Game.Board.HighlightCellsWithNoteOrNumber(-1);
+            Game.Board.ClearNoteHighlights();
 
             // maybe re-highlight the focus number
             if (chkHighlightHavingValue.Checked)
@@ -351,7 +353,10 @@ namespace Sudoku
 
             // go through all the cells involved in the found pattern selected and highlight accordingly
             foreach (KeyValuePair<Cell, CellHighlightType> cellFound in ((KeyValuePair<string, FindResult>)cbxFindResults.SelectedItem).Value.CellsFound)
+            {
                 Game.Board.HighlightCell(cellFound.Key.Row, cellFound.Key.Column, cellFound.Value);
+                Game.Board.HighlightNote(cellFound.Key.Row, cellFound.Key.Column, ((KeyValuePair<string, FindResult>)cbxFindResults.SelectedItem).Value.Note, NoteHighlightType.Info);
+            }
 
             ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
             Render();
@@ -876,6 +881,8 @@ namespace Sudoku
                 try
                 {
                     ((BitmapBoard)Game.Board).LoadCells(File.ReadAllText(dlgImport.FileName));
+
+                    cbxFindResults.Items.Clear();
 
                     // reset and setup the undo/redo list based on the newly loaded board
                     ActionManager.Reset(((BitmapBoard)Game.Board).CellsAsJSON());

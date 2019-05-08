@@ -293,10 +293,21 @@ namespace Sudoku
             if ((note < 1) || (note > 9))
                 throw new ArgumentException(String.Format("Invalid note having highlight updated: {0}", note));
 
-            if (_selectedCell.HasNote(note))
+            HighlightNote(_selectedCell.Row, _selectedCell.Column, note, highlightType);
+        }
+
+        public void HighlightNote(int row, int col, int note, NoteHighlightType highlightType)
+        {
+            if ((row < 1) || (row > 9) || (col < 1) || (col > 9))
+                throw new ArgumentException(String.Format("Invalid value row/column requested for note highlight: {0}/{1}", row, col));
+
+            if ((note < 1) || (note > 9))
+                throw new ArgumentException(String.Format("Invalid note having highlight updated: {0}", note));
+
+            if (_cells[row - 1][col - 1].HasNote(note))
             {
-                _selectedCell.HighlightNote(note, highlightType);
-                ActionManager.AddState(CellsAsJSON());
+                _cells[row - 1][col - 1].HighlightNote(note, highlightType);
+             //   ActionManager.AddState(CellsAsJSON());
             }
         }
 

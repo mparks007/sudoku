@@ -30,6 +30,7 @@ namespace Sudoku
         }
 
         public bool IsNoted { get { return _candidate != 0; } }
+        [JsonIgnore]
         public NoteHighlightType HighlightType { get; set; }
 
         /// <summary>

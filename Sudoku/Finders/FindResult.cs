@@ -9,6 +9,7 @@ namespace Sudoku
     class FindResult
     {
         public List<KeyValuePair<Cell, CellHighlightType>> CellsFound = new List<KeyValuePair<Cell, CellHighlightType>>();
+        public int Note;
 
         /// <summary>
         /// Create a decent string representation of the results

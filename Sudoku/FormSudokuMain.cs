@@ -106,13 +106,16 @@ namespace Sudoku
             //  for highlight click mode
             chkHighlightClickMode.SetButtonText(HighlightClickMode.Cell.Description(), HighlightClickMode.Note.Description(), HighlightClickMode.Manual.Description());
             chkHighlightClickMode.ButtonClicked += chkHighlightClickMode_ButtonClicked;
-            //  for notes hold option
+            //  for givens lock option
+            chkGivensLock.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description());
+            chkGivensLock.ButtonClicked += chkGivensLock_ButtonClicked;
+            //  for notes lock option
             chkNotesHold.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description());
-            //  for number keys mode
-            chkNumberKeysMode.SetButtonText(NumberKeysMode.Numbers.Description(), NumberKeysMode.Notes.Description());
             //  for highlight value selected value mode
             chkHighlightHavingValue.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description());
             chkHighlightHavingValue.ButtonClicked += chkHighlightHavingValue_ButtonClicked;
+            //  for number keys mode
+            chkNumberKeysMode.SetButtonText(NumberKeysMode.Numbers.Description(), NumberKeysMode.Notes.Description());
             //  for remove old notes mode
             chkRemoveOldNotes.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description());
             chkRemoveOldNotes.ButtonClicked += chkRemoveOldNotes_ButtonClicked;
@@ -188,6 +191,16 @@ namespace Sudoku
         }
 
         /// <summary>
+        /// Callback/Event from givnes lock option 
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void chkGivensLock_ButtonClicked(object sender, EventArgs e)
+        {
+            Board.GivensLock = (YesNo)chkGivensLock.CheckState;
+        }
+
+        /// <summary>
         /// Callback/Event from Cell Highlight control to maybe trigger highlighting
         /// </summary>
         /// <param name="sender">Standard WinForms sender</param>
@@ -235,15 +248,18 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Set the current cell to the selected number (as a solution guess)
+        /// Set the current cell to the selected number (as a Given or Guess)
         /// </summary>
         /// <param name="sender">Standard WinForms sender</param>
         /// <param name="e">Standard WinForms click-event args</param>
-        private void btnSetGuess_Click(object sender, EventArgs e)
+        private void btnSetNumber_Click(object sender, EventArgs e)
         {
             ActionManager.Pause();
 
-            Game.Board.SetGuess(pnlFocusNumber.ActiveValue);
+            if (chkGivensLock.Checked)
+                Game.Board.SetGiven(pnlFocusNumber.ActiveValue);
+            else
+                Game.Board.SetGuess(pnlFocusNumber.ActiveValue);
 
             if (chkHighlightHavingValue.Checked)
                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
@@ -283,25 +299,6 @@ namespace Sudoku
 
             ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
             Render();
-        }
-
-        /// <summary>
-        /// Set the current cell to the selected number (as a Given)
-        /// </summary>
-        /// <param name="sender">Standard WinForms sender</param>
-        /// <param name="e">Standard WinForms click-event args</param>
-        private void btnSetGiven_Click(object sender, EventArgs e)
-        {
-            ActionManager.Pause();
-
-            Game.Board.SetGiven(pnlFocusNumber.ActiveValue);
-
-            if (chkHighlightHavingValue.Checked)
-                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
-
-            ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
-            Render();
-            CheckForSolved();
         }
 
         /// <summary>

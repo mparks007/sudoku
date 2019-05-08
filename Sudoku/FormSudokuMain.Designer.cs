@@ -29,8 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
-            this.btnSetGiven = new System.Windows.Forms.Button();
-            this.btnSetGuess = new System.Windows.Forms.Button();
+            this.btnSetNumber = new System.Windows.Forms.Button();
             this.cbxPatterns = new System.Windows.Forms.ComboBox();
             this.btnFind = new System.Windows.Forms.Button();
             this.btnToggleNote = new System.Windows.Forms.Button();
@@ -52,38 +51,24 @@
             this.btnImport = new System.Windows.Forms.Button();
             this.dlgExport = new System.Windows.Forms.SaveFileDialog();
             this.dlgImport = new System.Windows.Forms.OpenFileDialog();
+            this.chkGivensLock = new SudokuCustomControls.OptionButton();
             this.pnlButtons.SuspendLayout();
             this.SuspendLayout();
             // 
-            // btnSetGiven
+            // btnSetNumber
             // 
-            this.btnSetGiven.BackColor = System.Drawing.SystemColors.Highlight;
-            this.btnSetGiven.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnSetGiven.Font = new System.Drawing.Font("Yu Gothic", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSetGiven.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.btnSetGiven.Location = new System.Drawing.Point(581, 255);
-            this.btnSetGiven.Name = "btnSetGiven";
-            this.btnSetGiven.Size = new System.Drawing.Size(239, 30);
-            this.btnSetGiven.TabIndex = 0;
-            this.btnSetGiven.TabStop = false;
-            this.btnSetGiven.Text = "Set Given";
-            this.btnSetGiven.UseVisualStyleBackColor = false;
-            this.btnSetGiven.Click += new System.EventHandler(this.btnSetGiven_Click);
-            // 
-            // btnSetGuess
-            // 
-            this.btnSetGuess.BackColor = System.Drawing.SystemColors.Highlight;
-            this.btnSetGuess.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnSetGuess.Font = new System.Drawing.Font("Yu Gothic", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSetGuess.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.btnSetGuess.Location = new System.Drawing.Point(581, 156);
-            this.btnSetGuess.Name = "btnSetGuess";
-            this.btnSetGuess.Size = new System.Drawing.Size(239, 30);
-            this.btnSetGuess.TabIndex = 49;
-            this.btnSetGuess.TabStop = false;
-            this.btnSetGuess.Text = "Set Guess";
-            this.btnSetGuess.UseVisualStyleBackColor = false;
-            this.btnSetGuess.Click += new System.EventHandler(this.btnSetGuess_Click);
+            this.btnSetNumber.BackColor = System.Drawing.SystemColors.Highlight;
+            this.btnSetNumber.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnSetNumber.Font = new System.Drawing.Font("Yu Gothic", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSetNumber.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.btnSetNumber.Location = new System.Drawing.Point(581, 156);
+            this.btnSetNumber.Name = "btnSetNumber";
+            this.btnSetNumber.Size = new System.Drawing.Size(239, 30);
+            this.btnSetNumber.TabIndex = 49;
+            this.btnSetNumber.TabStop = false;
+            this.btnSetNumber.Text = "Set Number";
+            this.btnSetNumber.UseVisualStyleBackColor = false;
+            this.btnSetNumber.Click += new System.EventHandler(this.btnSetNumber_Click);
             // 
             // cbxPatterns
             // 
@@ -93,7 +78,7 @@
             this.cbxPatterns.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.cbxPatterns.Font = new System.Drawing.Font("Yu Gothic", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbxPatterns.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.cbxPatterns.Location = new System.Drawing.Point(636, 303);
+            this.cbxPatterns.Location = new System.Drawing.Point(636, 272);
             this.cbxPatterns.Name = "cbxPatterns";
             this.cbxPatterns.Size = new System.Drawing.Size(183, 25);
             this.cbxPatterns.TabIndex = 59;
@@ -105,7 +90,7 @@
             this.btnFind.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnFind.Font = new System.Drawing.Font("Yu Gothic", 10F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnFind.ForeColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.btnFind.Location = new System.Drawing.Point(581, 304);
+            this.btnFind.Location = new System.Drawing.Point(581, 273);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(55, 23);
             this.btnFind.TabIndex = 60;
@@ -155,7 +140,7 @@
             this.cbxFindResults.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.cbxFindResults.Font = new System.Drawing.Font("Yu Gothic", 7F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbxFindResults.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.cbxFindResults.Location = new System.Drawing.Point(581, 328);
+            this.cbxFindResults.Location = new System.Drawing.Point(581, 297);
             this.cbxFindResults.Name = "cbxFindResults";
             this.cbxFindResults.Size = new System.Drawing.Size(238, 20);
             this.cbxFindResults.TabIndex = 76;
@@ -337,12 +322,25 @@
             this.dlgImport.InitialDirectory = ".";
             this.dlgImport.Title = "Import Board";
             // 
+            // chkGivensLock
+            // 
+            this.chkGivensLock.Checked = false;
+            this.chkGivensLock.CheckState = System.Windows.Forms.CheckState.Unchecked;
+            this.chkGivensLock.Label = "Givens Lock:";
+            this.chkGivensLock.Location = new System.Drawing.Point(581, 372);
+            this.chkGivensLock.Name = "chkGivensLock";
+            this.chkGivensLock.Size = new System.Drawing.Size(242, 25);
+            this.chkGivensLock.TabIndex = 78;
+            this.chkGivensLock.TabStop = false;
+            this.chkGivensLock.ThreeState = false;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(845, 577);
+            this.Controls.Add(this.chkGivensLock);
             this.Controls.Add(this.pnlButtons);
             this.Controls.Add(this.cbxFindResults);
             this.Controls.Add(this.chkNotesHold);
@@ -355,8 +353,7 @@
             this.Controls.Add(this.pnlHiNumbersList);
             this.Controls.Add(this.btnFind);
             this.Controls.Add(this.cbxPatterns);
-            this.Controls.Add(this.btnSetGuess);
-            this.Controls.Add(this.btnSetGiven);
+            this.Controls.Add(this.btnSetNumber);
             this.Controls.Add(this.chkNumberKeysMode);
             this.Controls.Add(this.chkRemoveOldNotes);
             this.Controls.Add(this.chkValidationMode);
@@ -382,8 +379,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button btnSetGiven;
-        private System.Windows.Forms.Button btnSetGuess;
+        private System.Windows.Forms.Button btnSetNumber;
         private System.Windows.Forms.ComboBox cbxPatterns;
         private System.Windows.Forms.Button btnFind;
         private SudokuCustomControls.NumbersList pnlHiNumbersList;
@@ -405,6 +401,7 @@
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.SaveFileDialog dlgExport;
         private System.Windows.Forms.OpenFileDialog dlgImport;
+        private SudokuCustomControls.OptionButton chkGivensLock;
     }
 }
 

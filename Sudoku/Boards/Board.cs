@@ -19,6 +19,7 @@ namespace Sudoku
 
         public static YesNo RemoveOldNotes { get; set; }
         public static ValidationMode ValidationMode { get; set; }
+        public static YesNo GivensLock { get; set; }
 
         public Board()
         {
@@ -352,7 +353,12 @@ namespace Sudoku
                         if (((modifierKey & ModifierKey.Shift) != 0) && !_selectedCell.HasAnswer)
                             ToggleNote((int)input);
                         else if (modifierKey == 0) // if not shift or ctrl, etc.
-                            SetGuess((int)input);
+                        {
+                            if (Board.GivensLock == YesNo.Yes)
+                                SetGiven((int)input);
+                            else
+                                SetGuess((int)input);
+                        }
                     }
                     break;
                 case UserInput.UpArrow:

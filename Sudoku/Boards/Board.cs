@@ -25,6 +25,7 @@ namespace Sudoku
         {
             Board.RemoveOldNotes = YesNo.No;
             Board.ValidationMode = ValidationMode.Off;
+            Board.GivensLock = YesNo.No;
         }
 
         /// <summary>
@@ -116,18 +117,16 @@ namespace Sudoku
 
             if ((col < 1) || (col > 9))
                 throw new ArgumentException(String.Format("Invalid column requested for house selection: {0}", col));
-
-            int targetRow = _cells[row - 1][col - 1].Row;
-            int targetColumn = _cells[row - 1][col - 1].Column;
-            int targetBlock = _cells[row - 1][col - 1].Block;
+            
+            int block = _cells[row - 1][col - 1].Block;
 
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
                 {
                     // if in the same row, column, or block as the requested row/col
-                    if ((_cells[r][c].Row == targetRow) ||
-                        (_cells[r][c].Column == targetColumn) ||
-                        (_cells[r][c].Block == targetBlock))
+                    if ((_cells[r][c].Row == row) ||
+                        (_cells[r][c].Column == col) ||
+                        (_cells[r][c].Block == block))
                         _cells[r][c].IsHouseSelected = true;
                     else
                         _cells[r][c].IsHouseSelected = false;
@@ -245,8 +244,7 @@ namespace Sudoku
             if ((row < 1) || (row > 9) || (col < 1) || (col > 9))
                 throw new ArgumentException(String.Format("Invalid value row/column requested for cell highlight: {0}/{1}", row, col));
 
-            if (_cells[row - 1][col - 1].HighlightType != highlightType)
-                _cells[row - 1][col - 1].HighlightType = highlightType;
+            _cells[row - 1][col - 1].HighlightType = highlightType;
         }
 
         /// <summary>
@@ -277,8 +275,6 @@ namespace Sudoku
                 throw new ArgumentException("No cell is selected for note highlight update");
 
             _selectedCell.HighlightSelectedNote(highlightType);
-
-            ActionManager.AddState(CellsAsJSON());
         }
 
         /// <summary>
@@ -306,10 +302,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid note having highlight updated: {0}", note));
 
             if (_cells[row - 1][col - 1].HasNote(note))
-            {
                 _cells[row - 1][col - 1].HighlightNote(note, highlightType);
-             //   ActionManager.AddState(CellsAsJSON());
-            }
         }
 
         /// <summary>
@@ -320,8 +313,6 @@ namespace Sudoku
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)
                     _cells[r][c].ClearNoteHighlights();
-
-            ActionManager.AddState(CellsAsJSON());
         }
 
         /// <summary>

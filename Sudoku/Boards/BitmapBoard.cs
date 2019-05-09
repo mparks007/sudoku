@@ -79,7 +79,7 @@ namespace Sudoku
             {
                 ((BitmapCell)_selectedCell).HandlePixelXYClick(input, modifierKey, x, y);
 
-                // if now has answer, must have been a double-click of note to promote to answer, so check for dupes
+                // if now has answer, might have been a double-click on note to promote to answer, so check for dupes
                 if ((input == UserInput.DoubleClick) && _selectedCell.HasAnswer)
                     CheckAndMarkDupes();
 

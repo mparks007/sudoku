@@ -56,7 +56,7 @@ namespace Sudoku
             else
             {
                 // make a subtle checkerboard pattern on the nine blocks
-                if (Block % 2 == 0)
+                if ((Block % 2) == 0)
                     BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.Instance.CellBlockAlternate), rect);
                 else
                     BitmapBoard.Graphics.FillRectangle(new SolidBrush(Colors.Instance.CellBlank), rect);
@@ -67,7 +67,7 @@ namespace Sudoku
             {
                 string answer = _answer.ToString();
 
-                Font f = new Font(Fonts.Instance.Answer, _cellSize / 2);
+                Font f = new Font(Fonts.Instance.Answer, (_cellSize / 2));
                 SizeF fSize = BitmapBoard.Graphics.MeasureString(answer, f);
 
                 Brush br;
@@ -89,8 +89,8 @@ namespace Sudoku
             else
             {
                 // render notes
-                for (int i = 0; i < 9; i++)
-                    _notes[i].Render(Row, Column);
+                foreach (Note note in _notes)
+                    note.Render(Row, Column);
             }
             
             // maybe render selection box
@@ -128,8 +128,6 @@ namespace Sudoku
                 // if double-clicked note, promote to guess
                 if (input == UserInput.DoubleClick)
                     SetGuess(noteNum);
-                else if (input == UserInput.RightClick)
-                    ToggleNote(noteNum);
                 else if (((modifierKey & ModifierKey.Control) != 0) && !HasAnswer) // ctrl-clicking a note does special strong/weak
                 {
                     if (input == UserInput.LeftClick)
@@ -137,6 +135,8 @@ namespace Sudoku
                     else if (input == UserInput.RightClick)
                         HighlightNote(noteNum, NoteHighlightType.Weak);
                 }
+                else if (input == UserInput.RightClick)
+                    ToggleNote(noteNum);
             }
             else
                 _selectedNote = null;

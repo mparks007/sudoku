@@ -180,9 +180,8 @@ namespace Sudoku
         /// </summary>
         public void ClearNoteHighlights()
         {
-            for (int i = 0; i < 9; i++)
-                if (_notes[i].HighlightType != NoteHighlightType.None)
-                    _notes[i].HighlightType = NoteHighlightType.None;
+            foreach (Note note in _notes)
+                note.HighlightType = NoteHighlightType.None;
         }
 
         /// <summary>

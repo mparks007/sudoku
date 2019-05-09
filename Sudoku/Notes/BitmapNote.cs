@@ -69,7 +69,6 @@ namespace Sudoku
 
                 // prep for drawing the text onto the image
                 Font f = new Font(Fonts.Instance.Note, _cellPixelSize / 3 / 2);
-                SizeF fSize = BitmapBoard.Graphics.MeasureString(candidate, f);
                 StringFormat format = new StringFormat()
                 {
                     Alignment = StringAlignment.Center,

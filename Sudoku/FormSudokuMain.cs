@@ -309,6 +309,7 @@ namespace Sudoku
         private void btnFind_Click(object sender, EventArgs e)
         {
             cbxFindResults.Items.Clear();
+            Game.Board.RemoveNotes();
 
             // try to find patterns for the selected type
             List<FindResult> results = _finder.Find(Game.Board, ((KeyValuePair<string, Pattern>)cbxPatterns.SelectedItem).Value);

@@ -793,6 +793,7 @@ namespace Sudoku
                                 Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
                         }
 
+                        Render();
                         CheckForSolved();
                     }
                     else if (_isRightClick)
@@ -805,6 +806,8 @@ namespace Sudoku
 
                         if (chkHighlightHavingValue.Checked)
                             Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+
+                        Render();
                     }
                     else // left-click
                     {
@@ -827,10 +830,11 @@ namespace Sudoku
                             else if ((chkHighlightClickMode.CheckState == (CheckState)HighlightClickMode.Note) && !Game.Board.SelectedCell.HasAnswer)
                                 Game.Board.HighlightSelectedNote((NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
                         }
+
+                        Render();
                     }
 
                     ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
-                    Render();
                 }
 
                 // allow the MouseDown event handler to process clicks again

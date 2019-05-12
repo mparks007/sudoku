@@ -135,7 +135,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
             // if not a forced unhighlight...AND answer number is the one to highlight OR notes are visible and the requested note is present
-            if ((value != 0) && ((_answer == value) || (!HasAnswer && HasNote(value))))
+            if ((value != 0) && ((_answer == value) || HasNote(value)))
                 HighlightType = CellHighlightType.Value;
             else
                 HighlightType = CellHighlightType.None;
@@ -172,7 +172,16 @@ namespace Sudoku
         /// <returns></returns>
         public bool HasNote(int note)
         {
-            return _notes[note - 1].IsNoted;
+            return (!HasAnswer && _notes[note - 1].IsNoted);
+        }
+                
+        /// <summary>
+        /// Determine if there are multiple notes set
+        /// </summary>
+        /// <returns>True if multiple notes are set</returns>
+        public bool HasMultipleNotes()
+        {
+            return (!HasAnswer && (_notes.Where(note => note.IsNoted).Count() > 1));
         }
 
         /// <summary>

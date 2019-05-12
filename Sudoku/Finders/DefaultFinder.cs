@@ -16,11 +16,9 @@ namespace Sudoku
         public DefaultFinder()
         {
             // add in the supported find methods
+            _methods[Pattern.HiddenSingle] = FindHiddenSingles;
             _methods[Pattern.XWing] = FindXWings;
-            _methods[Pattern.FinnedXWing] = FindFinnedXWings;
             _methods[Pattern.Skyscraper] = FindSkyscrapers;
-            _methods[Pattern.XYWing] = FindXYWings;
-            _methods[Pattern.TwoStringKite] = FindTwoStringKites;
         }
 
         /// <summary>
@@ -40,8 +38,89 @@ namespace Sudoku
         #region Finders
 
         /// <summary>
+        /// Find Hidden Single patterns
+        /// </summary>
+        /// <param name="board">Board to search</param>
+        /// <returns>List of patterns found</returns>
+        private List<FindResult> FindHiddenSingles(Board board)
+        {
+            List<FindResult> results = new List<FindResult>();
+            IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
+
+            // row-based
+
+            // pick one number at a time
+            for (int n = 1; n <= 9; n++)
+            {
+                // scan rows from top to bottom
+                for (int r1 = 1; r1 <= 9; r1++)
+                {
+                    FindResult result = new FindResult();
+
+                    // look for notes of n
+                    var cellsWithNote = allCells.Where(cell => (cell.Row == r1) && cell.HasNote(n)).ToList<Cell>();
+                    // if found a single note hidden in a pack of notes
+                    if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
+                    {
+                        result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
+
+                        result.Note = n;
+                        results.Add(result);
+                    }
+                }
+            }
+
+            // column-based
+
+            // pick one number at a time
+            for (int n = 1; n <= 9; n++)
+            {
+                // scan columns left to right
+                for (int c1 = 1; c1 <= 9; c1++)
+                {
+                    FindResult result = new FindResult();
+
+                    // look for notes of n
+                    var cellsWithNote = allCells.Where(cell => (cell.Column == c1) && cell.HasNote(n)).ToList<Cell>();
+                    // if found a single note hidden in a pack of notes
+                    if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
+                    {
+                        result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
+
+                        result.Note = n;
+                        results.Add(result);
+                    }
+                }
+            }
+
+            // block-based
+
+            // pick one number at a time
+            for (int n = 1; n <= 9; n++)
+            {
+                // scan blocks
+                for (int b1 = 1; b1 <= 9; b1++)
+                {
+                    FindResult result = new FindResult();
+
+                    // look for notes of n
+                    var cellsWithNote = allCells.Where(cell => (cell.Block == b1) && cell.HasNote(n)).ToList<Cell>();
+                    // if found a single note hidden in a pack of notes
+                    if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
+                    {
+                        result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
+
+                        result.Note = n;
+                        results.Add(result);
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
         /// Find XWing patterns
-        ///   Very raw way to search atm (sort of searched as I search with brain)
         /// </summary>
         /// <param name="board">Board to search</param>
         /// <returns>List of patterns found</returns>
@@ -61,7 +140,7 @@ namespace Sudoku
                     FindResult result = new FindResult();
 
                     // look for notes of n
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && !cell.HasAnswer && cell.HasNote(n));
+                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && cell.HasNote(n));
                     // if found two
                     if (firstPair.Count() == 2)
                     {
@@ -69,21 +148,24 @@ namespace Sudoku
                         for (int r2 = r1 + 1; r2 <= 9; r2++)
                         {
                             // again, look for notes of n
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && !cell.HasAnswer && cell.HasNote(n));
+                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && cell.HasNote(n));
                             // again, if found two
                             if (secondPair.Count() == 2)
                             {
+                                var firstPairAsList = firstPair.OfType<Cell>().ToList();
+                                var secondPairAsList = secondPair.OfType<Cell>().ToList();
+
                                 // if the sets of pairs found are of the same column, but not in the same block, we have an xwing
-                                if (((firstPair.OfType<Cell>().ToList()[0].Column == secondPair.OfType<Cell>().ToList()[0].Column) &&
-                                     (firstPair.OfType<Cell>().ToList()[1].Column == secondPair.OfType<Cell>().ToList()[1].Column)) &&
-                                    ((firstPair.OfType<Cell>().ToList()[0].Block != firstPair.OfType<Cell>().ToList()[1].Block) ||
-                                     (firstPair.OfType<Cell>().ToList()[0].Block != secondPair.OfType<Cell>().ToList()[0].Block)))
+                                if (((firstPairAsList[0].Column == secondPairAsList[0].Column) &&
+                                     (firstPairAsList[1].Column == secondPairAsList[1].Column)) &&
+                                    ((firstPairAsList[0].Block != firstPairAsList[1].Block) ||
+                                     (firstPairAsList[0].Block != secondPairAsList[0].Block)))
                                 {
                                     // put all four cells involved in the single results object
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[0].Row, firstPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[1].Row, firstPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
 
                                     result.Note = n;
                                     results.Add(result);
@@ -106,7 +188,7 @@ namespace Sudoku
                     FindResult result = new FindResult();
 
                     // look for notes of n
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && !cell.HasAnswer && cell.HasNote(n));
+                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && cell.HasNote(n));
                     // if found two
                     if (firstPair.Count() == 2)
                     {
@@ -114,21 +196,24 @@ namespace Sudoku
                         for (int c2 = c1 + 1; c2 <= 9; c2++)
                         {
                             // again, look for notes of n
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && !cell.HasAnswer && cell.HasNote(n));
+                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && cell.HasNote(n));
                             // again, if found two
                             if (secondPair.Count() == 2)
                             {
+                                var firstPairAsList = firstPair.OfType<Cell>().ToList();
+                                var secondPairAsList = secondPair.OfType<Cell>().ToList();
+
                                 // if the sets of pairs found are of the same row, but not in the same block, we have an xwing
-                                if (((firstPair.OfType<Cell>().ToList()[0].Row == secondPair.OfType<Cell>().ToList()[0].Row) &&
-                                    (firstPair.OfType<Cell>().ToList()[1].Row == secondPair.OfType<Cell>().ToList()[1].Row)) &&
-                                    ((firstPair.OfType<Cell>().ToList()[0].Block != firstPair.OfType<Cell>().ToList()[1].Block) ||
-                                     (firstPair.OfType<Cell>().ToList()[0].Block != secondPair.OfType<Cell>().ToList()[0].Block)))
+                                if (((firstPairAsList[0].Row == secondPairAsList[0].Row) &&
+                                    (firstPairAsList[1].Row == secondPairAsList[1].Row)) &&
+                                    ((firstPairAsList[0].Block != firstPairAsList[1].Block) ||
+                                     (firstPairAsList[0].Block != secondPairAsList[0].Block)))
                                 {
                                     // put all four cells involved in the single results object
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[0].Row, firstPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[1].Row, firstPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
 
                                     result.Note = n;
                                     results.Add(result);
@@ -139,21 +224,6 @@ namespace Sudoku
                     }
                 }
             }
-
-            return results;
-        }
-
-        /// <summary>
-        /// Find Finned XWing patterns
-        ///   Very raw way to search atm (sort of searched as I search with brain)
-        /// </summary>
-        /// <param name="board">Board to search</param>
-        /// <returns>List of patterns found</returns>
-        private List<FindResult> FindFinnedXWings(Board board)
-        {
-            List<FindResult> results = new List<FindResult>();
-            IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
-
 
             return results;
         }
@@ -179,7 +249,7 @@ namespace Sudoku
                     FindResult result = new FindResult();
 
                     // look for notes of n
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && !cell.HasAnswer && cell.HasNote(n));
+                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && cell.HasNote(n));
                     // if found two
                     if (firstPair.Count() == 2)
                     {
@@ -187,23 +257,26 @@ namespace Sudoku
                         for (int r2 = r1 + 1; r2 <= 9; r2++)
                         {
                             // again, look for notes of n
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && !cell.HasAnswer && cell.HasNote(n));
+                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && cell.HasNote(n));
                             // again, if found two
                             if (secondPair.Count() == 2)
                             {
+                                var firstPairAsList = firstPair.OfType<Cell>().ToList();
+                                var secondPairAsList = secondPair.OfType<Cell>().ToList();
+
                                 // if the sets of pairs found line up on one side but are offset on the other, and both offset ends are outside the lined up pair's block, we have a skyscraper
-                                if ((((firstPair.OfType<Cell>().ToList()[0].Column == secondPair.OfType<Cell>().ToList()[0].Column) && 
-                                      (firstPair.OfType<Cell>().ToList()[1].Column != secondPair.OfType<Cell>().ToList()[1].Column)) ||
-                                     ((firstPair.OfType<Cell>().ToList()[0].Column != secondPair.OfType<Cell>().ToList()[0].Column) && 
-                                      (firstPair.OfType<Cell>().ToList()[1].Column == secondPair.OfType<Cell>().ToList()[1].Column))) &&
-                                    ((firstPair.OfType<Cell>().ToList()[0].Block != firstPair.OfType<Cell>().ToList()[1].Block) ||
-                                     (firstPair.OfType<Cell>().ToList()[0].Block != secondPair.OfType<Cell>().ToList()[0].Block)))
+                                if ((((firstPairAsList[0].Column == secondPairAsList[0].Column) && 
+                                      (firstPairAsList[1].Column != secondPairAsList[1].Column)) ||
+                                     ((firstPairAsList[0].Column != secondPairAsList[0].Column) && 
+                                      (firstPairAsList[1].Column == secondPairAsList[1].Column))) &&
+                                    ((firstPairAsList[0].Block != firstPairAsList[1].Block) ||
+                                     (firstPairAsList[0].Block != secondPairAsList[0].Block)))
                                 {
                                     // put all four cells involved in the single results object
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[0].Row, firstPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[1].Row, firstPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
 
                                     result.Note = n;
                                     results.Add(result);
@@ -226,7 +299,7 @@ namespace Sudoku
                     FindResult result = new FindResult();
 
                     // look for notes of n
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && !cell.HasAnswer && cell.HasNote(n));
+                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && cell.HasNote(n));
                     // if found two
                     if (firstPair.Count() == 2)
                     {
@@ -234,23 +307,26 @@ namespace Sudoku
                         for (int c2 = c1 + 1; c2 <= 9; c2++)
                         {
                             // again, look for notes of n
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && !cell.HasAnswer && cell.HasNote(n));
+                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && cell.HasNote(n));
                             // again, if found two
                             if (secondPair.Count() == 2)
                             {
+                                var firstPairAsList = firstPair.OfType<Cell>().ToList();
+                                var secondPairAsList = secondPair.OfType<Cell>().ToList();
+
                                 // if the sets of pairs found line up on one side but are offset on the other, and both offset ends are outside the lined up pair's block, we have a skyscraper
-                                if ((((firstPair.OfType<Cell>().ToList()[0].Row == secondPair.OfType<Cell>().ToList()[0].Row) &&
-                                      (firstPair.OfType<Cell>().ToList()[1].Row != secondPair.OfType<Cell>().ToList()[1].Row)) ||
-                                     ((firstPair.OfType<Cell>().ToList()[0].Row != secondPair.OfType<Cell>().ToList()[0].Row) &&
-                                      (firstPair.OfType<Cell>().ToList()[1].Row == secondPair.OfType<Cell>().ToList()[1].Row))) &&
-                                    ((firstPair.OfType<Cell>().ToList()[0].Block != firstPair.OfType<Cell>().ToList()[1].Block) ||
-                                     (firstPair.OfType<Cell>().ToList()[0].Block != secondPair.OfType<Cell>().ToList()[0].Block)))
+                                if ((((firstPairAsList[0].Row == secondPairAsList[0].Row) &&
+                                      (firstPairAsList[1].Row != secondPairAsList[1].Row)) ||
+                                     ((firstPairAsList[0].Row != secondPairAsList[0].Row) &&
+                                      (firstPairAsList[1].Row == secondPairAsList[1].Row))) &&
+                                    ((firstPairAsList[0].Block != firstPairAsList[1].Block) ||
+                                     (firstPairAsList[0].Block != secondPairAsList[0].Block)))
                                 {
                                     // put all four cells involved in the single results object
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[0].Row, firstPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[1].Row, firstPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
 
                                     result.Note = n;
                                     results.Add(result);
@@ -261,40 +337,6 @@ namespace Sudoku
                     }
                 }
             }
-
-            return results;
-        }
-
-        /// <summary>
-        /// Find XYWing patterns
-        /// </summary>
-        /// <param name="board">Board to search</param>
-        /// <returns>List of patterns found</returns>
-        private List<FindResult> FindXYWings(Board board)
-        {
-            List<FindResult> results = new List<FindResult>();
-            FindResult result = new FindResult();
-
-            // TODO...make it actually find all xywings
-            result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(2, 2), CellHighlightType.Pivot));
-            result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(2, 7), CellHighlightType.Pincer));
-            result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(7, 2), CellHighlightType.Pincer));
-            results.Add(result);
-
-            return results;
-        }
-
-        /// <summary>
-        /// Find Two-String kite patterns
-        /// </summary>
-        /// <param name="board">Board to search</param>
-        /// <returns>List of patterns found</returns>
-        private List<FindResult> FindTwoStringKites(Board board)
-        {
-            List<FindResult> results = new List<FindResult>();
-            FindResult result = new FindResult();
-
-            // TODO...make it actually find all two-string kites
 
             return results;
         }

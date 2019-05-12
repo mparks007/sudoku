@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sudoku
 {
-    interface IFinder
+    public interface IFinder
     {
         List<FindResult> Find(Board board, Pattern pattern);
     }

@@ -13,7 +13,7 @@ namespace Sudoku
     {
         private static int Index { get; set; }                          // where in the list of actions we are referencing
         private static List<string> _cellStates = new List<string>();   // list of states to play back and forth per undo/redo call
-        private static bool _paused;                                    //
+        private static bool _paused;                                    // flag to control adding to state queue
 
         /// <summary>
         /// Ctor to setup index to deal with the first time the board is loaded (that acts as a action to store at Index 0
@@ -78,7 +78,7 @@ namespace Sudoku
             if ((Index >= 0) && (cellState == _cellStates[Index]))
                 return;
 
-            // if another action, chop off the redo future since this would branch it and I don't want to deal with that
+            // if an explicit action occurred, chop off the redo future since this would branch it and I don't want to deal with that
             if ((Index > -1) && (Index < _cellStates.Count-1))
                 _cellStates.RemoveRange(Index+1, _cellStates.Count - 1 - Index );
 

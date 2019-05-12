@@ -14,8 +14,7 @@ namespace Sudoku
         private int _yOffset = 20;                                  // how far down from Form's top edge to start painting the board
         private ModifierKey _modifierKey = ModifierKey.None;        // keeping track of alt, shift, ctrl state at the time of early key trapping and normal keypress events
         private frmColorDialog _frmColors = new frmColorDialog();   // form to allow selection of custom colors
-        private IFinder _finder;
-        private string _initialBoard;
+        private string _initialBoard;                               // board that is initially set when the app loads (last, default, hardcode default)...so Reset can jump back to this board
 
         private readonly string _lastBoard = "lastboard.json";
         private readonly string _defaultBoard = "defaultboard.json";
@@ -36,12 +35,11 @@ namespace Sudoku
         {
             InitializeComponent();
             _gr = CreateGraphics();
-            _finder = new DefaultFinder();
 
             _frmColors.SetCallBack(ColorUIUpdateAndRender);
 
             SetupCustomControls();
-            SetupPatternUI();
+            SetupPatternFinderControls();
 
             // setup time for click/doubleclick hack code :(
             _doubleClickTimer.Interval = 35;
@@ -49,7 +47,7 @@ namespace Sudoku
 
             Game.CreateInstance(BoardType.Bitmap, cellSize: 60);
 
-            // start with some hard-coded board (but don't count towards undo/redo)
+            // for startup board, don't count towards undo/redo queue
             ActionManager.Pause();
             SetupInitialBoard();
             ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
@@ -130,14 +128,14 @@ namespace Sudoku
         /// <summary>
         /// Setup the Patterns combo box
         /// </summary>
-        private void SetupPatternUI()
+        private void SetupPatternFinderControls()
         {
             cbxPatterns.Items.Clear();
             cbxPatterns.DisplayMember = "Key";
             cbxPatterns.ValueMember = "Value";
 
             cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.XWing.Description(), Pattern.XWing));
-          //  cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.FinnedXWing.Description(), Pattern.FinnedXWing));
+            //cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.FinnedXWing.Description(), Pattern.FinnedXWing));
             cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.Skyscraper.Description(), Pattern.Skyscraper));
             //cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.TwoStringKite.Description(), Pattern.TwoStringKite));
             //cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.XYWing.Description(), Pattern.XYWing));
@@ -309,10 +307,12 @@ namespace Sudoku
         private void btnFind_Click(object sender, EventArgs e)
         {
             cbxFindResults.Items.Clear();
+
+            // clear out unnecessary notes since the finder code doesn't want to worry about ensuring it checks for givens/guesses in houses being checked
             Game.Board.RemoveNotes();
 
             // try to find patterns for the selected type
-            List<FindResult> results = _finder.Find(Game.Board, ((KeyValuePair<string, Pattern>)cbxPatterns.SelectedItem).Value);
+            List<FindResult> results = Game.Board.Finder.Find(Game.Board, ((KeyValuePair<string, Pattern>)cbxPatterns.SelectedItem).Value);
 
             // load list of all results
             foreach (FindResult result in results)
@@ -341,7 +341,7 @@ namespace Sudoku
         {
             ActionManager.Pause();
 
-            // clear prior highlighting, even patterns.   and clear all note highlights
+            // clear prior highlighting, even patterns. and clear all note highlights
             Game.Board.HighlightCellsWithNoteOrNumber(-1);
             Game.Board.ClearNoteHighlights();
 
@@ -382,8 +382,10 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void chkRemoveOldNotes_ButtonClicked(Object sender, EventArgs e)
         {
+            // inner-board logic needs to know of this option
             Board.RemoveOldNotes = (YesNo)chkRemoveOldNotes.CheckState;
-            if ((Game.Board != null) && (Board.RemoveOldNotes != YesNo.No))
+
+            if ((Game.Board != null) && (Board.RemoveOldNotes == YesNo.Yes))
             {
                 ActionManager.Pause();
 
@@ -476,49 +478,8 @@ namespace Sudoku
         {
             _modifierKey = ModifierKey.None;
 
-            // convert 10-key numbers to normal number keys
             switch (keyData)
             {
-                case Keys.NumPad1:
-                    keyData = Keys.D1;
-                    break;
-                case Keys.NumPad2:
-                    keyData = Keys.D2;
-                    break;
-                case Keys.NumPad3:
-                    keyData = Keys.D3;
-                    break;
-                case Keys.NumPad4:
-                    keyData = Keys.D4;
-                    break;
-                case Keys.NumPad5:
-                    keyData = Keys.D5;
-                    break;
-                case Keys.NumPad6:
-                    keyData = Keys.D6;
-                    break;
-                case Keys.NumPad7:
-                    keyData = Keys.D7;
-                    break;
-                case Keys.NumPad8:
-                    keyData = Keys.D8;
-                    break;
-                case Keys.NumPad9:
-                    keyData = Keys.D9;
-                    break;
-            }
-
-            switch (keyData)
-            {
-                case Keys.D1:
-                case Keys.D2:
-                case Keys.D3:
-                case Keys.D4:
-                case Keys.D5:
-                case Keys.D6:
-                case Keys.D7:
-                case Keys.D8:
-                case Keys.D9:
                 case Keys.Up:
                 case Keys.Down:
                 case Keys.Left:
@@ -551,10 +512,14 @@ namespace Sudoku
         private void frmMain_KeyDown(object sender, KeyEventArgs e)
         {
             UserInput input = UserInput.None;
-            int numPressed;
+            int numPressed = (int)e.KeyValue;
+
+            // maybe convert numpad nums to normal nums
+            if ((e.KeyValue >= (int)Keys.NumPad1) && (e.KeyValue <= (int)Keys.NumPad9))
+                numPressed = e.KeyValue - 48;
 
             // if a non-zero number key, remember it (any better way to do this check?)
-            if (int.TryParse(((char)e.KeyValue).ToString(), out numPressed) && (numPressed != 0))
+            if (int.TryParse(((char)numPressed).ToString(), out numPressed) && (numPressed != 0))
             {
                 // convert to custom number enum
                 UserInput[] possibleNums = { UserInput.One, UserInput.Two, UserInput.Three, UserInput.Four, UserInput.Five, UserInput.Six, UserInput.Seven, UserInput.Eight, UserInput.Nine };

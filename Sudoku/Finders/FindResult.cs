@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sudoku
 {
-    class FindResult
+    public class FindResult
     {
         public List<KeyValuePair<Cell, CellHighlightType>> CellsFound = new List<KeyValuePair<Cell, CellHighlightType>>();
         public int Note;

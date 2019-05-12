@@ -9,6 +9,8 @@ namespace Sudoku
 {
     public abstract class Board
     {
+        private IFinder _finder;
+
         protected int _boardSize;
         protected Cell[][] _cells;
         protected Cell _selectedCell;
@@ -16,6 +18,7 @@ namespace Sudoku
         public Cell SelectedCell { get { return _selectedCell; } }
         public int BoardSize { get { return _boardSize; } }
         public Cell[][] Cells {  get { return _cells; } }
+        public IFinder Finder {  get { return _finder; } }
 
         public static YesNo RemoveOldNotes { get; set; }
         public static ValidationMode ValidationMode { get; set; }
@@ -26,6 +29,8 @@ namespace Sudoku
             Board.RemoveOldNotes = YesNo.No;
             Board.ValidationMode = ValidationMode.Off;
             Board.GivensLock = YesNo.No;
+
+            _finder = new DefaultFinder();
         }
 
         /// <summary>

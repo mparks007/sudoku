@@ -55,27 +55,29 @@ namespace Sudoku
             // pick one number at a time
             for (int n = 1; n <=9; n++)
             {
-                // from top, scan rows from top to bottom
+                // scan rows from top to bottom
                 for (int r1 = 1; r1 <= 9; r1++)
                 {
                     FindResult result = new FindResult();
 
-                    // look for two numbers (but for this query, have to also find givens/guesses answer matches too, which is skipped if using brain)
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
-                    // if found two, but there are JUST notes found, no givens/guesses in the mix (we found our note pairs)
-                    if ((firstPair.Count() == 2) && firstPair.Where(cell => cell.HasAnswer).Count() == 0)
+                    // look for notes of n
+                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && !cell.HasAnswer && cell.HasNote(n));
+                    // if found two
+                    if (firstPair.Count() == 2)
                     {
-                        // now scan scoot down a row and try to find another pair
+                        // now scoot down a row and try to find another pair from there to bottom
                         for (int r2 = r1 + 1; r2 <= 9; r2++)
                         {
-                            // again, look for two numbers (but for this query, have to also find givens/guesses answer matches too, which is skipped if using brain)
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
-                            // again, if found two, but there are JUST notes found, no givens/guesses in the mix  (we found our other note pairs)
-                            if ((secondPair.Count() == 2) && secondPair.Where(cell => cell.HasAnswer).Count() == 0)
+                            // again, look for notes of n
+                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && !cell.HasAnswer && cell.HasNote(n));
+                            // again, if found two
+                            if (secondPair.Count() == 2)
                             {
-                                // if the sets of pairs found are of the same column, they are lined up as xwing
-                                if ((firstPair.OfType<Cell>().ToList()[0].Column == secondPair.OfType<Cell>().ToList()[0].Column) &&
-                                    (firstPair.OfType<Cell>().ToList()[1].Column == secondPair.OfType<Cell>().ToList()[1].Column))
+                                // if the sets of pairs found are of the same column, but not in the same block, we have an xwing
+                                if (((firstPair.OfType<Cell>().ToList()[0].Column == secondPair.OfType<Cell>().ToList()[0].Column) &&
+                                     (firstPair.OfType<Cell>().ToList()[1].Column == secondPair.OfType<Cell>().ToList()[1].Column)) &&
+                                    ((firstPair.OfType<Cell>().ToList()[0].Block != firstPair.OfType<Cell>().ToList()[1].Block) ||
+                                     (firstPair.OfType<Cell>().ToList()[0].Block != secondPair.OfType<Cell>().ToList()[0].Block)))
                                 {
                                     // put all four cells involved in the single results object
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[0].Row, firstPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
@@ -98,27 +100,29 @@ namespace Sudoku
             // pick one number at a time
             for (int n = 1; n <= 9; n++)
             {
-                // from left, scan columns left to right
+                // scan columns left to right
                 for (int c1 = 1; c1 <= 9; c1++)
                 {
                     FindResult result = new FindResult();
 
-                    // look for two numbers (but for this query, have to also find givens/guesses answer matches too, which is skipped if using brain)
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
-                    // if found two, but there are JUST notes found, no givens/guesses in the mix (we found our note pairs)
-                    if ((firstPair.Count() == 2) && firstPair.Where(cell => cell.HasAnswer).Count() == 0)
+                    // look for notes of n
+                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && !cell.HasAnswer && cell.HasNote(n));
+                    // if found two
+                    if (firstPair.Count() == 2)
                     {
-                        // now scan scoot over a column and try to find another pair
+                        // now scoot over a column and try to find another pair from there to the right
                         for (int c2 = c1 + 1; c2 <= 9; c2++)
                         {
-                            // again, look for two numbers (but for this query, have to also find givens/guesses answer matches too, which is skipped if using brain)
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
-                            // again, if found two, but there are JUST notes found, no givens/guesses in the mix  (we found our other note pairs)
-                            if ((secondPair.Count() == 2) && secondPair.Where(cell => cell.HasAnswer).Count() == 0)
+                            // again, look for notes of n
+                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && !cell.HasAnswer && cell.HasNote(n));
+                            // again, if found two
+                            if (secondPair.Count() == 2)
                             {
-                                // if the sets of pairs found are of the same row, they are lined up as xwing
-                                if ((firstPair.OfType<Cell>().ToList()[0].Row == secondPair.OfType<Cell>().ToList()[0].Row) &&
-                                    (firstPair.OfType<Cell>().ToList()[1].Row == secondPair.OfType<Cell>().ToList()[1].Row))
+                                // if the sets of pairs found are of the same row, but not in the same block, we have an xwing
+                                if (((firstPair.OfType<Cell>().ToList()[0].Row == secondPair.OfType<Cell>().ToList()[0].Row) &&
+                                    (firstPair.OfType<Cell>().ToList()[1].Row == secondPair.OfType<Cell>().ToList()[1].Row)) &&
+                                    ((firstPair.OfType<Cell>().ToList()[0].Block != firstPair.OfType<Cell>().ToList()[1].Block) ||
+                                     (firstPair.OfType<Cell>().ToList()[0].Block != secondPair.OfType<Cell>().ToList()[0].Block)))
                                 {
                                     // put all four cells involved in the single results object
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[0].Row, firstPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
@@ -150,91 +154,6 @@ namespace Sudoku
             List<FindResult> results = new List<FindResult>();
             IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
 
-            // row-based xwings
-
-            // pick one number at a time
-            for (int n = 1; n <= 9; n++)
-            {
-                // from top, scan rows from top to bottom
-                for (int r1 = 1; r1 <= 9; r1++)
-                {
-                    FindResult result = new FindResult();
-
-                    // look for 3 to 4 numbers (but for this query, have to also find answer matches too, which is skipped if using brain)
-                    IEnumerable<Cell> firstSet = allCells.Where(cell => (cell.Row == r1) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
-                    // if found 3 to 4 of this number, but they are JUST notes found (we found our note pairs)
-                    if (((firstSet.Count() > 2) && (firstSet.Count() <= 4)) && firstSet.Where(cell => cell.HasAnswer).Count() == 0)
-                    {
-                        // now scan scoot down a row and try to find another pair
-                        for (int r2 = r1 + 1; r2 <= 9; r2++)
-                        {
-                            // again, look for two numbers (but for this query, have to also find answer matches too, which is skipped if using brain)
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
-                            // if found two, but they are JUST notes found (we found our note pairs)
-                            if ((secondPair.Count() == 2) && secondPair.Where(cell => cell.HasAnswer).Count() == 0)
-                            {
-                                // if the sets of pairs found are of the same column, they are lined up as xwing
-                                if ((firstSet.OfType<Cell>().ToList()[0].Column == secondPair.OfType<Cell>().ToList()[0].Column) &&
-                                    (firstSet.OfType<Cell>().ToList()[1].Column == secondPair.OfType<Cell>().ToList()[1].Column))
-                                {
-                                    // put all four cells involved in the single results object
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstSet.OfType<Cell>().ToList()[0].Row, firstSet.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstSet.OfType<Cell>().ToList()[1].Row, firstSet.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
-
-                                    result.Note = n;
-                                    results.Add(result);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // column-based xwings
-
-            // pick one number at a time
-            for (int n = 1; n <= 9; n++)
-            {
-                // from left, scan columns left to right
-                for (int c1 = 1; c1 <= 9; c1++)
-                {
-                    FindResult result = new FindResult();
-
-                    // look for two numbers (but for this query, have to also find answer matches too, which is skipped if using brain)
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
-                    // if found two, but they are JUST notes found (we found our note pairs)
-                    if ((firstPair.Count() == 2) && firstPair.Where(cell => cell.HasAnswer).Count() == 0)
-                    {
-                        // now scan scoot over a column and try to find another pair
-                        for (int c2 = c1 + 1; c2 <= 9; c2++)
-                        {
-                            // again, look for two numbers (but for this query, have to also find answer matches too, which is skipped if using brain)
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
-                            // again, if found two, but they are JUST notes found (we found our note pairs)
-                            if ((secondPair.Count() == 2) && secondPair.Where(cell => cell.HasAnswer).Count() == 0)
-                            {
-                                // if the sets of pairs found are of the same row, they are lined up as xwing
-                                if ((firstPair.OfType<Cell>().ToList()[0].Row == secondPair.OfType<Cell>().ToList()[0].Row) &&
-                                    (firstPair.OfType<Cell>().ToList()[1].Row == secondPair.OfType<Cell>().ToList()[1].Row))
-                                {
-                                    // put all four cells involved in the single results object
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[0].Row, firstPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[1].Row, firstPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[0].Row, secondPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPair.OfType<Cell>().ToList()[1].Row, secondPair.OfType<Cell>().ToList()[1].Column), CellHighlightType.Special));
-
-                                    result.Note = n;
-                                    results.Add(result);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
 
             return results;
         }
@@ -249,36 +168,36 @@ namespace Sudoku
             List<FindResult> results = new List<FindResult>();
             IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
 
-            // row-based xwings
+            // row-based skyscrapers
 
             // pick one number at a time
             for (int n = 1; n <= 9; n++)
             {
-                // from top, scan rows from top to bottom
+                // scan rows from top to bottom
                 for (int r1 = 1; r1 <= 9; r1++)
                 {
                     FindResult result = new FindResult();
 
-                    // look for two numbers (but for this query, have to also find answer matches too, which is skipped if using brain)
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
-                    // if found two, but they are JUST notes found (we found our note pairs)
-                    if ((firstPair.Count() == 2) && firstPair.Where(cell => cell.HasAnswer).Count() == 0)
+                    // look for notes of n
+                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && !cell.HasAnswer && cell.HasNote(n));
+                    // if found two
+                    if (firstPair.Count() == 2)
                     {
-                        // now scan scoot down a row and try to find another pair
+                        // now scoot down a row and try to find another pair from there to bottom
                         for (int r2 = r1 + 1; r2 <= 9; r2++)
                         {
-                            // again, look for two numbers (but for this query, have to also find answer matches too, which is skipped if using brain)
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
-                            // again, if found two, but they are JUST notes found (we found our note pairs)
-                            if ((secondPair.Count() == 2) && secondPair.Where(cell => cell.HasAnswer).Count() == 0)
+                            // again, look for notes of n
+                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && !cell.HasAnswer && cell.HasNote(n));
+                            // again, if found two
+                            if (secondPair.Count() == 2)
                             {
-                                // if the sets of pairs found are of the same column, they are lined up as xwing
-                                if (((firstPair.OfType<Cell>().ToList()[0].Column == secondPair.OfType<Cell>().ToList()[0].Column) &&
-                                    (firstPair.OfType<Cell>().ToList()[1].Column != secondPair.OfType<Cell>().ToList()[1].Column))
-                                    ||
-                                    ((firstPair.OfType<Cell>().ToList()[0].Column != secondPair.OfType<Cell>().ToList()[0].Column) &&
-                                    (firstPair.OfType<Cell>().ToList()[1].Column == secondPair.OfType<Cell>().ToList()[1].Column)))
-
+                                // if the sets of pairs found line up on one side but are offset on the other, and both offset ends are outside the lined up pair's block, we have a skyscraper
+                                if ((((firstPair.OfType<Cell>().ToList()[0].Column == secondPair.OfType<Cell>().ToList()[0].Column) && 
+                                      (firstPair.OfType<Cell>().ToList()[1].Column != secondPair.OfType<Cell>().ToList()[1].Column)) ||
+                                     ((firstPair.OfType<Cell>().ToList()[0].Column != secondPair.OfType<Cell>().ToList()[0].Column) && 
+                                      (firstPair.OfType<Cell>().ToList()[1].Column == secondPair.OfType<Cell>().ToList()[1].Column))) &&
+                                    ((firstPair.OfType<Cell>().ToList()[0].Block != firstPair.OfType<Cell>().ToList()[1].Block) ||
+                                     (firstPair.OfType<Cell>().ToList()[0].Block != secondPair.OfType<Cell>().ToList()[0].Block)))
                                 {
                                     // put all four cells involved in the single results object
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[0].Row, firstPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));
@@ -296,35 +215,36 @@ namespace Sudoku
                 }
             }
 
-            // column-based xwings
+            // column-based skyscrapers
 
             // pick one number at a time
             for (int n = 1; n <= 9; n++)
             {
-                // from left, scan columns left to right
+                // scan columns left to right
                 for (int c1 = 1; c1 <= 9; c1++)
                 {
                     FindResult result = new FindResult();
 
-                    // look for two numbers (but for this query, have to also find answer matches too, which is skipped if using brain)
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
-                    // if found two, but they are JUST notes found (we found our note pairs)
-                    if ((firstPair.Count() == 2) && firstPair.Where(cell => cell.HasAnswer).Count() == 0)
+                    // look for notes of n
+                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && !cell.HasAnswer && cell.HasNote(n));
+                    // if found two
+                    if (firstPair.Count() == 2)
                     {
-                        // now scan scoot over a column and try to find another pair
+                        // now scoot over a column and try to find another pair from there to the right
                         for (int c2 = c1 + 1; c2 <= 9; c2++)
                         {
-                            // again, look for two numbers (but for this query, have to also find answer matches too, which is skipped if using brain)
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && (!cell.HasAnswer && cell.HasNote(n) || (cell.HasAnswer && (cell.Answer == n))));
-                            // again, if found two, but they are JUST notes found (we found our note pairs)
-                            if ((secondPair.Count() == 2) && secondPair.Where(cell => cell.HasAnswer).Count() == 0)
+                            // again, look for notes of n
+                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && !cell.HasAnswer && cell.HasNote(n));
+                            // again, if found two
+                            if (secondPair.Count() == 2)
                             {
-                                // if the sets of pairs found are of the same row, they are lined up as xwing
-                                if (((firstPair.OfType<Cell>().ToList()[0].Row == secondPair.OfType<Cell>().ToList()[0].Row) &&
-                                    (firstPair.OfType<Cell>().ToList()[1].Row != secondPair.OfType<Cell>().ToList()[1].Row))
-                                    ||
-                                    ((firstPair.OfType<Cell>().ToList()[0].Row != secondPair.OfType<Cell>().ToList()[0].Row) &&
-                                    (firstPair.OfType<Cell>().ToList()[1].Row == secondPair.OfType<Cell>().ToList()[1].Row)))
+                                // if the sets of pairs found line up on one side but are offset on the other, and both offset ends are outside the lined up pair's block, we have a skyscraper
+                                if ((((firstPair.OfType<Cell>().ToList()[0].Row == secondPair.OfType<Cell>().ToList()[0].Row) &&
+                                      (firstPair.OfType<Cell>().ToList()[1].Row != secondPair.OfType<Cell>().ToList()[1].Row)) ||
+                                     ((firstPair.OfType<Cell>().ToList()[0].Row != secondPair.OfType<Cell>().ToList()[0].Row) &&
+                                      (firstPair.OfType<Cell>().ToList()[1].Row == secondPair.OfType<Cell>().ToList()[1].Row))) &&
+                                    ((firstPair.OfType<Cell>().ToList()[0].Block != firstPair.OfType<Cell>().ToList()[1].Block) ||
+                                     (firstPair.OfType<Cell>().ToList()[0].Block != secondPair.OfType<Cell>().ToList()[0].Block)))
                                 {
                                     // put all four cells involved in the single results object
                                     result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPair.OfType<Cell>().ToList()[0].Row, firstPair.OfType<Cell>().ToList()[0].Column), CellHighlightType.Special));

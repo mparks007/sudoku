@@ -29,8 +29,8 @@ C:\src\github.com\mparks007\sudoku\Sudoku\obj\Debug\Sudoku.frmMain.resources
 C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\SudokuCustomControls.dll
 C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\SudokuCustomControls.pdb
 C:\src\github.com\mparks007\sudoku\Sudoku\obj\Debug\Sudoku.frmColorDialog.resources
-C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\Saves\blankboard.json
-C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\Saves\closeboard.json
-C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\Saves\defaultboard.json
-C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\Saves\skyscrapersboard.json
-C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\Saves\xwingsboard.json
+C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\blankboard.json
+C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\closeboard.json
+C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\defaultboard.json
+C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\skyscrapersboard.json
+C:\src\github.com\mparks007\sudoku\Sudoku\bin\Debug\xwingsboard.json

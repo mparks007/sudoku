@@ -23,12 +23,14 @@ namespace Sudoku
         public static YesNo RemoveOldNotes { get; set; }
         public static ValidationMode ValidationMode { get; set; }
         public static YesNo GivensLock { get; set; }
+        public static HighlightValueMode HighlightValueMode { get; set; }
 
         public Board()
         {
             Board.RemoveOldNotes = YesNo.No;
             Board.ValidationMode = ValidationMode.Off;
             Board.GivensLock = YesNo.No;
+            Board.HighlightValueMode = HighlightValueMode.Off;
 
             _finder = new DefaultFinder();
         }
@@ -216,6 +218,10 @@ namespace Sudoku
         {
             if ((value < -1) || (value > 9))
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
+
+            // if not a total clear and highlighting is off, return vs. trying highlight code below
+            if ((value > 0) && (Board.HighlightValueMode == HighlightValueMode.Off))
+                return;
 
             for (int r = 0; r < 9; r++)
                 for (int c = 0; c < 9; c++)

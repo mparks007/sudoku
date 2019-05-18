@@ -110,7 +110,7 @@ namespace Sudoku
             //  for notes lock option
             chkNotesHold.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description());
             //  for highlight value selected value mode
-            chkHighlightHavingValue.SetButtonText(YesNo.No.Description(), YesNo.Yes.Description());
+            chkHighlightHavingValue.SetButtonText(HighlightValueMode.NotesOnly.Description(), HighlightValueMode.NumbersAndNotes.Description(), HighlightValueMode.Off.Description());
             chkHighlightHavingValue.ButtonClicked += chkHighlightHavingValue_ButtonClicked;
             //  for number keys mode
             chkNumberKeysMode.SetButtonText(NumberKeysMode.Numbers.Description(), NumberKeysMode.Notes.Description());
@@ -212,9 +212,7 @@ namespace Sudoku
                 ActionManager.Pause();
 
                 Game.Board.HighlightCellsWithNoteOrNumber(-1);
-
-                if (chkHighlightHavingValue.Checked)
-                    Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
                 ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
                 Render();
@@ -260,8 +258,7 @@ namespace Sudoku
             else
                 Game.Board.SetGuess(pnlFocusNumber.ActiveValue);
 
-            if (chkHighlightHavingValue.Checked)
-                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+            Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
             ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
             Render();
@@ -275,11 +272,8 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void pnlSetNumbers_NumberClicked(object sender, EventArgs e)
         {
-            if (chkHighlightHavingValue.Checked)
-            {
-                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
-                Render();
-            }
+            Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+            Render();
         }
 
         /// <summary>
@@ -292,9 +286,7 @@ namespace Sudoku
             ActionManager.Pause();
 
             Game.Board.ToggleNote(pnlFocusNumber.ActiveValue);
-
-            if (chkHighlightHavingValue.Checked)
-                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+            Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
             ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
             Render();
@@ -326,10 +318,7 @@ namespace Sudoku
             {
                 Game.Board.HighlightCellsWithNoteOrNumber(-1);
                 Game.Board.ClearNoteHighlights();
-
-                // maybe re-highlight the focus number
-                if (chkHighlightHavingValue.Checked)
-                    Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
             }
         }
 
@@ -342,13 +331,10 @@ namespace Sudoku
         {
             ActionManager.Pause();
 
-            // clear prior highlighting, even patterns. and clear all note highlights
+            // clear prior highlighting, even patterns! clear all note highlights. maybe re-highlight
             Game.Board.HighlightCellsWithNoteOrNumber(-1);
             Game.Board.ClearNoteHighlights();
-
-            // maybe re-highlight the focus number
-            if (chkHighlightHavingValue.Checked)
-                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+            Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
             // go through all the cells involved in the found pattern selected and highlight accordingly
             foreach (KeyValuePair<Cell, CellHighlightType> cellFound in ((KeyValuePair<string, FindResult>)cbxFindResults.SelectedItem).Value.CellsFound)
@@ -368,10 +354,12 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void chkHighlightHavingValue_ButtonClicked(object sender, EventArgs e)
         {
-            if (chkHighlightHavingValue.Checked)
-                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
-            else
+            Board.HighlightValueMode = (HighlightValueMode)chkHighlightHavingValue.CheckState;
+
+            if ((Game.Board != null) && (Board.HighlightValueMode == HighlightValueMode.Off))
                 Game.Board.HighlightCellsWithNoteOrNumber(0);
+            else
+                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
             Render();
         }
@@ -391,9 +379,7 @@ namespace Sudoku
                 ActionManager.Pause();
 
                 Game.Board.RemoveNotes();
-
-                if (chkHighlightHavingValue.Checked)
-                    Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
                 ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
                 Render();
@@ -621,8 +607,8 @@ namespace Sudoku
 
                 Game.Board.HandleKeyUserInput(input, _modifierKey);
 
-                // if in auto-highlight mode AND (pressed a number OR just deleted main number, exposing potential notes), update highlighting
-                if (chkHighlightHavingValue.Checked && ((numPressed != 0) || (input == UserInput.Delete)))
+                // pressed a number OR just deleted main number, exposing potential notes), update highlighting
+                if ((numPressed != 0) || (input == UserInput.Delete))
                     Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
                 ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());
@@ -636,8 +622,7 @@ namespace Sudoku
         {
             ((BitmapBoard)Game.Board).LoadCells(ActionManager.Undo());
             
-            if (chkHighlightHavingValue.Checked)
-                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+            Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
             Render();
             CheckForSolved();
@@ -648,8 +633,7 @@ namespace Sudoku
         {
             ((BitmapBoard)Game.Board).LoadCells(ActionManager.Redo());
 
-            if (chkHighlightHavingValue.Checked)
-                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+            Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
             Render();
             CheckForSolved();
@@ -662,8 +646,7 @@ namespace Sudoku
         {
             ((BitmapBoard)Game.Board).LoadCells(_initialBoard);
 
-            if (chkHighlightHavingValue.Checked)
-                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+            Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
             Render();
             CheckForSolved();
@@ -741,22 +724,17 @@ namespace Sudoku
                     {
                         ((BitmapBoard)Game.Board).HandlePixelXYClick(UserInput.DoubleClick, _modifierKey, _clickX, _clickY);
 
-                        if (chkHighlightHavingValue.Checked)
-                        {
-                            // if maybe just double-clicked a note to become the guess, see how it should highlight
-                            if (Game.Board.SelectedCell.Answer == pnlFocusNumber.ActiveValue)
-                                Game.Board.HighlightCell(CellHighlightType.Value);
-                            else
-                                Game.Board.HighlightCell(CellHighlightType.None);
-                        }
+                        // maybe just double-clicked a note to become the guess, so see how it should highlight
+                        if ((chkHighlightHavingValue.CheckState == (CheckState)HighlightValueMode.NumbersAndNotes) && (Game.Board.SelectedCell.Answer == pnlFocusNumber.ActiveValue))
+                            Game.Board.HighlightCell(CellHighlightType.Value);
+                        else
+                            Game.Board.HighlightCell(CellHighlightType.None);
 
                         // if has a guess/given and old notes are to be cleared, do that
                         if (Game.Board.SelectedCell.HasAnswer && (Board.RemoveOldNotes == YesNo.Yes))
                         {
                             Game.Board.RemoveNotes(Game.Board.SelectedCell.Answer);
-
-                            if (chkHighlightHavingValue.Checked)
-                                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+                            Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
                         }
 
                         Render();
@@ -770,8 +748,7 @@ namespace Sudoku
                         if (Game.Board.SelectedCell.HasAnswer && (Game.Board.SelectedCell.IsGiven.HasValue && !Game.Board.SelectedCell.IsGiven.Value))
                             frmMain_KeyDown(this, new KeyEventArgs(Keys.Delete));
 
-                        if (chkHighlightHavingValue.Checked)
-                            Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+                        Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
                         Render();
                     }
@@ -783,9 +760,7 @@ namespace Sudoku
                         if (chkNotesHold.Checked)
                         {
                             Game.Board.ToggleNote(pnlFocusNumber.ActiveValue);
-
-                            if (chkHighlightHavingValue.Checked)
-                                Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
+                            Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
                         }
 
                         // do special highlighting if Control WASN'T clicked (Control-Left click is for special strong/week coloring done in HandleXYClick)
@@ -855,6 +830,7 @@ namespace Sudoku
                     // reset and setup the undo/redo list based on the newly loaded board
                     ActionManager.Reset(((BitmapBoard)Game.Board).CellsAsJSON());
 
+                    Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
                     Render();
                 }
                 catch (Exception ex)

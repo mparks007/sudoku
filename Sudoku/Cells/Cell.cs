@@ -135,7 +135,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
             // if not a forced unhighlight...AND answer number is the one to highlight OR notes are visible and the requested note is present
-            if ((value != 0) && ((_answer == value) || HasNote(value)))
+            if ((value != 0) && (((Board.HighlightValueMode == HighlightValueMode.NumbersAndNotes) && (_answer == value)) || HasNote(value)))
                 HighlightType = CellHighlightType.Value;
             else
                 HighlightType = CellHighlightType.None;

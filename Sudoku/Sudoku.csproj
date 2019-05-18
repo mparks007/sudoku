@@ -57,6 +57,7 @@
     <Compile Include="Boards\Board.cs" />
     <Compile Include="Cells\BitmapCell.cs" />
     <Compile Include="Colors.cs" />
+    <Compile Include="Enums\HighlightValueMode.cs" />
     <Compile Include="Enums\ColorScheme.cs" />
     <Compile Include="Finders\DefaultFinder.cs" />
     <Compile Include="Finders\FindResult.cs" />

@@ -161,15 +161,15 @@
             // 
             // chkHighlightHavingValue
             // 
-            this.chkHighlightHavingValue.Checked = false;
-            this.chkHighlightHavingValue.CheckState = System.Windows.Forms.CheckState.Unchecked;
-            this.chkHighlightHavingValue.Label = "Highlight Numbers:";
+            this.chkHighlightHavingValue.Checked = true;
+            this.chkHighlightHavingValue.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+            this.chkHighlightHavingValue.Label = "Highlight Values Mode:";
             this.chkHighlightHavingValue.Location = new System.Drawing.Point(581, 420);
             this.chkHighlightHavingValue.Name = "chkHighlightHavingValue";
             this.chkHighlightHavingValue.Size = new System.Drawing.Size(242, 25);
             this.chkHighlightHavingValue.TabIndex = 71;
             this.chkHighlightHavingValue.TabStop = false;
-            this.chkHighlightHavingValue.ThreeState = false;
+            this.chkHighlightHavingValue.ThreeState = true;
             // 
             // chkHighlightClickMode
             // 

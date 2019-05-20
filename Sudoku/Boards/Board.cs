@@ -270,7 +270,8 @@ namespace Sudoku
             if ((note < 1) || (note > 9))
                 throw new ArgumentException(String.Format("Invalid note requested for note toggle: {0}", note));
 
-            _selectedCell.ToggleNote(note);
+            if (!_selectedCell.HasAnswer)
+                _selectedCell.ToggleNote(note);
 
             ActionManager.AddState(CellsAsJSON());
             CheckAndMarkDupes();

@@ -11,7 +11,7 @@ namespace Sudoku
     public abstract class Note
     {
         [JsonProperty]
-        protected int _candidate;
+        protected int _candidate;   // the 0 through 9 possible number (0 = note is not present at all)
 
         /// <summary>
         /// The number on this note (if one was assinged)
@@ -30,7 +30,7 @@ namespace Sudoku
         }
 
         public bool IsNoted { get { return (_candidate != 0); } }
-        [JsonIgnore]
+        //[JsonIgnore]
         public NoteHighlightType HighlightType { get; set; }
 
         /// <summary>

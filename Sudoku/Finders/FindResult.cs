@@ -14,7 +14,7 @@ namespace Sudoku
         /// <summary>
         /// Create a decent string representation of the results
         /// </summary>
-        /// <returns>Formattes string</returns>
+        /// <returns>Formatted string</returns>
         public override string ToString()
         {
             StringBuilder str = new StringBuilder(CellsFound.Count * 15);

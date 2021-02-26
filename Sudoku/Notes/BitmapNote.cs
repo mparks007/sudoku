@@ -65,8 +65,6 @@ namespace Sudoku
 
                 BitmapBoard.Graphics.FillRectangle(new SolidBrush(c), rect);
 
-                string candidate = _candidate.ToString();
-
                 // prep for drawing the text onto the image
                 Font f = new Font(Fonts.Instance.Note, _cellPixelSize / 3 / 2);
                 StringFormat format = new StringFormat()
@@ -76,7 +74,7 @@ namespace Sudoku
                 };
 
                 // draw the string (single digit note)
-                BitmapBoard.Graphics.DrawString(candidate, f, br, rect, format);
+                BitmapBoard.Graphics.DrawString(_candidate.ToString(), f, br, rect, format);
             }
         }
     }

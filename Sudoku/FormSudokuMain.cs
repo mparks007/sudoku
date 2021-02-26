@@ -725,7 +725,7 @@ namespace Sudoku
                         ((BitmapBoard)Game.Board).HandlePixelXYClick(UserInput.DoubleClick, _modifierKey, _clickX, _clickY);
 
                         // maybe just double-clicked a note to become the guess, so see how it should highlight
-                        if ((chkHighlightHavingValue.CheckState == (CheckState)HighlightValueMode.NumbersAndNotes) && (Game.Board.SelectedCell.Answer == pnlFocusNumber.ActiveValue))
+                        if ((chkHighlightHavingValue.CheckState == (CheckState)HighlightValueMode.NumbersAndNotes) && (Game.Board.SelectedCell.Value == pnlFocusNumber.ActiveValue))
                             Game.Board.HighlightCell(CellHighlightType.Value);
                         else
                             Game.Board.HighlightCell(CellHighlightType.None);
@@ -733,7 +733,7 @@ namespace Sudoku
                         // if has a guess/given and old notes are to be cleared, do that
                         if (Game.Board.SelectedCell.HasAnswer && (Board.RemoveOldNotes == YesNo.Yes))
                         {
-                            Game.Board.RemoveNotes(Game.Board.SelectedCell.Answer);
+                            Game.Board.RemoveNotes(Game.Board.SelectedCell.Value);
                             Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
                         }
 

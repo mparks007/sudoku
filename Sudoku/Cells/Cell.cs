@@ -14,32 +14,32 @@ namespace Sudoku
     public abstract class Cell
     {
         [JsonProperty]
-        protected int _answer;
+        protected int _value;           // main number set in the cell
         [JsonProperty]
-        protected Note[] _notes;
+        protected Note[] _notes;        // array of all the temporary notes possible
         [JsonProperty]
-        protected Note _selectedNote;
+        protected Note _selectedNote;   // which of the 9 possible notes is selected (if any)
         
-        public int Answer { get { return _answer; } }
-        public bool HasAnswer { get { return (_answer != 0); } }
-        public bool? IsGiven { get; set; }
+        public int Value { get { return _value; } }
+        public bool HasAnswer { get { return (_value != 0); } }
+        public bool? IsGiven { get; set; }      // if the cell is pre-filled with the correct value on board creation and needs no guess
         [JsonIgnore]
-        public bool IsSelected { get; set; }
-        public bool IsInvalid { get; set; }
+        public bool IsSelected { get; set; }    // if the cell is selected by the user (used for rendering options)
+        public bool IsInvalid { get; set; }     // if the value set in the cell has been verifed to clash with the rules
+        //[JsonIgnore]
+        public CellHighlightType HighlightType { get; set; }    // rendering will use this to decide what the cell will look like
         [JsonIgnore]
-        public CellHighlightType HighlightType { get; set; }
-        [JsonIgnore]
-        public bool IsHouseSelected { get; set; }
-        public int Row { get; set; }
-        public int Column { get; set; }
-        public int Block { get; set; }
+        public bool IsHouseSelected { get; set; }   // rending will use this to decide if basic house selection coloring should be used
+        public int Row { get; set; }                // which row of the board this cell is in (used in all sort of calculations)
+        public int Column { get; set; }             // which column of the board this cell is in (used in all sort of calculations)
+        public int Block { get; set; }              // which block of the board this cell is in (used in all sort of calculations)
 
         /// <summary>
-        /// Ctor
+        /// Ctor (the board creation logic will tell each cell how it fits in the overall board structure
         /// </summary>
-        /// <param name="row">Row of the cell in the overall board (used for render calculations)</param>
-        /// <param name="column">Column of the cell in the overall board (used for render calculations)</param>
-        /// <param name="block">Block of the cell in the overall board (used for render calculations)</param>
+        /// <param name="row">Row of the cell in the overall board (used for various calculations)</param>
+        /// <param name="column">Column of the cell in the overall board (used for various calculations)</param>
+        /// <param name="block">Block of the cell in the overall board (used for various calculations)</param>
         public Cell(int row, int column, int block)
         {
             Row = row;
@@ -50,47 +50,48 @@ namespace Sudoku
         /// <summary>
         /// Places an guess number in the cell
         /// </summary>
-        /// <param name="guess">Number to try and set (0 = clear guess)</param>
-        public void SetGuess(int guess)
+        /// <param name="guessedNumber">Number to try and set (0 = clear guess)</param>
+        public void SetGuess(int guessedNumber)
         {
             // if is same number as current, don't waste your time
-            if (_answer == guess)
+            if (_value == guessedNumber)
                 return;
 
-            if ((guess < 0) || (guess > 9))
-                throw new ArgumentException(String.Format("Invalid solution number being set: {0}", guess));
+            if ((guessedNumber < 0) || (guessedNumber > 9))
+                throw new ArgumentException(String.Format("Invalid solution number being set: {0}", guessedNumber));
 
             // if is trying to convert a given to a guess (unless the guess is 0 for "delete"), don't
-            if (IsGiven.HasValue && IsGiven.Value && (guess != 0))
+            if (IsGiven.HasValue && IsGiven.Value && (guessedNumber != 0))
                 return;
 
-            _answer = guess;
+            // finally, actually set the cell's value!
+            _value = guessedNumber;
 
             // if was a Delete, no idea if IsGiven or not, so reset the nullable bool
-            if (guess == 0)
+            if (guessedNumber == 0)
                 IsGiven = null;
             else // is an actual guess
                 IsGiven = false;
         }
 
         /// <summary>
-        /// Places a starter/given answer number in the cell
+        /// Places a starter/given value in the cell
         /// </summary>
         /// <param name="given">Number to try and set</param>
         public void SetGiven(int given)
         {
             // if is same number as current, don't waste your time
-            if (_answer == given)
+            if (_value == given)
                 return;
 
             if ((given < 1) || (given > 9))
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", given));
 
-            // if is trying to convert a guess to a given, don't
+            // if trying to convert a guess to a given, don't (I forget why I did this)
             if (IsGiven.HasValue && !IsGiven.Value)
                 return;
 
-            _answer = given;
+            _value = given;
             IsGiven = true;
         }
 
@@ -103,7 +104,7 @@ namespace Sudoku
             if ((note < 1) || (note > 9))
                 throw new ArgumentException(String.Format("Invalid note being set/unset: {0}", note));
 
-            // if already has this note (then remove it)
+            // if already has this note (then remove it, hence, a Toggle)
             if (_notes[note - 1].Candidate == note)
                 RemoveNote(note);
             else
@@ -116,6 +117,9 @@ namespace Sudoku
         /// <param name="note">Note to clear</param>
         public void RemoveNote(int note)
         {
+            if ((note < 1) || (note > 9))
+                throw new ArgumentException(String.Format("Invalid note being removed: {0}", note));
+
             // clear potential highlight on it too
             HighlightNote(note, NoteHighlightType.None);
             _notes[note - 1].Candidate = 0;
@@ -135,7 +139,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
             // if not a forced unhighlight...AND answer number is the one to highlight OR notes are visible and the requested note is present
-            if ((value != 0) && (((Board.HighlightValueMode == HighlightValueMode.NumbersAndNotes) && (_answer == value)) || HasNote(value)))
+            if ((value != 0) && (((Board.HighlightValueMode == HighlightValueMode.NumbersAndNotes) && (_value == value)) || HasNote(value)))
                 HighlightType = CellHighlightType.Value;
             else
                 HighlightType = CellHighlightType.None;

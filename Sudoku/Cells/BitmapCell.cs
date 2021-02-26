@@ -28,7 +28,7 @@ namespace Sudoku
             _cellSize = cellSize;
             _notes = new BitmapNote[9];
 
-            // making as derived class here vs. just Note
+            // making as derived class here vs. just base Note class
             for (int i = 0; i < 9; i++)
                 _notes[i] = new BitmapNote(_cellSize);
         }
@@ -63,12 +63,11 @@ namespace Sudoku
             }
 
             // if solved, render solved number
-            if (_answer != 0)
+            if (_value != 0)
             {
-                string answer = _answer.ToString();
+                string answer = _value.ToString();
 
                 Font f = new Font(Fonts.Instance.Answer, (_cellSize / 2));
-                SizeF fSize = BitmapBoard.Graphics.MeasureString(answer, f);
 
                 Brush br;
                 // only turn red when invalid if....validating full number option and that number isn't a given
@@ -93,7 +92,7 @@ namespace Sudoku
                     note.Render(Row, Column);
             }
             
-            // maybe render selection box
+            // render selection box if selected
             if (IsSelected)
                 BitmapBoard.Graphics.DrawRectangle(new Pen(Colors.Instance.CellSelectFrame, 3), rect.X+2, rect.Y+2, rect.Width-4, rect.Height-4);
 
@@ -128,7 +127,7 @@ namespace Sudoku
                 // if double-clicked note, promote to guess
                 if (input == UserInput.DoubleClick)
                     SetGuess(noteNum);
-                else if (((modifierKey & ModifierKey.Control) != 0) && !HasAnswer) // ctrl-clicking a note does special strong/weak
+                else if (((modifierKey & ModifierKey.Control) != 0) && !HasAnswer) // ctrl-clicking a note does special strong/weak highlighting
                 {
                     if (input == UserInput.LeftClick)
                         HighlightNote(noteNum, NoteHighlightType.Strong);

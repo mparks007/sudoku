@@ -143,22 +143,22 @@ namespace Sudoku
         /// <summary>
         /// Places an answer/guess/solve main number in the selected cell
         /// </summary>
-        /// <param name="num">Number to try and set</param>
-        public void SetGuess(int num)
+        /// <param name="guessedNum">Number to try and set</param>
+        public void SetGuess(int guessedNum)
         {
             if (_selectedCell == null)
-                throw new ArgumentException(String.Format("No cell is selected for setting guess number: {0}", num));
+                throw new ArgumentException(String.Format("No cell is selected for setting guess number: {0}", guessedNum));
 
-            if ((num < 0) || (num > 9))
-                throw new ArgumentException(String.Format("Invalid guess number being set: {0}", num));
+            if ((guessedNum < 0) || (guessedNum > 9))
+                throw new ArgumentException(String.Format("Invalid guess number being set: {0}", guessedNum));
 
-            if (_selectedCell.Answer != num)
+            if (_selectedCell.Value != guessedNum)
             {
-                _selectedCell.SetGuess(num);
+                _selectedCell.SetGuess(guessedNum);
 
                 bool didRemove = false;
-                if ((Board.RemoveOldNotes == YesNo.Yes) && (num != 0))
-                    didRemove = RemoveNotes(num);
+                if ((Board.RemoveOldNotes == YesNo.Yes) && (guessedNum != 0))
+                    didRemove = RemoveNotes(guessedNum);
 
                 // RemoveNotes would have added state if it removed, so don't double up here
                 if (!didRemove)
@@ -194,7 +194,7 @@ namespace Sudoku
             if ((num < 1) || (num > 9))
                 throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
 
-            if (_cells[row - 1][col - 1].Answer != num)
+            if (_cells[row - 1][col - 1].Value != num)
             {
                 _cells[row - 1][col - 1].SetGiven(num);
 
@@ -444,8 +444,8 @@ namespace Sudoku
             for (int r = 1; r <= 9; r++)
                 for (int n = min; n <= max; n++) // while on a column, pick each number (or ONE specific note if one was passed in)
                 {
-                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Row == r) && (cell.HasNote(n) || (cell.Answer == n)));
-                    if (filteredCells.Where(cell => (cell.Answer == n)).Count() > 0)
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Row == r) && (cell.HasNote(n) || (cell.Value == n)));
+                    if (filteredCells.Where(cell => (cell.Value == n)).Count() > 0)
                     {
                         if (filteredCells.Where(cell => (cell.HasNote(n))).Count() > 0)
                         {
@@ -459,8 +459,8 @@ namespace Sudoku
             for (int c = 1; c <= 9; c++)
                 for (int n = min; n <= max; n++) // while on a column, pick each number (or ONE specific note if one was passed in)
                 {
-                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Column == c) && (cell.HasNote(n) || (cell.Answer == n)));
-                    if (filteredCells.Where(cell => (cell.Answer == n)).Count() > 0)
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Column == c) && (cell.HasNote(n) || (cell.Value == n)));
+                    if (filteredCells.Where(cell => (cell.Value == n)).Count() > 0)
                     {
                         if (filteredCells.Where(cell => (cell.HasNote(n))).Count() > 0)
                         {
@@ -474,8 +474,8 @@ namespace Sudoku
             for (int b = 1; b <= 9; b++)
                 for (int n = min; n <= max; n++) // while on a block, pick each number (or ONE specific note if one was passed in)
                 {
-                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Block == b) && (cell.HasNote(n) || (cell.Answer == n)));
-                    if (filteredCells.Where(cell => (cell.Answer == n)).Count() > 0)
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Block == b) && (cell.HasNote(n) || (cell.Value == n)));
+                    if (filteredCells.Where(cell => (cell.Value == n)).Count() > 0)
                     {
                         if (filteredCells.Where(cell => (cell.HasNote(n))).Count() > 0)
                         {
@@ -509,7 +509,7 @@ namespace Sudoku
             for (int r = 1; r <= 9; r++)
                 for (int n = 1; n <= 9; n++) // while on a row, pick each number
                 {
-                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Row == r) && (cell.Answer == n));
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Row == r) && (cell.Value == n));
                     if (filteredCells.Count() > 1)
                     {
                         filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
@@ -521,7 +521,7 @@ namespace Sudoku
             for (int c = 1; c <= 9; c++)
                 for (int n = 1; n <= 9; n++) // while on a column, pick each number
                 {
-                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Column == c) && (cell.Answer == n));
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Column == c) && (cell.Value == n));
                     if (filteredCells.Count() > 1)
                     {
                         filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);
@@ -533,7 +533,7 @@ namespace Sudoku
             for (int b = 1; b <= 9; b++)
                 for (int n = 1; n <= 9; n++) // while on a block, pick each number
                 {
-                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Block == b) && (cell.Answer == n));
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Block == b) && (cell.Value == n));
                     if (filteredCells.Count() > 1)
                     {
                         filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.IsInvalid = true);

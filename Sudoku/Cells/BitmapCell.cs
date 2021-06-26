@@ -130,9 +130,29 @@ namespace Sudoku
                 else if (((modifierKey & ModifierKey.Control) != 0) && !HasAnswer) // ctrl-clicking a note does special strong/weak highlighting
                 {
                     if (input == UserInput.LeftClick)
-                        HighlightNote(noteNum, NoteHighlightType.Strong);
+                    {
+                        // if already strong highlight on note, then unhighlight note
+                        if (_selectedNote.HighlightType == NoteHighlightType.Strong)
+                            HighlightNote(noteNum, NoteHighlightType.None);
+                        else
+                            HighlightNote(noteNum, NoteHighlightType.Strong);
+                    }
                     else if (input == UserInput.RightClick)
-                        HighlightNote(noteNum, NoteHighlightType.Weak);
+                    {
+                        // if already weak highlighton on note, then unhighlight note
+                        if (_selectedNote.HighlightType == NoteHighlightType.Weak)
+                            HighlightNote(noteNum, NoteHighlightType.None);
+                        else
+                            HighlightNote(noteNum, NoteHighlightType.Weak);
+                    }
+                    else if (input == UserInput.MiddleClick)
+                    {
+                        // if already info highlighton on note, then unhighlight note
+                        if (_selectedNote.HighlightType == NoteHighlightType.Info)
+                            HighlightNote(noteNum, NoteHighlightType.None);
+                        else
+                            HighlightNote(noteNum, NoteHighlightType.Info);
+                    }
                 }
                 else if (input == UserInput.RightClick)
                     ToggleNote(noteNum);

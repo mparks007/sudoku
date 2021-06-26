@@ -23,6 +23,8 @@ namespace Sudoku
         private Timer _doubleClickTimer = new Timer();
         private bool _isFirstClick = true;
         private bool _isRightClick;
+        private bool _isLeftClick;
+        private bool _isMiddleClick;
         private bool _isDoubleClick;
         private int _milliseconds;
         private int _clickX;
@@ -678,7 +680,29 @@ namespace Sudoku
         /// <param name="e">Standard WinForms click-event args</param>
         private void frmMain_MouseDown(object sender, MouseEventArgs e)
         {
-            _isRightClick = (e.Button == MouseButtons.Right);
+            switch (e.Button)
+            {
+                case MouseButtons.Right:
+                    _isRightClick = true;
+                    _isLeftClick = false;
+                    _isMiddleClick = false;
+                    break;
+                case MouseButtons.Left:
+                    _isRightClick = false;
+                    _isLeftClick = true;
+                    _isMiddleClick = false;
+                    break;
+                case MouseButtons.Middle:
+                    _isRightClick = false;
+                    _isLeftClick = false;
+                    _isMiddleClick = true;
+                    break;
+                default:
+                    _isRightClick = false;
+                    _isLeftClick = false;
+                    _isMiddleClick = false;
+                    break;
+            }
 
             // if first time in here, consider this will be a single click
             if (_isFirstClick)
@@ -752,7 +776,7 @@ namespace Sudoku
 
                         Render();
                     }
-                    else // left-click
+                    else if (_isLeftClick)
                     {
                         ((BitmapBoard)Game.Board).HandlePixelXYClick(UserInput.LeftClick, _modifierKey, _clickX, _clickY);
 
@@ -771,6 +795,21 @@ namespace Sudoku
                             else if ((chkHighlightClickMode.CheckState == (CheckState)HighlightClickMode.Note) && !Game.Board.SelectedCell.HasAnswer)
                                 Game.Board.HighlightSelectedNote((NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
                         }
+
+                        Render();
+                    }
+                    else if (_isMiddleClick)
+                    {
+                        ((BitmapBoard)Game.Board).HandlePixelXYClick(UserInput.MiddleClick, _modifierKey, _clickX, _clickY);
+
+                        //// do special highlighting if Control WASN'T clicked (Control-Left click is for special strong/week coloring done in HandleXYClick)
+                        //if ((_modifierKey & ModifierKey.Control) == 0)
+                        //{
+                        //    if (chkHighlightClickMode.CheckState == (CheckState)HighlightClickMode.Cell)
+                        //        Game.Board.HighlightCell((CellHighlightType)pnlCellHighlightPicker.ActiveValue);
+                        //    else if ((chkHighlightClickMode.CheckState == (CheckState)HighlightClickMode.Note) && !Game.Board.SelectedCell.HasAnswer)
+                        //        Game.Board.HighlightSelectedNote((NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
+                        //}
 
                         Render();
                     }

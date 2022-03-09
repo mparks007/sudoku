@@ -9,9 +9,18 @@ namespace Sudoku
 {
     // http://hodoku.sourceforge.net/en/techniques.php
     // http://sudopedia.enjoysudoku.com/Solving_Technique.html
+    // https://www.sudokuwiki.org/Unique_Rectangles
 
     public enum Pattern
     {
+        [Description("Naked Single")]
+        NakedSingle,
+        [Description("Naked Pair")]
+        NakedPair,
+        [Description("Naked Triple")]
+        NakedTriple,
+        [Description("Naked Quad")]
+        NakedQuad,
         [Description("Hidden Single")]
         HiddenSingle,
         [Description("Hidden Pair")]
@@ -20,12 +29,6 @@ namespace Sudoku
         HiddenTriple,
         [Description("Hidden Quad")]
         HiddenQuad,
-        [Description("Naked Pair")]
-        NakedPair,
-        [Description("Naked Triple")]
-        NakedTriple,
-        [Description("Naked Quad")]
-        NakedQuad,
         [Description("Pointing Pair/Triple")]
         PointingPairTriple,
         [Description("Box/Line Reduction")]
@@ -48,6 +51,12 @@ namespace Sudoku
         XYWing,
         [Description("Empty Rectangle")]
         EmptyRectangle,
+        [Description("Deadly")]
+        Deadly,
+        [Description("Unique Rectangle Type 1")]
+        UniqueRectangleType1,
+        [Description("BugPlusOne")]
+        BugPlusOne,
         [Description("Swordfish")]
         Swordfish
     }

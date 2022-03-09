@@ -108,7 +108,7 @@ namespace Sudoku
             _selectedCell = _cells[row - 1][col - 1];
             _selectedCell.IsSelected = true;
 
-            // cell selection changed, so house would have too
+            // cell selection changed, so house might have too
             SelectHousesOfCellAtRowCol(row, col);
         }
 
@@ -152,6 +152,7 @@ namespace Sudoku
             if ((guessedNum < 0) || (guessedNum > 9))
                 throw new ArgumentException(String.Format("Invalid guess number being set: {0}", guessedNum));
 
+            // don't waste time if setting same number as one already set
             if (_selectedCell.Value != guessedNum)
             {
                 _selectedCell.SetGuess(guessedNum);
@@ -160,7 +161,7 @@ namespace Sudoku
                 if ((Board.RemoveOldNotes == YesNo.Yes) && (guessedNum != 0))
                     didRemove = RemoveNotes(guessedNum);
 
-                // RemoveNotes would have added state if it removed, so don't double up here
+                // RemoveNotes possibly called just above would have added state if it removed, so don't double up here
                 if (!didRemove)
                     ActionManager.AddState(CellsAsJSON());
 
@@ -171,13 +172,13 @@ namespace Sudoku
         /// <summary>
         /// Places a starter/given main number in the selected cell
         /// </summary>
-        /// <param name="num">Number to try and set</param>
-        public void SetGiven(int num)
+        /// <param name="givenNum">Number to try and set</param>
+        public void SetGiven(int givenNum)
         {
             if (_selectedCell == null)
-                throw new ArgumentException(String.Format("No cell is selected for setting given: {0}", num));
+                throw new ArgumentException(String.Format("No cell is selected for setting given: {0}", givenNum));
 
-            SetGiven(_selectedCell.Row, _selectedCell.Column, num);
+            SetGiven(_selectedCell.Row, _selectedCell.Column, givenNum);
         }
 
         /// <summary>
@@ -185,24 +186,25 @@ namespace Sudoku
         /// </summary>
         /// <param name="row">Row to update</param>
         /// <param name="col">Column to update</param>
-        /// <param name="num">Number to try and set</param>
-        private void SetGiven(int row, int col, int num)
+        /// <param name="givenNum">Number to try and set</param>
+        private void SetGiven(int row, int col, int givenNum)
         {
             if ((row < 1) || (row > 9) || (col < 1) || (col > 9))
                 throw new ArgumentException(String.Format("Invalid value row/column requested for setting given: {0}/{1}", row, col));
 
-            if ((num < 1) || (num > 9))
-                throw new ArgumentException(String.Format("Invalid given number being set: {0}", num));
+            if ((givenNum < 1) || (givenNum > 9))
+                throw new ArgumentException(String.Format("Invalid given number being set: {0}", givenNum));
 
-            if (_cells[row - 1][col - 1].Value != num)
+            // don't waste time if setting same number as one already set
+            if (_cells[row - 1][col - 1].Value != givenNum)
             {
-                _cells[row - 1][col - 1].SetGiven(num);
+                _cells[row - 1][col - 1].SetGiven(givenNum);
 
                 bool didRemove = false;
                 if (Board.RemoveOldNotes == YesNo.Yes)
-                    didRemove = RemoveNotes(num);
+                    didRemove = RemoveNotes(givenNum);
 
-                // RemoveNotes would have added state if it removed, so don't double up here
+                // RemoveNotes possibly called just above would have added state if it removed, so don't double up here
                 if (!didRemove)
                     ActionManager.AddState(CellsAsJSON());
 
@@ -236,7 +238,7 @@ namespace Sudoku
         /// Highlight the selected cell with the specified type of highlight
         /// </summary>
         /// <param name="highlightType">Type of cell highlight</param>
-        public void HighlightCell(CellHighlightType highlightType)
+        public void HighlightSelectedCell(CellHighlightType highlightType)
         {
             if (_selectedCell == null)
                 throw new ArgumentException(String.Format("No cell is selected for highlight: {0}", highlightType.Description()));
@@ -418,7 +420,7 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Remove all notes of the given note value
+        /// Remove all notes of the given note value.
         /// Ugly waste of time to do all the cells when only might need to do selected cell houses
         /// </summary>
         /// <param name="note">Note to remove, if has it (0 means check all note values)</param>

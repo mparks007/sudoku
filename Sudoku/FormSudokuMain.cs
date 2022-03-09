@@ -136,6 +136,7 @@ namespace Sudoku
             cbxPatterns.DisplayMember = "Key";
             cbxPatterns.ValueMember = "Value";
 
+            //cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.NakedSingle.Description(), Pattern.NakedSingle));
             cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.HiddenSingle.Description(), Pattern.HiddenSingle));
             cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.XWing.Description(), Pattern.XWing));
             //cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.FinnedXWing.Description(), Pattern.FinnedXWing));
@@ -221,7 +222,7 @@ namespace Sudoku
             }
             else if (chkHighlightClickMode.CheckState == (CheckState)HighlightClickMode.Manual)
             {
-                Game.Board.HighlightCell((CellHighlightType)pnlCellHighlightPicker.ActiveValue);
+                Game.Board.HighlightSelectedCell((CellHighlightType)pnlCellHighlightPicker.ActiveValue);
                 Render();
             }
         }
@@ -750,9 +751,9 @@ namespace Sudoku
 
                         // maybe just double-clicked a note to become the guess, so see how it should highlight
                         if ((chkHighlightHavingValue.CheckState == (CheckState)HighlightValueMode.NumbersAndNotes) && (Game.Board.SelectedCell.Value == pnlFocusNumber.ActiveValue))
-                            Game.Board.HighlightCell(CellHighlightType.Value);
+                            Game.Board.HighlightSelectedCell(CellHighlightType.Value);
                         else
-                            Game.Board.HighlightCell(CellHighlightType.None);
+                            Game.Board.HighlightSelectedCell(CellHighlightType.None);
 
                         // if has a guess/given and old notes are to be cleared, do that
                         if (Game.Board.SelectedCell.HasAnswer && (Board.RemoveOldNotes == YesNo.Yes))
@@ -791,7 +792,7 @@ namespace Sudoku
                         if ((_modifierKey & ModifierKey.Control) == 0)
                         {
                             if (chkHighlightClickMode.CheckState == (CheckState)HighlightClickMode.Cell)
-                                Game.Board.HighlightCell((CellHighlightType)pnlCellHighlightPicker.ActiveValue);
+                                Game.Board.HighlightSelectedCell((CellHighlightType)pnlCellHighlightPicker.ActiveValue);
                             else if ((chkHighlightClickMode.CheckState == (CheckState)HighlightClickMode.Note) && !Game.Board.SelectedCell.HasAnswer)
                                 Game.Board.HighlightSelectedNote((NoteHighlightType)pnlNoteHighlightPicker.ActiveValue);
                         }

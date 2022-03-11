@@ -99,51 +99,51 @@ namespace Sudoku
                 }
             }
 
-            // column-based
+            //// column-based
 
-            // pick one number at a time
-            for (int n = 1; n <= 9; n++)
-            {
-                // scan columns left to right
-                for (int c1 = 1; c1 <= 9; c1++)
-                {
-                    FindResult result = new FindResult();
+            //// pick one number at a time
+            //for (int n = 1; n <= 9; n++)
+            //{
+            //    // scan columns left to right
+            //    for (int c1 = 1; c1 <= 9; c1++)
+            //    {
+            //        FindResult result = new FindResult();
 
-                    // look for notes of n
-                    var cellsWithNote = allCells.Where(cell => (cell.Column == c1) && cell.HasNoteOf(n)).ToList<Cell>();
-                    // if found a single note hidden in a pack of notes
-                    if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
-                    {
-                        result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
+            //        // look for notes of n
+            //        var cellsWithNote = allCells.Where(cell => (cell.Column == c1) && cell.HasNoteOf(n)).ToList<Cell>();
+            //        // if found a single note hidden in a pack of notes
+            //        if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
+            //        {
+            //            result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
 
-                        result.Note = n;
-                        results.Add(result);
-                    }
-                }
-            }
+            //            result.Note = n;
+            //            results.Add(result);
+            //        }
+            //    }
+            //}
 
-            // block-based
+            //// block-based
 
-            // pick one number at a time
-            for (int n = 1; n <= 9; n++)
-            {
-                // scan blocks
-                for (int b1 = 1; b1 <= 9; b1++)
-                {
-                    FindResult result = new FindResult();
+            //// pick one number at a time
+            //for (int n = 1; n <= 9; n++)
+            //{
+            //    // scan blocks
+            //    for (int b1 = 1; b1 <= 9; b1++)
+            //    {
+            //        FindResult result = new FindResult();
 
-                    // look for notes of n
-                    var cellsWithNote = allCells.Where(cell => (cell.Block == b1) && cell.HasNoteOf(n)).ToList<Cell>();
-                    // if found a single note hidden in a pack of notes
-                    if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
-                    {
-                        result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
+            //        // look for notes of n
+            //        var cellsWithNote = allCells.Where(cell => (cell.Block == b1) && cell.HasNoteOf(n)).ToList<Cell>();
+            //        // if found a single note hidden in a pack of notes
+            //        if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
+            //        {
+            //            result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
 
-                        result.Note = n;
-                        results.Add(result);
-                    }
-                }
-            }
+            //            result.Note = n;
+            //            results.Add(result);
+            //        }
+            //    }
+            //}
 
             return results;
         }

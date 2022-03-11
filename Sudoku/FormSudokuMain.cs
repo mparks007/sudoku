@@ -304,9 +304,6 @@ namespace Sudoku
         {
             cbxFindResults.Items.Clear();
 
-            // clear out unnecessary notes since the finder code doesn't want to worry about ensuring it checks for givens/guesses in houses being checked
-            Game.Board.RemoveNotes();
-
             // try to find patterns for the selected type
             List<FindResult> results = Game.Board.Finder.Find(Game.Board, ((KeyValuePair<string, Pattern>)cbxPatterns.SelectedItem).Value);
 

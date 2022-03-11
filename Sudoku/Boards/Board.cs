@@ -315,7 +315,7 @@ namespace Sudoku
             if ((note < 1) || (note > 9))
                 throw new ArgumentException(String.Format("Invalid note having highlight updated: {0}", note));
 
-            if (_cells[row - 1][col - 1].HasNote(note))
+            if (_cells[row - 1][col - 1].HasNoteOf(note))
                 _cells[row - 1][col - 1].HighlightNote(note, highlightType);
         }
 
@@ -446,10 +446,10 @@ namespace Sudoku
             for (int r = 1; r <= 9; r++)
                 for (int n = min; n <= max; n++) // while on a column, pick each number (or ONE specific note if one was passed in)
                 {
-                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Row == r) && (cell.HasNote(n) || (cell.Value == n)));
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Row == r) && (cell.HasNoteOf(n) || (cell.Value == n)));
                     if (filteredCells.Where(cell => (cell.Value == n)).Count() > 0)
                     {
-                        if (filteredCells.Where(cell => (cell.HasNote(n))).Count() > 0)
+                        if (filteredCells.Where(cell => (cell.HasNoteOf(n))).Count() > 0)
                         {
                             filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.RemoveNote(n));
                             didRemove = true;
@@ -461,10 +461,10 @@ namespace Sudoku
             for (int c = 1; c <= 9; c++)
                 for (int n = min; n <= max; n++) // while on a column, pick each number (or ONE specific note if one was passed in)
                 {
-                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Column == c) && (cell.HasNote(n) || (cell.Value == n)));
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Column == c) && (cell.HasNoteOf(n) || (cell.Value == n)));
                     if (filteredCells.Where(cell => (cell.Value == n)).Count() > 0)
                     {
-                        if (filteredCells.Where(cell => (cell.HasNote(n))).Count() > 0)
+                        if (filteredCells.Where(cell => (cell.HasNoteOf(n))).Count() > 0)
                         {
                             filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.RemoveNote(n));
                             didRemove = true;
@@ -476,10 +476,10 @@ namespace Sudoku
             for (int b = 1; b <= 9; b++)
                 for (int n = min; n <= max; n++) // while on a block, pick each number (or ONE specific note if one was passed in)
                 {
-                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Block == b) && (cell.HasNote(n) || (cell.Value == n)));
+                    IEnumerable<Cell> filteredCells = allCells.Where(cell => (cell.Block == b) && (cell.HasNoteOf(n) || (cell.Value == n)));
                     if (filteredCells.Where(cell => (cell.Value == n)).Count() > 0)
                     {
-                        if (filteredCells.Where(cell => (cell.HasNote(n))).Count() > 0)
+                        if (filteredCells.Where(cell => (cell.HasNoteOf(n))).Count() > 0)
                         {
                             filteredCells.OfType<Cell>().ToList().ForEach(cell => cell.RemoveNote(n));
                             didRemove = true;

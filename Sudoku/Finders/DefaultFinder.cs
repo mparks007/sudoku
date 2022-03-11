@@ -16,6 +16,7 @@ namespace Sudoku
         public DefaultFinder()
         {
             // add in the supported find methods
+            _methods[Pattern.NakedSingle] = FindNakedSingles;
             _methods[Pattern.HiddenSingle] = FindHiddenSingles;
             _methods[Pattern.XWing] = FindXWings;
             _methods[Pattern.Skyscraper] = FindSkyscrapers;
@@ -38,6 +39,34 @@ namespace Sudoku
         #region Finders
 
         /// <summary>
+        /// Find Naked Single occurrences 
+        /// </summary>
+        /// <param name="board">Board to search</param>
+        /// <returns>List of locations found</returns>
+        private List<FindResult> FindNakedSingles(Board board)
+        {
+            List<FindResult> results = new List<FindResult>();
+            IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
+
+            // look for cells with naked singles
+            var cellsWithNakedSingle = allCells.Where(cell => !cell.HasAnswer && cell.HasSingleNote()).ToList<Cell>();
+            
+            // build results for all found
+            foreach (Cell cellWithNakedSingle in cellsWithNakedSingle)
+            {
+                FindResult result = new FindResult();
+
+                result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellWithNakedSingle.Row, cellWithNakedSingle.Column), CellHighlightType.Special));
+
+                // assuming the cell will have a SINGLE visible note due to the HasSingleNote call when building the nakeds list above
+                result.Note = cellWithNakedSingle.GetNoteIfSingle();
+                results.Add(result);
+            }
+
+            return results;
+        }
+
+        /// <summary>
         /// Find Hidden Single patterns
         /// </summary>
         /// <param name="board">Board to search</param>
@@ -58,7 +87,7 @@ namespace Sudoku
                     FindResult result = new FindResult();
 
                     // look for notes of n
-                    var cellsWithNote = allCells.Where(cell => (cell.Row == r1) && cell.HasNote(n)).ToList<Cell>();
+                    var cellsWithNote = allCells.Where(cell => (cell.Row == r1) && cell.HasNoteOf(n)).ToList<Cell>();
                     // if found a single note hidden in a pack of notes
                     if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
                     {
@@ -81,7 +110,7 @@ namespace Sudoku
                     FindResult result = new FindResult();
 
                     // look for notes of n
-                    var cellsWithNote = allCells.Where(cell => (cell.Column == c1) && cell.HasNote(n)).ToList<Cell>();
+                    var cellsWithNote = allCells.Where(cell => (cell.Column == c1) && cell.HasNoteOf(n)).ToList<Cell>();
                     // if found a single note hidden in a pack of notes
                     if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
                     {
@@ -104,7 +133,7 @@ namespace Sudoku
                     FindResult result = new FindResult();
 
                     // look for notes of n
-                    var cellsWithNote = allCells.Where(cell => (cell.Block == b1) && cell.HasNote(n)).ToList<Cell>();
+                    var cellsWithNote = allCells.Where(cell => (cell.Block == b1) && cell.HasNoteOf(n)).ToList<Cell>();
                     // if found a single note hidden in a pack of notes
                     if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
                     {
@@ -140,7 +169,7 @@ namespace Sudoku
                     FindResult result = new FindResult();
 
                     // look for notes of n
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && cell.HasNote(n));
+                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && cell.HasNoteOf(n));
                     // if found two
                     if (firstPair.Count() == 2)
                     {
@@ -148,7 +177,7 @@ namespace Sudoku
                         for (int r2 = r1 + 1; r2 <= 9; r2++)
                         {
                             // again, look for notes of n
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && cell.HasNote(n));
+                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && cell.HasNoteOf(n));
                             // again, if found two
                             if (secondPair.Count() == 2)
                             {
@@ -188,7 +217,7 @@ namespace Sudoku
                     FindResult result = new FindResult();
 
                     // look for notes of n
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && cell.HasNote(n));
+                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && cell.HasNoteOf(n));
                     // if found two
                     if (firstPair.Count() == 2)
                     {
@@ -196,7 +225,7 @@ namespace Sudoku
                         for (int c2 = c1 + 1; c2 <= 9; c2++)
                         {
                             // again, look for notes of n
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && cell.HasNote(n));
+                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && cell.HasNoteOf(n));
                             // again, if found two
                             if (secondPair.Count() == 2)
                             {
@@ -249,7 +278,7 @@ namespace Sudoku
                     FindResult result = new FindResult();
 
                     // look for notes of n
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && cell.HasNote(n));
+                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && cell.HasNoteOf(n));
                     // if found two
                     if (firstPair.Count() == 2)
                     {
@@ -257,7 +286,7 @@ namespace Sudoku
                         for (int r2 = r1 + 1; r2 <= 9; r2++)
                         {
                             // again, look for notes of n
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && cell.HasNote(n));
+                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && cell.HasNoteOf(n));
                             // again, if found two
                             if (secondPair.Count() == 2)
                             {
@@ -299,7 +328,7 @@ namespace Sudoku
                     FindResult result = new FindResult();
 
                     // look for notes of n
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && cell.HasNote(n));
+                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && cell.HasNoteOf(n));
                     // if found two
                     if (firstPair.Count() == 2)
                     {
@@ -307,7 +336,7 @@ namespace Sudoku
                         for (int c2 = c1 + 1; c2 <= 9; c2++)
                         {
                             // again, look for notes of n
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && cell.HasNote(n));
+                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && cell.HasNoteOf(n));
                             // again, if found two
                             if (secondPair.Count() == 2)
                             {

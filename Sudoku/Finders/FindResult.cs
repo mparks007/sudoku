@@ -20,7 +20,15 @@ namespace Sudoku
             StringBuilder str = new StringBuilder(CellsFound.Count * 15);
 
             foreach (KeyValuePair<Cell, CellHighlightType> cellFound in CellsFound)
-                str.AppendFormat("[{0},{1},{2}]", cellFound.Key.Row, cellFound.Key.Column, cellFound.Value.Description());
+            {
+                string extraInfo = "";
+
+                // if not Special, ensure the found cell details can add a little extra info to the type of cell, like Pincer, Pivot, etc.
+                if (cellFound.Value != CellHighlightType.Special)
+                    extraInfo = cellFound.Value.Description();
+
+                str.AppendFormat("[{0},{1}{2}{3}] ", cellFound.Key.Row, cellFound.Key.Column, (extraInfo.Length > 0 ? ",": ""), extraInfo);
+            }
 
             return str.ToString();
         }

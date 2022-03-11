@@ -139,7 +139,7 @@ namespace Sudoku
                 throw new ArgumentException(String.Format("Invalid value requested for cell highlight by note or number: {0}", value));
 
             // if not a forced unhighlight...AND answer number is the one to highlight OR notes are visible and the requested note is present
-            if ((value != 0) && (((Board.HighlightValueMode == HighlightValueMode.NumbersAndNotes) && (_value == value)) || HasNote(value)))
+            if ((value != 0) && (((Board.HighlightValueMode == HighlightValueMode.NumbersAndNotes) && (_value == value)) || HasNoteOf(value)))
                 HighlightType = CellHighlightType.Value;
             else
                 HighlightType = CellHighlightType.None;
@@ -165,7 +165,7 @@ namespace Sudoku
             if ((note < 1) || (note > 9))
                 throw new ArgumentException(String.Format("Invalid note requested for highlight: {0}", note));
 
-            if (HasNote(note))
+            if (HasNoteOf(note))
                 _notes[note - 1].HighlightType = highlightType;
         }
 
@@ -174,11 +174,29 @@ namespace Sudoku
         /// </summary>
         /// <param name="note">Note to check for</param>
         /// <returns></returns>
-        public bool HasNote(int note)
+        public bool HasNoteOf(int note)
         {
             return (!HasAnswer && _notes[note - 1].IsNoted);
         }
-                
+
+        /// <summary>
+        /// Return the current, visible note, if notes are visible and a single note marked
+        /// </summary>
+        /// <returns>The single note noted, or zero otherwise</returns>
+        public int GetNoteIfSingle()
+        {
+            if (!HasAnswer)
+            {
+                IEnumerable<Note> notes = _notes.Where(note => note.IsNoted).ToList<Note>();
+                if (notes.Count<Note>() == 1)
+                    return notes.First<Note>().Candidate;
+                else
+                    return 0;
+            }
+            else
+                return 0;
+        }
+
         /// <summary>
         /// Determine if there are multiple notes set
         /// </summary>
@@ -186,6 +204,15 @@ namespace Sudoku
         public bool HasMultipleNotes()
         {
             return (!HasAnswer && (_notes.Where(note => note.IsNoted).Count() > 1));
+        }
+
+        /// <summary>
+        /// Determine if there is a single note set
+        /// </summary>
+        /// <returns>True if a single note is set</returns>
+        public bool HasSingleNote()
+        {
+            return (!HasAnswer && (_notes.Where(note => note.IsNoted).Count() == 1));
         }
 
         /// <summary>

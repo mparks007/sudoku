@@ -336,11 +336,20 @@ namespace Sudoku
             Game.Board.ClearNoteHighlights();
             Game.Board.HighlightCellsWithNoteOrNumber(pnlFocusNumber.ActiveValue);
 
-            // go through all the cells involved in the found pattern selected and highlight accordingly
-            foreach (KeyValuePair<Cell, CellHighlightType> cellFound in ((KeyValuePair<string, FindResult>)cbxFindResults.SelectedItem).Value.CellsFound)
+            // snag the search result from the cbx
+            FindResult result = ((KeyValuePair<string, FindResult>)cbxFindResults.SelectedItem).Value;
+                        
+            // go through all the found candidate cells and highlight accordingly (cells and the notes in them)
+            foreach (KeyValuePair<Cell, CellHighlightType> candidateCell in result.CandidateCells)
             {
-                Game.Board.HighlightCell(cellFound.Key.Row, cellFound.Key.Column, cellFound.Value);
-                Game.Board.HighlightNote(cellFound.Key.Row, cellFound.Key.Column, ((KeyValuePair<string, FindResult>)cbxFindResults.SelectedItem).Value.Note, NoteHighlightType.Info);
+                Game.Board.HighlightCell(candidateCell.Key.Row, candidateCell.Key.Column, candidateCell.Value);
+                Game.Board.HighlightNotes(candidateCell.Key.Row, candidateCell.Key.Column, result.CandidateNotes, NoteHighlightType.Info);
+            }
+
+            // go through all the cells that have eliminatable notes and highlight accordingly
+            foreach (Cell eliminationCell in result.EliminationCells)
+            {
+                Game.Board.HighlightNotes(eliminationCell.Row, eliminationCell.Column, result.EliminationNotes, NoteHighlightType.Bad);
             }
 
             ActionManager.Resume(((BitmapBoard)Game.Board).CellsAsJSON());

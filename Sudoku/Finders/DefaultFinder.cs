@@ -44,15 +44,45 @@ namespace Sudoku
         private List<FindResult> DedupeResults(List<FindResult> resultsToDedupe)
         {
             List<FindResult> dedupedResults = new List<FindResult>();
-            List<String> priorResultsInfo = new List<string>(); 
+            List<String> priorResultsInfo = new List<string>();
 
             foreach (FindResult resultToDedupe in resultsToDedupe)
             {
-                string resultInfo = resultToDedupe.ToString();
+                string resultInfo = "";
 
+                // if just a single cell in the results, easy to just ensure that "[r,c]" isn't in the final results more than once
+                if (resultToDedupe.CandidateCells.Count == 1)
+                {
+                    resultInfo = resultToDedupe.ToString();
+
+                    // also add in any candidate details that are associated to the result
+                    foreach (Note note in resultToDedupe.CandidateNotes)
+                        resultInfo += note.Candidate.ToString();
+                }
+                else // need to do crazy stuff to ensure the same list of cells wasn't found in a different find order
+                {
+                    List<string> combinedInfo = new List<string>();
+
+                    // build single string based on cell coords
+                    foreach (KeyValuePair<Cell, CellHighlightType> candidateCell in resultToDedupe.CandidateCells)
+                        combinedInfo.Add(candidateCell.Key.ToString());
+
+                    // also add in any candidate details that are associated to the result
+                    foreach (Note note in resultToDedupe.CandidateNotes)
+                        combinedInfo.Add(note.Candidate.ToString());
+
+                    // now take all the details about cells and candidate notes, sort it, then use this string later for "if seen this full detail before"
+                    var arr = combinedInfo.ToArray();
+                    Array.Sort(arr);
+                    resultInfo = string.Join("", arr);
+                }
+
+                // if not already seen this cell coords and candidate info
                 if (!priorResultsInfo.Contains(resultInfo))
                 {
                     dedupedResults.Add(resultToDedupe);
+                        
+                    // remember already seen this cell coords and candidate info
                     priorResultsInfo.Add(resultInfo);
                 }
             }
@@ -75,15 +105,15 @@ namespace Sudoku
             // look for cells with naked singles
             var cellsWithNakedSingle = allCells.Where(cell => !cell.HasAnswer && cell.HasSingleNote()).ToList<Cell>();
             
-            // build results for all found
+            // build results list for all found
             foreach (Cell cellWithNakedSingle in cellsWithNakedSingle)
             {
                 FindResult result = new FindResult();
 
-                result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellWithNakedSingle.Row, cellWithNakedSingle.Column), CellHighlightType.Special));
+                result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellWithNakedSingle.Row, cellWithNakedSingle.Column), CellHighlightType.Special));
 
                 // assuming the cell will have a SINGLE visible note due to the HasSingleNote call when building the nakeds list above
-                result.Note = cellWithNakedSingle.GetNoteIfSingle();
+                result.CandidateNotes.Add(cellWithNakedSingle.GetOnlyNote());
                 results.Add(result);
             }
 
@@ -110,14 +140,22 @@ namespace Sudoku
                 {
                     FindResult result = new FindResult();
 
-                    // look for notes of n
+                    // look for notes of n on this row
                     var cellsWithNote = allCells.Where(cell => (cell.Row == r1) && cell.HasNoteOf(n)).ToList<Cell>();
+
                     // if found a single note hidden in a pack of notes
                     if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
                     {
-                        result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
+                        result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
 
-                        result.Note = n;
+                        result.CandidateNotes.Add(cellsWithNote[0].GetNoteForCandidate(n));
+
+                        // cell with eliminations is the same cell as the hidden single
+                        result.EliminationCells.Add(cellsWithNote[0]);
+
+                        // remember which note was needing elimination
+                        result.EliminationNotes.AddRange(cellsWithNote[0].Notes.Where(note => (note.Candidate != n) && (note.Candidate != 0)));
+
                         results.Add(result);
                     }
                 }
@@ -133,14 +171,22 @@ namespace Sudoku
                 {
                     FindResult result = new FindResult();
 
-                    // look for notes of n
+                    // look for notes of n in this column
                     var cellsWithNote = allCells.Where(cell => (cell.Column == c1) && cell.HasNoteOf(n)).ToList<Cell>();
+
                     // if found a single note hidden in a pack of notes
                     if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
                     {
-                        result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
+                        result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
 
-                        result.Note = n;
+                        result.CandidateNotes.Add(cellsWithNote[0].GetNoteForCandidate(n));
+
+                        // cell with eliminations is the same cell as the hidden single
+                        result.EliminationCells.Add(cellsWithNote[0]);
+
+                        // remember which note was needing elimination
+                        result.EliminationNotes.AddRange(cellsWithNote[0].Notes.Where(note => (note.Candidate != n) && (note.Candidate != 0)));
+
                         results.Add(result);
                     }
                 }
@@ -156,14 +202,22 @@ namespace Sudoku
                 {
                     FindResult result = new FindResult();
 
-                    // look for notes of n
+                    // look for notes of n in this block
                     var cellsWithNote = allCells.Where(cell => (cell.Block == b1) && cell.HasNoteOf(n)).ToList<Cell>();
+
                     // if found a single note hidden in a pack of notes
                     if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
                     {
-                        result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
+                        result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
 
-                        result.Note = n;
+                        result.CandidateNotes.Add(cellsWithNote[0].GetNoteForCandidate(n));
+
+                        // cell with eliminations is the same cell as the hidden single
+                        result.EliminationCells.Add(cellsWithNote[0]);
+
+                        // remember which note was needing elimination
+                        result.EliminationNotes.AddRange(cellsWithNote[0].Notes.Where(note => (note.Candidate != n) && (note.Candidate != 0)));
+
                         results.Add(result);
                     }
                 }
@@ -215,12 +269,21 @@ namespace Sudoku
                                      (firstPairAsList[0].Block != secondPairAsList[0].Block)))
                                 {
                                     // put all four cells involved in the single results object
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
 
-                                    result.Note = n;
+                                    // remember which note was the candidate in the cell
+                                    result.CandidateNotes.Add(firstPair.First().GetNoteForCandidate(n));
+
+                                    // find all the cells with notes that should be eliminated (same columns but not in same rows as the candidate cells above)
+                                    var eliminationCells = allCells.Where(cell => ((cell.Column == firstPairAsList[0].Column) || (cell.Column == firstPairAsList[1].Column)) && (cell.Row != r1) && (cell.Row != r2) && cell.HasNoteOf(n));
+                                    result.EliminationCells.AddRange(eliminationCells);
+
+                                    // remember which note was needing elimination
+                                    result.EliminationNotes.Add(firstPair.First().GetNoteForCandidate(n));
+
                                     results.Add(result);
                                     break;
                                 }
@@ -263,12 +326,21 @@ namespace Sudoku
                                      (firstPairAsList[0].Block != secondPairAsList[0].Block)))
                                 {
                                     // put all four cells involved in the single results object
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
 
-                                    result.Note = n;
+                                    // remember which note was the candidate in the cell
+                                    result.CandidateNotes.Add(firstPair.First().GetNoteForCandidate(n));
+
+                                    // find all the cells with notes that should be eliminated (same rows but not in same columns as the candidate cells above)
+                                    var eliminationCells = allCells.Where(cell => ((cell.Row == firstPairAsList[0].Row) || (cell.Row == firstPairAsList[1].Row)) && (cell.Column != c1) && (cell.Column != c2) && cell.HasNoteOf(n));
+                                    result.EliminationCells.AddRange(eliminationCells);
+
+                                    // remember which note was needing elimination
+                                    result.EliminationNotes.Add(firstPair.First().GetNoteForCandidate(n));
+                                    
                                     results.Add(result);
                                     break;
                                 }
@@ -288,6 +360,18 @@ namespace Sudoku
         /// <returns>List of patterns found</returns>
         private List<FindResult> FindSkyscrapers(Board board)
         {
+            // THIS IS BROKEN
+            // THIS IS BROKEN
+            // THIS IS BROKEN
+            //
+            // It doesn't consider needing to have tops in differing blocks and it doesn't ensure the tower directions are actually legit
+            //
+            // THIS IS BROKEN
+            // THIS IS BROKEN
+            // THIS IS BROKEN
+            // THIS IS BROKEN
+
+
             List<FindResult> results = new List<FindResult>();
             IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
 
@@ -326,12 +410,12 @@ namespace Sudoku
                                      (firstPairAsList[0].Block != secondPairAsList[0].Block)))
                                 {
                                     // put all four cells involved in the single results object
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
 
-                                    result.Note = n;
+                                    result.CandidateNotes.Add(firstPair.First().GetNoteForCandidate(n));
                                     results.Add(result);
                                     break;
                                 }
@@ -376,12 +460,12 @@ namespace Sudoku
                                      (firstPairAsList[0].Block != secondPairAsList[0].Block)))
                                 {
                                     // put all four cells involved in the single results object
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
-                                    result.CellsFound.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
 
-                                    result.Note = n;
+                                    result.CandidateNotes.Add(firstPair.First().GetNoteForCandidate(n));
                                     results.Add(result);
                                     break;
                                 }

@@ -33,6 +33,8 @@ namespace Sudoku
         public int Row { get; set; }                // which row of the board this cell is in (used in all sort of calculations)
         public int Column { get; set; }             // which column of the board this cell is in (used in all sort of calculations)
         public int Block { get; set; }              // which block of the board this cell is in (used in all sort of calculations)
+        [JsonIgnore]
+        public Note[] Notes { get { return _notes; } }
 
         /// <summary>
         /// Ctor (the board creation logic will tell each cell how it fits in the overall board structure
@@ -98,31 +100,31 @@ namespace Sudoku
         /// <summary>
         /// Toggle a note on/off
         /// </summary>
-        /// <param name="note">Note number to toggle</param>
-        public void ToggleNote(int note)
+        /// <param name="noteNum">Note number to toggle</param>
+        public void ToggleNote(int noteNum)
         {
-            if ((note < 1) || (note > 9))
-                throw new ArgumentException(String.Format("Invalid note being set/unset: {0}", note));
+            if ((noteNum < 1) || (noteNum > 9))
+                throw new ArgumentException(String.Format("Invalid note being set/unset: {0}", noteNum));
 
             // if already has this note (then remove it, hence, a Toggle)
-            if (_notes[note - 1].Candidate == note)
-                RemoveNote(note);
+            if (_notes[noteNum - 1].Candidate == noteNum)
+                RemoveNote(noteNum);
             else
-                _notes[note - 1].Candidate = note;
+                _notes[noteNum - 1].Candidate = noteNum;
         }
 
         /// <summary>
         /// Clear the note specified
         /// </summary>
-        /// <param name="note">Note to clear</param>
-        public void RemoveNote(int note)
+        /// <param name="noteNum">Note to clear</param>
+        public void RemoveNote(int noteNum)
         {
-            if ((note < 1) || (note > 9))
-                throw new ArgumentException(String.Format("Invalid note being removed: {0}", note));
+            if ((noteNum < 1) || (noteNum > 9))
+                throw new ArgumentException(String.Format("Invalid note being removed: {0}", noteNum));
 
             // clear potential highlight on it too
-            HighlightNote(note, NoteHighlightType.None);
-            _notes[note - 1].Candidate = 0;
+            HighlightNote(noteNum, NoteHighlightType.None);
+            _notes[noteNum - 1].Candidate = 0;
         }
 
         /// <summary>
@@ -158,43 +160,64 @@ namespace Sudoku
         /// <summary>
         /// Set the specific note to the specified hightlight level
         /// </summary>
-        /// <param name="note">Which note to hightlight</param>
+        /// <param name="noteNum">Which note to hightlight</param>
         /// <param name="highlightType">How to highlight it</param>
-        public void HighlightNote(int note, NoteHighlightType highlightType)
+        public void HighlightNote(int noteNum, NoteHighlightType highlightType)
         {
-            if ((note < 1) || (note > 9))
-                throw new ArgumentException(String.Format("Invalid note requested for highlight: {0}", note));
+            if ((noteNum < 1) || (noteNum > 9))
+                throw new ArgumentException(String.Format("Invalid note requested for highlight: {0}", noteNum));
 
-            if (HasNoteOf(note))
-                _notes[note - 1].HighlightType = highlightType;
+            if (HasNoteOf(noteNum))
+                _notes[noteNum - 1].HighlightType = highlightType;
         }
 
         /// <summary>
         /// Determine if the cell has a particular note
         /// </summary>
-        /// <param name="note">Note to check for</param>
+        /// <param name="noteNum">Note to check for</param>
         /// <returns></returns>
-        public bool HasNoteOf(int note)
+        public bool HasNoteOf(int noteNum)
         {
-            return (!HasAnswer && _notes[note - 1].IsNoted);
+            if ((noteNum < 1) || (noteNum > 9))
+                throw new ArgumentException(String.Format("Invalid note being checked: {0}", noteNum));
+
+            return (!HasAnswer && _notes[noteNum - 1].IsNoted);
         }
 
         /// <summary>
         /// Return the current, visible note, if notes are visible and a single note marked
         /// </summary>
-        /// <returns>The single note noted, or zero otherwise</returns>
-        public int GetNoteIfSingle()
+        /// <returns>The single note noted, or null otherwise</returns>
+        public Note GetOnlyNote()
         {
             if (!HasAnswer)
             {
                 IEnumerable<Note> notes = _notes.Where(note => note.IsNoted).ToList<Note>();
                 if (notes.Count<Note>() == 1)
-                    return notes.First<Note>().Candidate;
-                else
-                    return 0;
+                    return notes.First<Note>();
             }
-            else
-                return 0;
+
+            return null;
+        }
+
+        /// <summary>
+        /// Get note object from a cell for a requested note number
+        /// </summary>
+        /// <param name="noteNum">Note to get</param>
+        /// <returns>Note object if found cell with the requested note, otherwise null</returns>        
+        public Note GetNoteForCandidate(int noteNum)
+        {
+            if (!HasAnswer)
+            {
+                if ((noteNum < 1) || (noteNum > 9))
+                    throw new ArgumentException(String.Format("Invalid note being requested: {0}", noteNum));
+
+                Note note = _notes[noteNum - 1];
+                if (note != null)
+                    return note;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -222,6 +245,16 @@ namespace Sudoku
         {
             foreach (Note note in _notes)
                 note.HighlightType = NoteHighlightType.None;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return String.Format("[{0},{1}]", Row, Column);
         }
 
         /// <summary>

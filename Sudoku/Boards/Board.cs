@@ -280,7 +280,7 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Set the selected note to the specified hightlight level for the selected cell
+        /// For the selected cell (if is one), set the selected note to the specified highlight level 
         /// </summary>
         /// <param name="highlightType">How to highlight it</param>
         public void HighlightSelectedNote(NoteHighlightType highlightType)
@@ -292,9 +292,9 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Set the specific note to the specified hightlight level for the selected cell
+        /// For the selected cell (if is one), set the specific note to the specified highlight level
         /// </summary>
-        /// <param name="note">Which note to hightlight</param>
+        /// <param name="note">Which note to highlight</param>
         /// <param name="highlightType">How to highlight it</param>
         public void HighlightNote(int note, NoteHighlightType highlightType)
         {
@@ -307,6 +307,13 @@ namespace Sudoku
             HighlightNote(_selectedCell.Row, _selectedCell.Column, note, highlightType);
         }
 
+        /// <summary>
+        /// For the specific cell, set the specific note to the specified highlight level
+        /// </summary>
+        /// <param name="row">Row to highlight within</param>
+        /// <param name="col">Column to highlight within</param>
+        /// <param name="note">Note to highlight</param>
+        /// <param name="highlightType">Type of note highlight</param>
         public void HighlightNote(int row, int col, int note, NoteHighlightType highlightType)
         {
             if ((row < 1) || (row > 9) || (col < 1) || (col > 9))
@@ -317,6 +324,28 @@ namespace Sudoku
 
             if (_cells[row - 1][col - 1].HasNoteOf(note))
                 _cells[row - 1][col - 1].HighlightNote(note, highlightType);
+        }
+
+        /// <summary>
+        /// For the specific cell, set the specific notes to the specified highlight level
+        /// </summary>
+        /// <param name="row">Row to highlight within</param>
+        /// <param name="col">Column to highlight within</param>
+        /// <param name="notes">Notes to highlight</param>
+        /// <param name="highlightType">Type of note highlight</param>
+        public void HighlightNotes(int row, int col, List<Note> notes, NoteHighlightType highlightType)
+        {
+            if ((row < 1) || (row > 9) || (col < 1) || (col > 9))
+                throw new ArgumentException(String.Format("Invalid value row/column requested for note highlight: {0}/{1}", row, col));
+
+            foreach (Note note in notes)
+            {
+                if ((note.Candidate < 1) || (note.Candidate > 9))
+                    throw new ArgumentException(String.Format("Invalid note having highlight updated: {0}", note.Candidate));
+
+                if (_cells[row - 1][col - 1].HasNoteOf(note.Candidate))
+                    _cells[row - 1][col - 1].HighlightNote(note.Candidate, highlightType);
+            }
         }
 
         /// <summary>

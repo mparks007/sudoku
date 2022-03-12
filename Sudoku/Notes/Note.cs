@@ -34,6 +34,15 @@ namespace Sudoku
         public NoteHighlightType HighlightType { get; set; }
 
         /// <summary>
+        /// Return the Candidate
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return Candidate.ToString();
+        }
+        
+        /// <summary>
         /// Render (work done in derived classes)
         /// </summary>
         /// <param name="parentCellRow">Board row of the parent cell (used for render calculations)</param>

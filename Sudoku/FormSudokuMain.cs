@@ -544,6 +544,7 @@ namespace Sudoku
                         input = UserInput.End;
                         break;
                     case Keys.Delete:
+                    case Keys.Back:
                         input = UserInput.Delete;
                         break;
                     case Keys.Z:

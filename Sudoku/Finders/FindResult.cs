@@ -20,6 +20,8 @@ namespace Sudoku
         public List<Cell> EliminationCells { get { return _eliminationCells; } }
         public List<Note> EliminationNotes { get { return _eliminationNotes; } }
 
+        public HouseType HouseType { get; set; } // which house search was based on (not always applicable)
+
         public FindResult()
         {
             _candidateCells = new List<KeyValuePair<Cell, CellHighlightType>>();
@@ -35,8 +37,7 @@ namespace Sudoku
         /// <returns>Formatted string</returns>
         public override string ToString()
         {
-            // setup to max string length, which is approximately max lenth if end up like (number of cells * lenth of "[r,c,Special] ")
-            StringBuilder str = new StringBuilder(CandidateCells.Count * 15);
+            StringBuilder str = new StringBuilder();
 
             foreach (KeyValuePair<Cell, CellHighlightType> cellFound in CandidateCells)
             {
@@ -51,8 +52,11 @@ namespace Sudoku
 
             // go ahead and also show the candidate that was involved in the results
             foreach (Note note in CandidateNotes)
-                str.AppendFormat("({0})", note.ToString());
-            
+                str.AppendFormat("({0}) ", note.ToString());
+
+            // and could be handy to know if the result was found due to searching within a specific house
+            str.AppendFormat("(House: {0})", HouseType.Description());
+
             return str.ToString();
         }
     }

@@ -25,6 +25,7 @@ namespace Sudoku
         Home,
         End,
         Delete,
+        Backspace,
         Space,
         LeftClick,
         RightClick,

@@ -49,33 +49,20 @@ namespace Sudoku
             foreach (FindResult resultToDedupe in resultsToDedupe)
             {
                 string resultInfo = "";
+                List<string> combinedInfo = new List<string>();
 
-                // if just a single cell in the results, easy to just ensure that "[r,c]" isn't in the final results more than once
-                if (resultToDedupe.CandidateCells.Count == 1)
-                {
-                    resultInfo = resultToDedupe.ToString();
+                // build single string based on cell coords
+                foreach (KeyValuePair<Cell, CellHighlightType> candidateCell in resultToDedupe.CandidateCells)
+                    combinedInfo.Add(candidateCell.Key.ToString());
 
-                    // also add in any candidate details that are associated to the result
-                    foreach (Note note in resultToDedupe.CandidateNotes)
-                        resultInfo += note.Candidate.ToString();
-                }
-                else // need to do crazy stuff to ensure the same list of cells wasn't found in a different find order
-                {
-                    List<string> combinedInfo = new List<string>();
+                // also add in any candidate details that are associated to the result
+                foreach (Note note in resultToDedupe.CandidateNotes)
+                    combinedInfo.Add(note.Candidate.ToString());
 
-                    // build single string based on cell coords
-                    foreach (KeyValuePair<Cell, CellHighlightType> candidateCell in resultToDedupe.CandidateCells)
-                        combinedInfo.Add(candidateCell.Key.ToString());
-
-                    // also add in any candidate details that are associated to the result
-                    foreach (Note note in resultToDedupe.CandidateNotes)
-                        combinedInfo.Add(note.Candidate.ToString());
-
-                    // now take all the details about cells and candidate notes, sort it, then use this string later for "if seen this full detail before"
-                    var arr = combinedInfo.ToArray();
-                    Array.Sort(arr);
-                    resultInfo = string.Join("", arr);
-                }
+                // now take all the details about cells and candidate notes, sort it, then use this string later for "if seen this full detail before"
+                var arr = combinedInfo.ToArray();
+                Array.Sort(arr);
+                resultInfo = string.Join("", arr);
 
                 // if not already seen this cell coords and candidate info
                 if (!priorResultsInfo.Contains(resultInfo))
@@ -96,7 +83,7 @@ namespace Sudoku
         /// Find Naked Single occurrences 
         /// </summary>
         /// <param name="board">Board to search</param>
-        /// <returns>List of locations found</returns>
+        /// <returns>List of Naked Single locations found</returns>
         private List<FindResult> FindNakedSingles(Board board)
         {
             List<FindResult> results = new List<FindResult>();
@@ -109,11 +96,14 @@ namespace Sudoku
             foreach (Cell cellWithNakedSingle in cellsWithNakedSingle)
             {
                 FindResult result = new FindResult();
+                result.HouseType = HouseType.None;
 
+                // load in all the cells involved in the pattern
                 result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellWithNakedSingle.Row, cellWithNakedSingle.Column), CellHighlightType.Special));
 
-                // assuming the cell will have a SINGLE visible note due to the HasSingleNote call when building the nakeds list above
+                // remember which note was found (will have a SINGLE visible note due to the HasSingleNote call when building the nakeds list above, so GetOnlyNote will work)
                 result.CandidateNotes.Add(cellWithNakedSingle.GetOnlyNote());
+
                 results.Add(result);
             }
 
@@ -129,16 +119,19 @@ namespace Sudoku
         {
             List<FindResult> results = new List<FindResult>();
             IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
-
-            // row-based
-
+            int currentN = 1;
+            
             // pick one number at a time
             for (int n = 1; n <= 9; n++)
             {
+                // to track actual N in this outer loop since needing to reset N to search Column after Row and Block after Column
+                currentN = n;
+
                 // scan rows from top to bottom
                 for (int r1 = 1; r1 <= 9; r1++)
                 {
                     FindResult result = new FindResult();
+                    result.HouseType = HouseType.Row;
 
                     // look for notes of n on this row
                     var cellsWithNote = allCells.Where(cell => (cell.Row == r1) && cell.HasNoteOf(n)).ToList<Cell>();
@@ -146,30 +139,30 @@ namespace Sudoku
                     // if found a single note hidden in a pack of notes
                     if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
                     {
+                        // load in all the cells involved in the pattern
                         result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
 
+                        // remember which naked single note was found 
                         result.CandidateNotes.Add(cellsWithNote[0].GetNoteForCandidate(n));
 
-                        // cell with eliminations is the same cell as the hidden single
+                        // cell with eliminations (is the same cell as the hidden single already found above)
                         result.EliminationCells.Add(cellsWithNote[0]);
 
-                        // remember which note was needing elimination
+                        // remember which remaining notes were needing elimination
                         result.EliminationNotes.AddRange(cellsWithNote[0].Notes.Where(note => (note.Candidate != n) && (note.Candidate != 0)));
 
                         results.Add(result);
                     }
                 }
-            }
 
-            // column-based
+                // reset number for column-based search
+                n = 1;
 
-            // pick one number at a time
-            for (int n = 1; n <= 9; n++)
-            {
                 // scan columns left to right
                 for (int c1 = 1; c1 <= 9; c1++)
                 {
                     FindResult result = new FindResult();
+                    result.HouseType = HouseType.Column;
 
                     // look for notes of n in this column
                     var cellsWithNote = allCells.Where(cell => (cell.Column == c1) && cell.HasNoteOf(n)).ToList<Cell>();
@@ -177,30 +170,30 @@ namespace Sudoku
                     // if found a single note hidden in a pack of notes
                     if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
                     {
+                        // load in all the cells involved in the pattern
                         result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
 
+                        // remember which naked single note was found 
                         result.CandidateNotes.Add(cellsWithNote[0].GetNoteForCandidate(n));
 
-                        // cell with eliminations is the same cell as the hidden single
+                        // cell with eliminations (is the same cell as the hidden single already found above)
                         result.EliminationCells.Add(cellsWithNote[0]);
 
-                        // remember which note was needing elimination
+                        // remember which remaining notes were needing elimination
                         result.EliminationNotes.AddRange(cellsWithNote[0].Notes.Where(note => (note.Candidate != n) && (note.Candidate != 0)));
 
                         results.Add(result);
                     }
                 }
-            }
 
-            // block-based
+                // reset number for block-based search
+                n = 1;
 
-            // pick one number at a time
-            for (int n = 1; n <= 9; n++)
-            {
                 // scan blocks
                 for (int b1 = 1; b1 <= 9; b1++)
                 {
                     FindResult result = new FindResult();
+                    result.HouseType = HouseType.Block;
 
                     // look for notes of n in this block
                     var cellsWithNote = allCells.Where(cell => (cell.Block == b1) && cell.HasNoteOf(n)).ToList<Cell>();
@@ -208,19 +201,24 @@ namespace Sudoku
                     // if found a single note hidden in a pack of notes
                     if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
                     {
+                        // load in all the cells involved in the pattern
                         result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellsWithNote[0].Row, cellsWithNote[0].Column), CellHighlightType.Special));
 
+                        // remember which naked single note was found 
                         result.CandidateNotes.Add(cellsWithNote[0].GetNoteForCandidate(n));
 
-                        // cell with eliminations is the same cell as the hidden single
+                        // cell with eliminations (is the same cell as the hidden single already found above)
                         result.EliminationCells.Add(cellsWithNote[0]);
 
-                        // remember which note was needing elimination
+                        // remember which remaining notes were needing elimination
                         result.EliminationNotes.AddRange(cellsWithNote[0].Notes.Where(note => (note.Candidate != n) && (note.Candidate != 0)));
 
                         results.Add(result);
                     }
                 }
+
+                // get n back on track for moving through the candidate numbers loop at the very top
+                n = currentN;
             }
 
             return DedupeResults(results);
@@ -245,6 +243,7 @@ namespace Sudoku
                 for (int r1 = 1; r1 <= 9; r1++)
                 {
                     FindResult result = new FindResult();
+                    result.HouseType = HouseType.Row;
 
                     // look for notes of n
                     IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && cell.HasNoteOf(n));
@@ -302,6 +301,7 @@ namespace Sudoku
                 for (int c1 = 1; c1 <= 9; c1++)
                 {
                     FindResult result = new FindResult();
+                    result.HouseType = HouseType.Column;
 
                     // look for notes of n
                     IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && cell.HasNoteOf(n));
@@ -384,6 +384,7 @@ namespace Sudoku
                 for (int r1 = 1; r1 <= 9; r1++)
                 {
                     FindResult result = new FindResult();
+                    result.HouseType = HouseType.Row;
 
                     // look for notes of n
                     IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && cell.HasNoteOf(n));
@@ -434,6 +435,7 @@ namespace Sudoku
                 for (int c1 = 1; c1 <= 9; c1++)
                 {
                     FindResult result = new FindResult();
+                    result.HouseType = HouseType.Column;
 
                     // look for notes of n
                     IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && cell.HasNoteOf(n));

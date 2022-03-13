@@ -29,8 +29,14 @@ namespace Sudoku
         HiddenTriple,
         [Description("Hidden Quad")]
         HiddenQuad,
-        [Description("Pointing Pair/Triple")]
-        PointingPairTriple,
+        [Description("Pointing Pair")]
+        PointingPair,
+        [Description("Pointing Triple")]
+        PointingTriple,
+        [Description("Locked Pair")]
+        LockedPair,
+        [Description("Locked Triple")]
+        LockedPairTriple,
         [Description("Box/Line Reduction")]
         BoxLineReduction,
         [Description("X-Wing")]

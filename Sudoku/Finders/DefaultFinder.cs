@@ -108,6 +108,16 @@ namespace Sudoku
                 // remember which note was found (will have a SINGLE visible note due to the HasSingleNote call when building the nakeds list above, so GetOnlyNote will work)
                 result.CandidateNotes.Add(cellWithNakedSingle.GetOnlyNote());
 
+                // find cells in same row, column, block (but not the found cell itself)
+                var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && (cell.ToString() != cellWithNakedSingle.ToString()) && (cell.Row == cellWithNakedSingle.Row || 
+                                                                                                                                              cell.Column == cellWithNakedSingle.Column || 
+                                                                                                                                              cell.Block == cellWithNakedSingle.Block)).ToList<Cell>();
+                // cell with eliminations (is the same cell as the hidden single already found above)
+                result.EliminationCells.AddRange(cellsWithEliminations);
+
+                // remember which remaining notes were needing elimination
+                result.EliminationNotes.Add(cellWithNakedSingle.GetOnlyNote());
+
                 results.Add(result);
             }
 
@@ -255,22 +265,20 @@ namespace Sudoku
         {
             List<FindResult> results = new List<FindResult>();
             IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
-            int currentN = 1;
-            
+
+            // do rows
+
             // pick one number at a time
             for (int n = 1; n <= 9; n++)
             {
-                // to track actual N in this outer loop since needing to reset N to search Column after Row and Block after Column
-                currentN = n;
-
                 // scan rows from top to bottom
-                for (int r1 = 1; r1 <= 9; r1++)
+                for (int r = 1; r <= 9; r++)
                 {
                     FindResult result = new FindResult();
                     result.HouseType = HouseType.Row;
 
                     // look for notes of n on this row
-                    var cellsWithNote = allCells.Where(cell => (cell.Row == r1) && cell.HasNoteOf(n)).ToList<Cell>();
+                    var cellsWithNote = allCells.Where(cell => (cell.Row == r) && cell.HasNoteOf(n)).ToList<Cell>();
 
                     // if found a single note hidden in a pack of notes
                     if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
@@ -290,18 +298,21 @@ namespace Sudoku
                         results.Add(result);
                     }
                 }
+            }
 
-                // reset number for column-based search
-                n = 1;
+            // do columns
 
+            // pick one number at a time
+            for (int n = 1; n <= 9; n++)
+            {
                 // scan columns left to right
-                for (int c1 = 1; c1 <= 9; c1++)
+                for (int c = 1; c <= 9; c++)
                 {
                     FindResult result = new FindResult();
                     result.HouseType = HouseType.Column;
 
                     // look for notes of n in this column
-                    var cellsWithNote = allCells.Where(cell => (cell.Column == c1) && cell.HasNoteOf(n)).ToList<Cell>();
+                    var cellsWithNote = allCells.Where(cell => (cell.Column == c) && cell.HasNoteOf(n)).ToList<Cell>();
 
                     // if found a single note hidden in a pack of notes
                     if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
@@ -321,18 +332,21 @@ namespace Sudoku
                         results.Add(result);
                     }
                 }
+            }
 
-                // reset number for block-based search
-                n = 1;
+            // do blocks
 
+            // pick one number at a time
+            for (int n = 1; n <= 9; n++)
+            {
                 // scan blocks
-                for (int b1 = 1; b1 <= 9; b1++)
+                for (int b = 1; b <= 9; b++)
                 {
                     FindResult result = new FindResult();
                     result.HouseType = HouseType.Block;
 
                     // look for notes of n in this block
-                    var cellsWithNote = allCells.Where(cell => (cell.Block == b1) && cell.HasNoteOf(n)).ToList<Cell>();
+                    var cellsWithNote = allCells.Where(cell => (cell.Block == b) && cell.HasNoteOf(n)).ToList<Cell>();
 
                     // if found a single note hidden in a pack of notes
                     if ((cellsWithNote.Count() == 1) && cellsWithNote[0].HasMultipleNotes())
@@ -352,9 +366,6 @@ namespace Sudoku
                         results.Add(result);
                     }
                 }
-
-                // get n back on track for moving through the candidate numbers loop at the very top
-                n = currentN;
             }
 
             return DedupeResults(results);

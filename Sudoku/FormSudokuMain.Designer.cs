@@ -83,6 +83,7 @@
             this.cbxPatterns.Size = new System.Drawing.Size(183, 25);
             this.cbxPatterns.TabIndex = 59;
             this.cbxPatterns.TabStop = false;
+            this.cbxPatterns.SelectedIndexChanged += new System.EventHandler(this.cbxPatterns_SelectedIndexChanged);
             // 
             // btnFind
             // 

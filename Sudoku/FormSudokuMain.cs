@@ -297,6 +297,16 @@ namespace Sudoku
         }
 
         /// <summary>
+        /// Selecting a different Pattern
+        /// </summary>
+        /// <param name="sender">Standard WinForms sender</param>
+        /// <param name="e">Standard WinForms click-event args</param>
+        private void cbxPatterns_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cbxFindResults.Items.Clear();
+        }
+
+        /// <summary>
         /// Find the pattern selected in the patter combo box
         /// </summary>
         /// <param name="sender">Standard WinForms sender</param>

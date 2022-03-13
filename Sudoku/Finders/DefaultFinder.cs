@@ -18,8 +18,10 @@ namespace Sudoku
             // add in the supported find methods
             _methods[Pattern.NakedSingle] = FindNakedSingles;
             _methods[Pattern.NakedPair] = FindNakedPairs;
+            _methods[Pattern.NakedTriple] = FindNakedTriples;
             _methods[Pattern.HiddenSingle] = FindHiddenSingles;
             _methods[Pattern.HiddenPair] = FindHiddenPairs;
+            _methods[Pattern.HiddenTriple] = FindHiddenTriples;
             _methods[Pattern.XWing] = FindXWings;
             _methods[Pattern.Skyscraper] = FindSkyscrapers;
         }
@@ -144,13 +146,7 @@ namespace Sudoku
                 {
                     // if about to compare the same two numbers, skip it
                     if (n1 == n2)
-                    {
-                        n2++;
-
-                        // sanity check to avoid using a 10
-                        if (n2 > 9)
-                            continue;
-                    }
+                        continue;
 
                     // keep track of each pair already seen
                     reverseCheckList.Add(new KeyValuePair<int, int>(n1, n2));
@@ -249,6 +245,77 @@ namespace Sudoku
                             result.EliminationNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
 
                             results.Add(result);
+                        }
+                    }
+                }
+            }
+
+            return DedupeResults(results);
+        }
+
+        /// <summary>
+        /// Find Naked Triple occurrences 
+        /// </summary>
+        /// <param name="board">Board to search</param>
+        /// <returns>List of Naked Triple locations found</returns>
+        private List<FindResult> FindNakedTriples(Board board)
+        {
+            List<FindResult> results = new List<FindResult>();
+            IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
+            List<KeyValuePair<int, int>> reverseCheckList = new List<KeyValuePair<int, int>>();
+
+            // pick one number at a time for the first part of the triple
+            for (int n1 = 1; n1 <= 9; n1++)
+            {
+                // pick one number at a time for the second part of the triple
+                for (int n2 = 1; n2 <= 9; n2++)
+                {
+                    // pick one number at a time for the third part of the triple
+                    for (int n3 = 1; n3 <= 9; n3++)
+                    {
+                        // if about to compare the same three numbers, skip this 
+                        if (n1 == n2 && n1 == n3)
+                            continue;
+
+                        // how to avoid preventing a check of things already checked?  (below if from Pairs check)
+                        //// keep track of each pair already seen
+                        //reverseCheckList.Add(new KeyValuePair<int, int>(n1, n2));
+
+                        //// if already seen the reverse of a seen pair, skip the check (have seen 1,2 so skip 2,1)
+                        //if (reverseCheckList.Where(kvp => kvp.Key == n2 && kvp.Value == n1).Count() != 0)
+                        //    continue;
+
+                        // check each row
+                        for (int r = 1; r <= 9; r++)
+                        {
+                            FindResult result = new FindResult();
+                            result.HouseType = HouseType.Row;
+
+                            // how to find three cells notes like ((1,2)(1,3)(1,2,3) or (1,3)(2,2)(1,2) or (1,2,3)(1,2,3)(1,2,3) or (1)(2)(1,2,3)) etc.  any combo of three cells using any combination of the three notes being searched
+
+                            //// look for cells with only two notes and those two notes are the ones being checked in this pass
+                            //var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2)).ToList<Cell>();
+
+                            //if (cellsWithCorrectNakeds.Count == 2)
+                            //{
+                            //    // put cells involved into the single results object
+                            //    foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
+                            //        result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectNakeds, CellHighlightType.Special));
+
+                            //    // remember which notes were the candidates in the cell
+                            //    result.CandidateNotes.AddRange(cellsWithCorrectNakeds(0].GetNotesWithAnyCandidate());
+
+                            //    // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
+                            //    var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && !(cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2))).ToList<Cell>();
+
+                            //    // cell with eliminations (is the same cell as the hidden single already found above)
+                            //    result.EliminationCells.AddRange(cellsWithEliminations);
+
+                            //    // remember which remaining notes were needing elimination
+                            //    result.EliminationNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
+
+                            //    results.Add(result);
+                            //}
                         }
                     }
                 }
@@ -378,6 +445,144 @@ namespace Sudoku
         /// <param name="board">Board to search</param>
         /// <returns>List of Naked Pair locations found</returns>
         private List<FindResult> FindHiddenPairs(Board board)
+        {
+            List<FindResult> results = new List<FindResult>();
+            IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
+            List<KeyValuePair<int, int>> reverseCheckList = new List<KeyValuePair<int, int>>();
+
+            // pick one number at a time for the first part of the pair
+            for (int n1 = 1; n1 <= 9; n1++)
+            {
+                // pick one number at a time for the second part of the pair
+                for (int n2 = 1; n2 <= 9; n2++)
+                {
+                    // if about to compare the same two numbers, skip it
+                    if (n1 == n2)
+                    {
+                        n2++;
+
+                        // sanity check to avoid using a 10
+                        if (n2 > 9)
+                            continue;
+                    }
+
+                    // keep track of each pair already seen
+                    reverseCheckList.Add(new KeyValuePair<int, int>(n1, n2));
+
+                    // if already seen the reverse of a seen pair, skip the check (have seen 1,2 so skip 2,1)
+                    if (reverseCheckList.Where(kvp => kvp.Key == n2 && kvp.Value == n1).Count() != 0)
+                        continue;
+
+                    // check each row
+                    for (int r = 1; r <= 9; r++)
+                    {
+                        FindResult result = new FindResult();
+                        result.HouseType = HouseType.Row;
+
+                        // find cells that have the two notes in the search
+                        var cellsWithCorrectHiddens = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && cell.HasNoteOf(n1) && cell.HasNoteOf(n2)).ToList<Cell>();
+                        // find any cells that have either/both of those notes but are not in the cells just found with BOTH notes
+                        var invalidatingCells = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && (cell.HasNoteOf(n1) || cell.HasNoteOf(n2)) && cellsWithCorrectHiddens.IndexOf(cell) < 0).ToList<Cell>();
+
+                        // if found two sets of notes and no other cells with those notes and the two found are not just naked pairs (either have more than two notes)
+                        if ((cellsWithCorrectHiddens.Count() == 2) && invalidatingCells.Count() == 0 && (cellsWithCorrectHiddens[0].NumberOfNotes() > 2 || cellsWithCorrectHiddens[1].NumberOfNotes() > 2))
+                        {
+                            // put cells involved into the single results object
+                            foreach (Cell cellWithCorrectHiddens in cellsWithCorrectHiddens)
+                                result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectHiddens, CellHighlightType.Special));
+
+                            // remember which note was the candidate in the cell
+                            result.CandidateNotes.AddRange(cellsWithCorrectHiddens[0].Notes.Where(note => note.Candidate == n1 || note.Candidate == n2));
+                            result.CandidateNotes.AddRange(cellsWithCorrectHiddens[1].Notes.Where(note => note.Candidate == n1 || note.Candidate == n2));
+
+                            // cell with eliminations (are the same cells as the hidden pairs already found above)
+                            result.EliminationCells.AddRange(cellsWithCorrectHiddens);
+
+                            // remember which remaining notes were needing elimination
+                            result.EliminationNotes.AddRange(cellsWithCorrectHiddens[0].Notes.Where(note => note.IsNoted && note.Candidate != n1 && note.Candidate != n2));
+                            result.EliminationNotes.AddRange(cellsWithCorrectHiddens[1].Notes.Where(note => note.IsNoted && note.Candidate != n1 && note.Candidate != n2));
+
+                            results.Add(result);
+                        }
+                    }
+
+                    // check each column
+                    for (int c = 1; c <= 9; c++)
+                    {
+                        FindResult result = new FindResult();
+                        result.HouseType = HouseType.Column;
+
+                        // find cells that have the two notes in the search
+                        var cellsWithCorrectHiddens = allCells.Where(cell => !cell.HasAnswer && cell.Column == c && cell.HasNoteOf(n1) && cell.HasNoteOf(n2)).ToList<Cell>();
+                        // find any cells that have either/both of those notes but are not in the cells just found with BOTH notes
+                        var invalidatingCells = allCells.Where(cell => !cell.HasAnswer && cell.Column == c && (cell.HasNoteOf(n1) || cell.HasNoteOf(n2)) && cellsWithCorrectHiddens.IndexOf(cell) < 0).ToList<Cell>();
+
+                        // if found two sets of notes and no other cells with those notes and the two found are not just naked pairs (either have more than two notes)
+                        if ((cellsWithCorrectHiddens.Count() == 2) && invalidatingCells.Count() == 0 && (cellsWithCorrectHiddens[0].NumberOfNotes() > 2 || cellsWithCorrectHiddens[1].NumberOfNotes() > 2))
+                        {
+                            // put cells involved into the single results object
+                            foreach (Cell cellWithCorrectHiddens in cellsWithCorrectHiddens)
+                                result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectHiddens, CellHighlightType.Special));
+
+                            // remember which note was the candidate in the cell
+                            result.CandidateNotes.AddRange(cellsWithCorrectHiddens[0].Notes.Where(note => note.Candidate == n1 || note.Candidate == n2));
+                            result.CandidateNotes.AddRange(cellsWithCorrectHiddens[1].Notes.Where(note => note.Candidate == n1 || note.Candidate == n2));
+
+                            // cell with eliminations (are the same cells as the hidden pairs already found above)
+                            result.EliminationCells.AddRange(cellsWithCorrectHiddens);
+
+                            // remember which remaining notes were needing elimination
+                            result.EliminationNotes.AddRange(cellsWithCorrectHiddens[0].Notes.Where(note => note.IsNoted && note.Candidate != n1 && note.Candidate != n2));
+                            result.EliminationNotes.AddRange(cellsWithCorrectHiddens[1].Notes.Where(note => note.IsNoted && note.Candidate != n1 && note.Candidate != n2));
+
+                            results.Add(result);
+                        }
+                    }
+
+                    // check each block
+                    for (int b = 1; b <= 9; b++)
+                    {
+                        FindResult result = new FindResult();
+                        result.HouseType = HouseType.Block;
+
+                        // find cells that have the two notes in the search
+                        var cellsWithCorrectHiddens = allCells.Where(cell => !cell.HasAnswer && cell.Block == b && cell.HasNoteOf(n1) && cell.HasNoteOf(n2)).ToList<Cell>();
+                        // find any cells that have either/both of those notes but are not in the cells just found with BOTH notes
+                        var invalidatingCells = allCells.Where(cell => !cell.HasAnswer && cell.Block == b && (cell.HasNoteOf(n1) || cell.HasNoteOf(n2)) && cellsWithCorrectHiddens.IndexOf(cell) < 0).ToList<Cell>();
+
+                        // if found two sets of notes and no other cells with those notes and the two found are not just naked pairs (either have more than two notes)
+                        if ((cellsWithCorrectHiddens.Count() == 2) && invalidatingCells.Count() == 0 && (cellsWithCorrectHiddens[0].NumberOfNotes() > 2 || cellsWithCorrectHiddens[1].NumberOfNotes() > 2))
+                        {
+                            // put cells involved into the single results object
+                            foreach (Cell cellWithCorrectHiddens in cellsWithCorrectHiddens)
+                                result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectHiddens, CellHighlightType.Special));
+
+                            // remember which note was the candidate in the cell
+                            result.CandidateNotes.AddRange(cellsWithCorrectHiddens[0].Notes.Where(note => note.Candidate == n1 || note.Candidate == n2));
+                            result.CandidateNotes.AddRange(cellsWithCorrectHiddens[1].Notes.Where(note => note.Candidate == n1 || note.Candidate == n2));
+
+                            // cell with eliminations (are the same cells as the hidden pairs already found above)
+                            result.EliminationCells.AddRange(cellsWithCorrectHiddens);
+
+                            // remember which remaining notes were needing elimination
+                            result.EliminationNotes.AddRange(cellsWithCorrectHiddens[0].Notes.Where(note => note.IsNoted && note.Candidate != n1 && note.Candidate != n2));
+                            result.EliminationNotes.AddRange(cellsWithCorrectHiddens[1].Notes.Where(note => note.IsNoted && note.Candidate != n1 && note.Candidate != n2));
+
+                            results.Add(result);
+                        }
+                    }
+                }
+            }
+
+            return DedupeResults(results);
+        }
+
+        /// <summary>
+        /// Find Naked Triples occurrences 
+        /// </summary>
+        /// <param name="board">Board to search</param>
+        /// <returns>List of Naked Triples locations found</returns>
+        private List<FindResult> FindHiddenTriples(Board board)
         {
             List<FindResult> results = new List<FindResult>();
             IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);

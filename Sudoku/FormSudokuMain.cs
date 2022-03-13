@@ -137,6 +137,7 @@ namespace Sudoku
             cbxPatterns.ValueMember = "Value";
 
             cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.NakedSingle.Description(), Pattern.NakedSingle));
+            cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.NakedPair.Description(), Pattern.NakedPair));
             cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.HiddenSingle.Description(), Pattern.HiddenSingle));
             cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.XWing.Description(), Pattern.XWing));
             //cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.FinnedXWing.Description(), Pattern.FinnedXWing));

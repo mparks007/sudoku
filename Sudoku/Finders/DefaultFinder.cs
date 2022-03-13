@@ -17,6 +17,7 @@ namespace Sudoku
         {
             // add in the supported find methods
             _methods[Pattern.NakedSingle] = FindNakedSingles;
+            _methods[Pattern.NakedPair] = FindNakedPairs;
             _methods[Pattern.HiddenSingle] = FindHiddenSingles;
             _methods[Pattern.XWing] = FindXWings;
             _methods[Pattern.Skyscraper] = FindSkyscrapers;
@@ -58,6 +59,9 @@ namespace Sudoku
                 // also add in any candidate details that are associated to the result
                 foreach (Note note in resultToDedupe.CandidateNotes)
                     combinedInfo.Add(note.Candidate.ToString());
+
+                // then throw in house type to ensure some max uniqueness
+                combinedInfo.Add(resultToDedupe.HouseType.Description());
 
                 // now take all the details about cells and candidate notes, sort it, then use this string later for "if seen this full detail before"
                 var arr = combinedInfo.ToArray();
@@ -105,6 +109,138 @@ namespace Sudoku
                 result.CandidateNotes.Add(cellWithNakedSingle.GetOnlyNote());
 
                 results.Add(result);
+            }
+
+            return DedupeResults(results);
+        }
+
+        /// <summary>
+        /// Find Naked Pair occurrences 
+        /// </summary>
+        /// <param name="board">Board to search</param>
+        /// <returns>List of Naked Pair locations found</returns>
+        private List<FindResult> FindNakedPairs(Board board)
+        {
+            List<FindResult> results = new List<FindResult>();
+            IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
+            List<KeyValuePair<int, int>> reverseCheckList = new List<KeyValuePair<int, int>>();
+
+            // pick one number at a time for the first part of the pair
+            for (int n1 = 1; n1 <= 9; n1++)
+            {
+                // pick one number at a time for the second part of the pair
+                for (int n2 = 1; n2 <= 9; n2++)
+                {
+                    // if about to compare the same two numbers, skip it
+                    if (n1 == n2)
+                    {
+                        n2++;
+
+                        // sanity check to avoid using a 10
+                        if (n2 > 9)
+                            continue;
+                    }
+
+                    // keep track of each pair already seen
+                    reverseCheckList.Add(new KeyValuePair<int, int>(n1, n2));
+
+                    // if already seen the reverse of a seen pair, skip the check (have seen 1,2 so skip 2,1)
+                    if (reverseCheckList.Where(kvp => kvp.Key == n2 && kvp.Value == n1).Count() != 0)
+                        continue;
+
+                    // check each row
+                    for (int r = 1; r <= 9; r++)
+                    {
+                        FindResult result = new FindResult();
+                        result.HouseType = HouseType.Row;
+
+                        // look for cells with only two notes and those two notes are the ones being checked in this pass
+                        var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2)).ToList<Cell>();
+
+                        if (cellsWithCorrectNakeds.Count == 2)
+                        {
+                            // put cells involved into the single results object
+                            foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
+                                result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellWithCorrectNakeds.Row, cellWithCorrectNakeds.Column), CellHighlightType.Special));
+
+                            // remember which note was the candidate in the cell
+                            result.CandidateNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
+
+                            // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
+                            var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && !(cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2))).ToList<Cell>();
+
+                            // cell with eliminations (is the same cell as the hidden single already found above)
+                            result.EliminationCells.AddRange(cellsWithEliminations);
+
+                            // remember which remaining notes were needing elimination
+                            result.EliminationNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
+
+                            results.Add(result);
+                        }
+                    }
+
+                    // check each column
+                    for (int c = 1; c <= 9; c++)
+                    {
+                        FindResult result = new FindResult();
+                        result.HouseType = HouseType.Column;
+
+                        // look for cells with only two notes and those two notes are the ones being checked in this pass
+                        var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Column == c && cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2)).ToList<Cell>();
+
+                        if (cellsWithCorrectNakeds.Count == 2)
+                        {
+                            // put cells involved into the single results object
+                            foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
+                                result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellWithCorrectNakeds.Row, cellWithCorrectNakeds.Column), CellHighlightType.Special));
+
+                            // remember which note was the candidate in the cell
+                            result.CandidateNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
+
+                            // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
+                            var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Column == c && !(cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2))).ToList<Cell>();
+
+                            // cell with eliminations (is the same cell as the hidden single already found above)
+                            result.EliminationCells.AddRange(cellsWithEliminations);
+
+                            // remember which remaining notes were needing elimination
+                            result.EliminationNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
+
+                            results.Add(result);
+                        }
+                    }
+
+                    // check each block
+                    for (int b = 1; b <= 9; b++)
+                    {
+                        FindResult result = new FindResult();
+                        result.HouseType = HouseType.Block;
+
+                        // look for cells with only two notes and those two notes are the ones being checked in this pass
+                        var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Block == b && cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2)).ToList<Cell>();
+
+                        if (cellsWithCorrectNakeds.Count == 2)
+                        {
+                            // put cells involved into the single results object
+                            foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
+                                result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellWithCorrectNakeds.Row, cellWithCorrectNakeds.Column), CellHighlightType.Special));
+
+                            // remember which note was the candidate in the cell
+                            result.CandidateNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
+
+                            // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
+                            var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Block == b && !(cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2))).ToList<Cell>();
+
+                            // cell with eliminations (is the same cell as the hidden single already found above)
+                            result.EliminationCells.AddRange(cellsWithEliminations);
+
+                            // remember which remaining notes were needing elimination
+                            result.EliminationNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
+
+                            results.Add(result);
+                        }
+                    }
+                }
             }
 
             return DedupeResults(results);

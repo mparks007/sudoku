@@ -221,6 +221,18 @@ namespace Sudoku
         }
 
         /// <summary>
+        /// Get notes that have been set with a candidate
+        /// </summary>
+        /// <returns>Notes list for any Note that has a number set (non zero)</returns>        
+        public List<Note> GetNotesWithAnyCandidate()
+        {
+            if (!HasAnswer)
+                return _notes.Where(note => note.Candidate != -0).ToList<Note>();
+
+            return null;
+        }
+
+        /// <summary>
         /// Determine if there are multiple notes set
         /// </summary>
         /// <returns>True if multiple notes are set</returns>
@@ -236,6 +248,18 @@ namespace Sudoku
         public bool HasSingleNote()
         {
             return (!HasAnswer && (_notes.Where(note => note.IsNoted).Count() == 1));
+        }
+
+        /// <summary>
+        /// Get number of notes that have candidates set (that are noted)
+        /// </summary>
+        /// <returns>Number of notes</returns>
+        public int NumberOfNotes()
+        {
+            if (!HasAnswer)
+                return (_notes.Where(note => note.IsNoted).Count());
+
+            return 0;
         }
 
         /// <summary>

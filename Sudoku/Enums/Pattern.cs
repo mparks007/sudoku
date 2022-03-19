@@ -33,12 +33,10 @@ namespace Sudoku
         PointingPair,
         [Description("Pointing Triple")]
         PointingTriple,
-        [Description("Locked Pair")]
-        LockedPair,
-        [Description("Locked Triple")]
-        LockedPairTriple,
-        [Description("Box/Line Reduction")]
-        BoxLineReduction,
+        [Description("Claiming Pair")]
+        ClaimingPair,
+        [Description("Claiming Triple")]
+        ClaimingTriple,
         [Description("X-Wing")]
         XWing,
         [Description("Finned X-Wing")]
@@ -49,12 +47,12 @@ namespace Sudoku
         Skyscraper,
         [Description("Two-String Kite")]
         TwoStringKite,
+        [Description("XY-Wing (Y-Wing)")]
+        XYWing,
         [Description("XYZ-Wing")]
         XYZWing,
         [Description("W-Wing")]
         WWing,
-        [Description("XY-Wing (Y-Wing)")]
-        XYWing,
         [Description("Empty Rectangle")]
         EmptyRectangle,
         [Description("Deadly")]

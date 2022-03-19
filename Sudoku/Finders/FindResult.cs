@@ -39,20 +39,20 @@ namespace Sudoku
         {
             StringBuilder str = new StringBuilder();
 
-            foreach (KeyValuePair<Cell, CellHighlightType> cellFound in CandidateCells)
+            foreach (KeyValuePair<Cell, CellHighlightType> candidateCell in CandidateCells)
             {
                 string extraInfo = "";
 
                 // if want to provide a bit of highlight for very specific types of candidate cells (ie. Pivot, Pincer), setup that extra info for the ToString text
-                if (cellFound.Value != CellHighlightType.Special)
-                    extraInfo = cellFound.Value.Description();
+                if (candidateCell.Value != CellHighlightType.Special)
+                    extraInfo = candidateCell.Value.Description();
 
-                str.AppendFormat("[{0},{1}{2}{3}] ", cellFound.Key.Row, cellFound.Key.Column, (extraInfo.Length > 0 ? ",": ""), extraInfo);
+                str.AppendFormat("[{0},{1}{2}{3}]", candidateCell.Key.Row, candidateCell.Key.Column, (extraInfo.Length > 0 ? ",": ""), extraInfo);
             }
 
             // go ahead and also show the candidate that was involved in the results
-            foreach (Note note in CandidateNotes)
-                str.AppendFormat("({0}) ", note.ToString());
+            foreach (Note candidateNote in CandidateNotes)
+                str.AppendFormat("({0})", candidateNote.ToString());
 
             // and could be handy to know if the result was found due to searching within a specific house
             str.AppendFormat("(House: {0})", HouseType.Description());

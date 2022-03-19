@@ -258,20 +258,21 @@ namespace Sudoku
         /// Determine if a cell has the right notes match for a candidate set
         /// </summary>
         /// <param name="cell">Cell to search its Notes</param>
-        /// <param name="setCandidates">Candidate list to search for (like numbers making triplets, quads, quints)</param>
+        /// <param name="setCandidates">Candidate list to search for (like ALL the numbers that would make a triple, quad, quint, whatever is being searched for)</param>
+        /// <param name="searchForNaked">Flag if this is a naked or hidden type search</param>
         /// <returns>True if the cell has the right amount of notes and the right coverage of notes to be a part of a set type</returns>
         private bool CellContainsSuitableNotes(Cell cell, int[] setCandidates, bool searchForNaked)
         {
             // gather the notes that are matching the set needed
             var notesMatchingSetCandidates = cell.Notes.Where(note => setCandidates.Contains(note.Candidate));
 
-            // true if two or more notes in the cell (always required for triplets+) and all of them are related to the set needed
+            // true if two or more set notes where found in the cell (two+ ALWAYS required for triplets and above)
             if (notesMatchingSetCandidates.Count() >= 2)
             {
                 // if naked search, the set notes found must be all the available notes
                 if (searchForNaked)
                     return notesMatchingSetCandidates.Count() == cell.NumberOfNotes();
-                else // mismatch, so the set notes found must be buried in extra notes
+                else // mismatch, so the set notes found must be buried in extra notes (a hidden match)
                     return notesMatchingSetCandidates.Count() < cell.NumberOfNotes();
             }
             return false;
@@ -314,7 +315,7 @@ namespace Sudoku
 
                         // sort triplets for easier checking if seen this combo in prior pass
                         string sortedTriplets = string.Join("", currentTriplets.OrderBy(i => i));
-                       
+
                         // if not already seen these triplets
                         if (reverseCheckList.Where(str => str == sortedTriplets).Count() == 0)
                         {
@@ -333,9 +334,13 @@ namespace Sudoku
                             // how to find three cells notes like ((1,2)(1,3)(1,2,3) or (1,3)(2,2)(1,2) or (1,2,3)(1,2,3)(1,2,3) or (1)(2)(1,2,3)) etc.  any combo of three cells using any combination of the three notes being searched
 
                             // look for cells with correct triplet usage
-                            var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && CellContainsSuitableNotes(cell, currentTriplets, searchForNaked:true)).ToList<Cell>();
+                            var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && CellContainsSuitableNotes(cell, currentTriplets, searchForNaked: true)).ToList<Cell>();
 
-                            if (cellsWithCorrectNakeds.Count == 3)
+                            // get a distinct list of candidates from every note from every cell that has our triple
+                            var uniqueCandidatesFound = cellsWithCorrectNakeds.SelectMany(cell => cell.Notes).Where(note => note.IsNoted).Select(note => note.Candidate).Distinct();
+
+                            // if found three cells for the triple AND found all three of the triplet candidates within any combination of notes within those cells 
+                            if (cellsWithCorrectNakeds.Count == 3 && uniqueCandidatesFound.Count() == 3)
                             {
                                 List<Note> candidateNotes = new List<Note>();
 
@@ -343,7 +348,7 @@ namespace Sudoku
                                 foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
                                 {
                                     result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectNakeds, CellHighlightType.Special));
-                                    
+
                                     // just collect all the notes since all are a part of the triplet (deduped later)
                                     candidateNotes.AddRange(cellWithCorrectNakeds.GetNotesWithAnyCandidate());
                                 }
@@ -353,6 +358,94 @@ namespace Sudoku
 
                                 // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
                                 var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && cellsWithCorrectNakeds.IndexOf(cell) < 0).ToList<Cell>();
+
+                                // cell with eliminations (is the same cell as the hidden single already found above)
+                                result.EliminationCells.AddRange(cellsWithEliminations);
+
+                                // remember which remaining notes were needing elimination
+                                result.EliminationNotes.AddRange(candidateNotes.Distinct());
+
+                                results.Add(result);
+                            }
+                        }
+
+                        // check each column
+                        for (int c = 1; c <= 9; c++)
+                        {
+                            FindResult result = new FindResult();
+                            result.HouseType = HouseType.Column;
+
+                            // how to find three cells notes like ((1,2)(1,3)(1,2,3) or (1,3)(2,2)(1,2) or (1,2,3)(1,2,3)(1,2,3) or (1)(2)(1,2,3)) etc.  any combo of three cells using any combination of the three notes being searched
+
+                            // look for cells with correct triplet usage
+                            var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Column == c && CellContainsSuitableNotes(cell, currentTriplets, searchForNaked: true)).ToList<Cell>();
+
+                            // get a distinct list of candidates from every note from every cell that has our triple
+                            var uniqueCandidatesFound = cellsWithCorrectNakeds.SelectMany(cell => cell.Notes).Where(note => note.IsNoted).Select(note => note.Candidate).Distinct();
+
+                            // if found three cells for the triple AND found all three of the triplet candidates within any combination of notes within those cells 
+                            if (cellsWithCorrectNakeds.Count == 3 && uniqueCandidatesFound.Count() == 3)
+                            {
+                                List<Note> candidateNotes = new List<Note>();
+
+                                // put cells involved into the single results object
+                                foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
+                                {
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectNakeds, CellHighlightType.Special));
+
+                                    // just collect all the notes since all are a part of the triplet (deduped later)
+                                    candidateNotes.AddRange(cellWithCorrectNakeds.GetNotesWithAnyCandidate());
+                                }
+
+                                // remember which notes were the candidates in the cell (dedupe what got built out when learning which cells had the triplets)
+                                result.CandidateNotes.AddRange(candidateNotes.Distinct());
+
+                                // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
+                                var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Column == c && cellsWithCorrectNakeds.IndexOf(cell) < 0).ToList<Cell>();
+
+                                // cell with eliminations (is the same cell as the hidden single already found above)
+                                result.EliminationCells.AddRange(cellsWithEliminations);
+
+                                // remember which remaining notes were needing elimination
+                                result.EliminationNotes.AddRange(candidateNotes.Distinct());
+
+                                results.Add(result);
+                            }
+                        }
+
+                        // check each column
+                        for (int b = 1; b <= 9; b++)
+                        {
+                            FindResult result = new FindResult();
+                            result.HouseType = HouseType.Block;
+
+                            // how to find three cells notes like ((1,2)(1,3)(1,2,3) or (1,3)(2,2)(1,2) or (1,2,3)(1,2,3)(1,2,3) or (1)(2)(1,2,3)) etc.  any combo of three cells using any combination of the three notes being searched
+
+                            // look for cells with correct triplet usage
+                            var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Block == b && CellContainsSuitableNotes(cell, currentTriplets, searchForNaked: true)).ToList<Cell>();
+
+                            // get a distinct list of candidates from every note from every cell that has our triple
+                            var uniqueCandidatesFound = cellsWithCorrectNakeds.SelectMany(cell => cell.Notes).Where(note => note.IsNoted).Select(note => note.Candidate).Distinct();
+
+                            // if found three cells for the triple AND found all three of the triplet candidates within any combination of notes within those cells 
+                            if (cellsWithCorrectNakeds.Count == 3 && uniqueCandidatesFound.Count() == 3)
+                            {
+                                List<Note> candidateNotes = new List<Note>();
+
+                                // put cells involved into the single results object
+                                foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
+                                {
+                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectNakeds, CellHighlightType.Special));
+
+                                    // just collect all the notes since all are a part of the triplet (deduped later)
+                                    candidateNotes.AddRange(cellWithCorrectNakeds.GetNotesWithAnyCandidate());
+                                }
+
+                                // remember which notes were the candidates in the cell (dedupe what got built out when learning which cells had the triplets)
+                                result.CandidateNotes.AddRange(candidateNotes.Distinct());
+
+                                // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
+                                var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Block == b && cellsWithCorrectNakeds.IndexOf(cell) < 0).ToList<Cell>();
 
                                 // cell with eliminations (is the same cell as the hidden single already found above)
                                 result.EliminationCells.AddRange(cellsWithEliminations);

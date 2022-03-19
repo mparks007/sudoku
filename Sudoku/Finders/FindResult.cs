@@ -50,8 +50,8 @@ namespace Sudoku
                 str.AppendFormat("[{0},{1}{2}{3}]", candidateCell.Key.Row, candidateCell.Key.Column, (extraInfo.Length > 0 ? ",": ""), extraInfo);
             }
 
-            // go ahead and also show the candidate that was involved in the results
-            foreach (Note candidateNote in CandidateNotes)
+            // go ahead and also show the unique candidate list that was involved in the results
+            foreach (int candidateNote in CandidateNotes.Select(note => note.Candidate).Distinct())
                 str.AppendFormat("({0})", candidateNote.ToString());
 
             // and could be handy to know if the result was found due to searching within a specific house

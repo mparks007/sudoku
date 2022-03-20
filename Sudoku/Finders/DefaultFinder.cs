@@ -24,6 +24,8 @@ namespace Sudoku
             _methods[Pattern.HiddenSingle] = FindHiddenSingles;
             _methods[Pattern.HiddenPair] = FindHiddenPairs;
             _methods[Pattern.HiddenTriple] = FindHiddenTriples;
+            _methods[Pattern.HiddenQuad] = FindHiddenQuads;
+            _methods[Pattern.HiddenQuint] = FindHiddenQuints;
             _methods[Pattern.XWing] = FindXWings;
             _methods[Pattern.Skyscraper] = FindSkyscrapers;
         }
@@ -280,6 +282,8 @@ namespace Sudoku
             {
                 currentSubset = subset.Select(s => Int32.Parse(s.ToString())).ToArray();
 
+                hiddens are still broken
+
                 // check each row
                 for (int r = 1; r <= 9; r++)
                 {
@@ -292,8 +296,13 @@ namespace Sudoku
                     // get a distinct list of candidates from every note from every cell that has our subset
                     var uniqueCandidatesFound = cellsWithCorrectSubset.SelectMany(cell => cell.Notes).Where(note => note.IsNoted).Select(note => note.Candidate).Distinct();
 
-                    // if found correct number of cells for the subset size AND either hidden search or found all of the subset candidates within any combination of notes within those cells 
-                    if (cellsWithCorrectSubset.Count == subsetWidth && (!doSearchForNaked || uniqueCandidatesFound.Count() == subsetWidth))
+                    List<Cell> invalidatingCells = new List<Cell>();
+                    // if looking for hiddens, find all the cells that are not in the found subset sets but do have any of the notes in the subset (which would invalidate the hidden aspect)
+                    if (!doSearchForNaked)
+                        invalidatingCells = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && cellsWithCorrectSubset.IndexOf(cell) < 0 && cell.HasAnyNotesOf(currentSubset)).ToList<Cell>();
+
+                    // if found correct number of cells for the subset size AND no other cells ruin the find AND either hidden search or found all of the subset candidates within any combination of notes within those cells 
+                    if (cellsWithCorrectSubset.Count == subsetWidth && invalidatingCells.Count() == 0 && (!doSearchForNaked || uniqueCandidatesFound.Count() == subsetWidth))
                     {
                         List<Note> candidateNotes = new List<Note>();
 
@@ -507,7 +516,7 @@ namespace Sudoku
                         var cellsWithCorrectHiddens = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && cell.HasNoteOf(n1) && cell.HasNoteOf(n2)).ToList<Cell>();
                         // find any cells that have either/both of those notes but are not in the cells just found with BOTH notes
                         var invalidatingCells = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && (cell.HasNoteOf(n1) || cell.HasNoteOf(n2)) && cellsWithCorrectHiddens.IndexOf(cell) < 0).ToList<Cell>();
-                        need invalidating cells concept in common findsubset method to find the other cells not in the subset matches
+                       // need invalidating cells concept in common findsubset method to find the other cells not in the subset matches
                         // if found two sets of notes and no other cells with those notes and the two found are not just naked pairs (either have more than two notes)
                         if ((cellsWithCorrectHiddens.Count() == 2) && invalidatingCells.Count() == 0 && (cellsWithCorrectHiddens[0].NumberOfNotes() > 2 || cellsWithCorrectHiddens[1].NumberOfNotes() > 2))
                         {

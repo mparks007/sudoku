@@ -175,13 +175,27 @@ namespace Sudoku
         /// Determine if the cell has a particular note
         /// </summary>
         /// <param name="noteNum">Note to check for</param>
-        /// <returns></returns>
+        /// <returns>True if cell has the note</returns>
         public bool HasNoteOf(int noteNum)
         {
             if ((noteNum < 1) || (noteNum > 9))
                 throw new ArgumentException(String.Format("Invalid note being checked: {0}", noteNum));
 
             return (!HasAnswer && _notes[noteNum - 1].IsNoted);
+        }
+
+        /// <summary>
+        /// Determine if the cell any of the passed in notes
+        /// </summary>
+        /// <param name="notesToFind">Notes to check for</param>
+        /// <returns>True if cell has all the notes</returns>
+        public bool HasAnyNotesOf(int[] notesToFind)
+        {
+            foreach (int noteToFind in notesToFind)
+                if (Notes.Count(note => note.Candidate == noteToFind) > 0)
+                    return true;
+
+            return false;
         }
 
         /// <summary>

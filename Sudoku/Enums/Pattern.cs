@@ -31,6 +31,8 @@ namespace Sudoku
         HiddenTriple,
         [Description("Hidden Quad")]
         HiddenQuad,
+        [Description("Hidden Quint")]
+        HiddenQuint,
         [Description("Pointing Pair")]
         PointingPair,
         [Description("Pointing Triple")]

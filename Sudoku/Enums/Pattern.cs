@@ -21,6 +21,8 @@ namespace Sudoku
         NakedTriple,
         [Description("Naked Quad")]
         NakedQuad,
+        [Description("Naked Quint")]
+        NakedQuint,
         [Description("Hidden Single")]
         HiddenSingle,
         [Description("Hidden Pair")]

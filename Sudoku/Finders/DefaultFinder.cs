@@ -20,6 +20,7 @@ namespace Sudoku
             _methods[Pattern.NakedPair] = FindNakedPairs;
             _methods[Pattern.NakedTriple] = FindNakedTriples;
             _methods[Pattern.NakedQuad] = FindNakedQuads;
+            _methods[Pattern.NakedQuint] = FindNakedQuints;
             _methods[Pattern.HiddenSingle] = FindHiddenSingles;
             _methods[Pattern.HiddenPair] = FindHiddenPairs;
             _methods[Pattern.HiddenTriple] = FindHiddenTriples;
@@ -88,186 +89,20 @@ namespace Sudoku
         #region Finders
 
         /// <summary>
-        /// Find Naked Single occurrences 
-        /// </summary>
-        /// <param name="board">Board to search</param>
-        /// <returns>List of Naked Single locations found</returns>
-        private List<FindResult> FindNakedSingles(Board board)
-        {
-            List<FindResult> results = new List<FindResult>();
-            IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
-
-            // look for cells with naked singles
-            var cellsWithNakedSingle = allCells.Where(cell => !cell.HasAnswer && cell.HasSingleNote()).ToList<Cell>();
-            
-            // build results list for all found
-            foreach (Cell cellWithNakedSingle in cellsWithNakedSingle)
-            {
-                FindResult result = new FindResult();
-                result.HouseType = HouseType.None;
-
-                // load in all the cells involved in the pattern
-                result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithNakedSingle, CellHighlightType.Special));
-
-                // remember which note was found (will have a SINGLE visible note due to the HasSingleNote call when building the nakeds list above, so GetOnlyNote will work)
-                result.CandidateNotes.Add(cellWithNakedSingle.GetOnlyNote());
-
-                // find cells in same row, column, block (but not the found cell itself)
-                var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && (cell.ToString() != cellWithNakedSingle.ToString()) && (cell.Row == cellWithNakedSingle.Row || 
-                                                                                                                                              cell.Column == cellWithNakedSingle.Column || 
-                                                                                                                                              cell.Block == cellWithNakedSingle.Block)).ToList<Cell>();
-                // cell with eliminations (is the same cell as the hidden single already found above)
-                result.EliminationCells.AddRange(cellsWithEliminations);
-
-                // remember which remaining notes were needing elimination
-                result.EliminationNotes.Add(cellWithNakedSingle.GetOnlyNote());
-
-                results.Add(result);
-            }
-
-            return DedupeResults(results);
-        }
-
-        /// <summary>
-        /// Find Naked Pair occurrences 
-        /// </summary>
-        /// <param name="board">Board to search</param>
-        /// <returns>List of Naked Pair locations found</returns>
-        private List<FindResult> FindNakedPairs(Board board)
-        {
-            List<FindResult> results = new List<FindResult>();
-            IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
-            List<KeyValuePair<int, int>> reverseCheckList = new List<KeyValuePair<int, int>>();
-
-            // pick one number at a time for the first part of the pair
-            for (int n1 = 1; n1 <= 9; n1++)
-            {
-                // pick one number at a time for the second part of the pair
-                for (int n2 = 1; n2 <= 9; n2++)
-                {
-                    // if about to search for the same two notes in a cell, skip it (there should never be two of the same notes in a cell)
-                    if (n1 == n2)
-                        continue;
-
-                    // keep track of each pair already seen
-                    reverseCheckList.Add(new KeyValuePair<int, int>(n1, n2));
-
-                    // if already seen the reverse of a seen pair, skip the check (have seen 1,2 so skip 2,1)
-                    if (reverseCheckList.Where(kvp => kvp.Key == n2 && kvp.Value == n1).Count() != 0)
-                        continue;
-
-                    // check each row
-                    for (int r = 1; r <= 9; r++)
-                    {
-                        FindResult result = new FindResult();
-                        result.HouseType = HouseType.Row;
-
-                        // look for cells with only two notes and those two notes are the ones being checked in this pass
-                        var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2)).ToList<Cell>();
-
-                        if (cellsWithCorrectNakeds.Count == 2)
-                        {
-                            // put cells involved into the single results object
-                            foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
-                                result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectNakeds, CellHighlightType.Special));
-
-                            // remember which notes were the candidates in the cell
-                            result.CandidateNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
-
-                            // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
-                            var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && !(cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2))).ToList<Cell>();
-
-                            // cell with eliminations (is the same cell as the hidden single already found above)
-                            result.EliminationCells.AddRange(cellsWithEliminations);
-
-                            // remember which remaining notes were needing elimination
-                            result.EliminationNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
-
-                            results.Add(result);
-                        }
-                    }
-
-                    // check each column
-                    for (int c = 1; c <= 9; c++)
-                    {
-                        FindResult result = new FindResult();
-                        result.HouseType = HouseType.Column;
-
-                        // look for cells with only two notes and those two notes are the ones being checked in this pass
-                        var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Column == c && cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2)).ToList<Cell>();
-
-                        if (cellsWithCorrectNakeds.Count == 2)
-                        {
-                            // remember which notes were the candidates in the cell
-                            foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
-                                result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellWithCorrectNakeds.Row, cellWithCorrectNakeds.Column), CellHighlightType.Special));
-
-                            // remember which note was the candidate in the cell
-                            result.CandidateNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
-
-                            // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
-                            var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Column == c && !(cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2))).ToList<Cell>();
-
-                            // cell with eliminations (is the same cell as the hidden single already found above)
-                            result.EliminationCells.AddRange(cellsWithEliminations);
-
-                            // remember which remaining notes were needing elimination
-                            result.EliminationNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
-
-                            results.Add(result);
-                        }
-                    }
-
-                    // check each block
-                    for (int b = 1; b <= 9; b++)
-                    {
-                        FindResult result = new FindResult();
-                        result.HouseType = HouseType.Block;
-
-                        // look for cells with only two notes and those two notes are the ones being checked in this pass
-                        var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Block == b && cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2)).ToList<Cell>();
-
-                        if (cellsWithCorrectNakeds.Count == 2)
-                        {
-                            // remember which notes were the candidates in the cell
-                            foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
-                                result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(cellWithCorrectNakeds.Row, cellWithCorrectNakeds.Column), CellHighlightType.Special));
-
-                            // remember which note was the candidate in the cell
-                            result.CandidateNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
-
-                            // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
-                            var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Block == b && !(cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2))).ToList<Cell>();
-
-                            // cell with eliminations (is the same cell as the hidden single already found above)
-                            result.EliminationCells.AddRange(cellsWithEliminations);
-
-                            // remember which remaining notes were needing elimination
-                            result.EliminationNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
-
-                            results.Add(result);
-                        }
-                    }
-                }
-            }
-
-            return DedupeResults(results);
-        }
-
-        /// <summary>
         /// Determine if a cell has the right notes match for a candidate set
         /// </summary>
         /// <param name="cell">Cell to search its Notes</param>
         /// <param name="setCandidates">Candidate list to search for (like ALL the numbers that would make a triple, quad, quint, whatever is being searched for)</param>
+        /// <param name="widthOfSet">If the subset is a single, pair, triple, quad, quint</param>
         /// <param name="searchForNaked">Flag if this is a naked or hidden type search</param>
         /// <returns>True if the cell has the right amount of notes and the right coverage of notes to be a part of a set type</returns>
-        private bool CellContainsSuitableNotes(Cell cell, int[] setCandidates, bool searchForNaked)
+        private bool CellContainsSuitableNotes(Cell cell, int[] setCandidates, int subsetWidth, bool searchForNaked)
         {
             // gather the notes that are matching the set needed
             var notesMatchingSetCandidates = cell.Notes.Where(note => setCandidates.Contains(note.Candidate));
 
-            // true if two or more set notes where found in the cell (two+ ALWAYS required for triplets and above)
-            if (notesMatchingSetCandidates.Count() >= 2)
+            // singles have to have one note, but two or more set notes required for triples and above
+            if ((subsetWidth == 1 && notesMatchingSetCandidates.Count() == 1) || (subsetWidth > 1 && notesMatchingSetCandidates.Count() >= 2))
             {
                 // if naked search, the set notes found must be all the available notes
                 if (searchForNaked)
@@ -279,188 +114,78 @@ namespace Sudoku
         }
 
         /// <summary>
+        /// Build out a list of all combinations of digits in a subset based on the subsets max amount of digits
+        /// </summary>
+        /// <param name="widthOfSet">If the subset is a single, pair, triple, quad, quint</param>
+        /// <param name="position">Array position tracker for recursive logic</param>
+        /// <param name="candidateSetValues">Subset candidates tracker for recursive logic</param>
+        /// <param name="reverseCheckList">Final list of all the possible combinations of subset digits</param>
+        private void BuildSetDigitCombinations(int widthOfSet, int position, int[] candidateSetValues, List<string> reverseCheckList)
+        {
+            for (int n = 1; n <= 9; n++)
+            {
+                // further build out an array that has as many digits as the number of subset values (1 for singles, 2 for pairs, 3 for triples, etc.)
+                candidateSetValues[position] = n;
+
+                // if have option to fill in a digit further to the end of the candidateSetValues array (building numbers right to left)
+                if (position < widthOfSet - 1)
+                {
+                    // recursive call needs to skip to next array position in candidateSetValues array
+                    position++;
+
+                    // recurse to loop and build out the latest candidateSetValues array slot
+                    BuildSetDigitCombinations(widthOfSet, position, candidateSetValues, reverseCheckList);
+                    
+                    // unwinding once so back up one position in candidateSetValues array
+                    position--;
+                }
+                else
+                {
+                    // to avoid anything where a subset digit is in the array twice (sure, do 123 for a triple, but skip over 113 since no way would two 1s in any cell)
+                    if (candidateSetValues.Distinct().Count() == widthOfSet)
+                    {
+                        // sort triplets for easier checking if seen this combo in prior pass
+                        string sortedTriplets = string.Join("", candidateSetValues.OrderBy(i => i));
+
+                        // if not already seen these triplets
+                        if (reverseCheckList.Where(str => str == sortedTriplets).Count() == 0)
+                        {
+                            // remember having seen subset for next time
+                            reverseCheckList.Add(sortedTriplets);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Find Naked Single occurrences 
+        /// </summary>
+        /// <param name="board">Board to search</param>
+        /// <returns>List of Naked Single locations found</returns>
+        private List<FindResult> FindNakedSingles(Board board)
+        {
+            return FindNakeds(board, 1);
+        }
+
+        /// <summary>
+        /// Find Naked Pair occurrences 
+        /// </summary>
+        /// <param name="board">Board to search</param>
+        /// <returns>List of Naked Pair locations found</returns>
+        private List<FindResult> FindNakedPairs(Board board)
+        {
+            return FindNakeds(board, 2);
+        }
+
+        /// <summary>
         /// Find Naked Triple occurrences 
         /// </summary>
         /// <param name="board">Board to search</param>
         /// <returns>List of Naked Triple locations found</returns>
         private List<FindResult> FindNakedTriples(Board board)
         {
-            List<FindResult> results = new List<FindResult>();
-            IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
-            List<string> reverseCheckList = new List<string>();
-            int[] currentTriplets = new int[3];
-
-            // pick one number at a time for the first part of the triple
-            for (int n1 = 1; n1 <= 9; n1++)
-            {
-                currentTriplets[0] = n1;
-
-                // pick one number at a time for the second part of the triple
-                for (int n2 = 1; n2 <= 9; n2++)
-                {
-                    currentTriplets[1] = n2;
-
-                    // pick one number at a time for the third part of the triple
-                    for (int n3 = 1; n3 <= 9; n3++)
-                    {
-                        // if about to search for the same notes more than once in a cell, skip it (there should never be two or more of the same notes in a cell)
-                        if (n1 == n2 && n1 == n3)
-                            continue;
-
-                        currentTriplets[2] = n3;
-
-                        // if the triplets about to check have more than one of a candidate, skip it (looking for unique like 1,2,3 or 4,7,9 but not 1,1,3 or 4,4,6)
-                        if ((currentTriplets.Where(num => num == n1).Count() > 1) || (currentTriplets.Where(num => num == n2).Count() > 1) || (currentTriplets.Where(num => num == n3).Count() > 1))
-                            continue;
-
-                        // sort triplets for easier checking if seen this combo in prior pass
-                        string sortedTriplets = string.Join("", currentTriplets.OrderBy(i => i));
-
-                        // if not already seen these triplets
-                        if (reverseCheckList.Where(str => str == sortedTriplets).Count() == 0)
-                        {
-                            // remember having seen them for next time
-                            reverseCheckList.Add(sortedTriplets);
-                        }
-                        else
-                            continue;
-
-                        // check each row
-                        for (int r = 1; r <= 9; r++)
-                        {
-                            FindResult result = new FindResult();
-                            result.HouseType = HouseType.Row;
-
-                            // how to find three cells notes like ((1,2)(1,3)(1,2,3) or (1,3)(2,2)(1,2) or (1,2,3)(1,2,3)(1,2,3) or (1)(2)(1,2,3)) etc.  any combo of three cells using any combination of the three notes being searched
-
-                            // look for cells with correct triplet usage
-                            var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && CellContainsSuitableNotes(cell, currentTriplets, searchForNaked: true)).ToList<Cell>();
-
-                            // get a distinct list of candidates from every note from every cell that has our triple
-                            var uniqueCandidatesFound = cellsWithCorrectNakeds.SelectMany(cell => cell.Notes).Where(note => note.IsNoted).Select(note => note.Candidate).Distinct();
-
-                            // if found three cells for the triple AND found all three of the triplet candidates within any combination of notes within those cells 
-                            if (cellsWithCorrectNakeds.Count == 3 && uniqueCandidatesFound.Count() == 3)
-                            {
-                                List<Note> candidateNotes = new List<Note>();
-
-                                // put cells involved into the single results object
-                                foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
-                                {
-                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectNakeds, CellHighlightType.Special));
-
-                                    // just collect all the notes since all are a part of the triplet (deduped later)
-                                    candidateNotes.AddRange(cellWithCorrectNakeds.GetNotesWithAnyCandidate());
-                                }
-
-                                // remember which notes were the candidates in the cell (dedupe what got built out when learning which cells had the triplets)
-                                result.CandidateNotes.AddRange(candidateNotes.Distinct());
-
-                                // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
-                                var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && cellsWithCorrectNakeds.IndexOf(cell) < 0).ToList<Cell>();
-
-                                // cell with eliminations (is the same cell as the hidden single already found above)
-                                result.EliminationCells.AddRange(cellsWithEliminations);
-
-                                // remember which remaining notes were needing elimination
-                                result.EliminationNotes.AddRange(candidateNotes.Distinct());
-
-                                results.Add(result);
-                            }
-                        }
-
-                        // check each column
-                        for (int c = 1; c <= 9; c++)
-                        {
-                            FindResult result = new FindResult();
-                            result.HouseType = HouseType.Column;
-
-                            // how to find three cells notes like ((1,2)(1,3)(1,2,3) or (1,3)(2,2)(1,2) or (1,2,3)(1,2,3)(1,2,3) or (1)(2)(1,2,3)) etc.  any combo of three cells using any combination of the three notes being searched
-
-                            // look for cells with correct triplet usage
-                            var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Column == c && CellContainsSuitableNotes(cell, currentTriplets, searchForNaked: true)).ToList<Cell>();
-
-                            // get a distinct list of candidates from every note from every cell that has our triple
-                            var uniqueCandidatesFound = cellsWithCorrectNakeds.SelectMany(cell => cell.Notes).Where(note => note.IsNoted).Select(note => note.Candidate).Distinct();
-
-                            // if found three cells for the triple AND found all three of the triplet candidates within any combination of notes within those cells 
-                            if (cellsWithCorrectNakeds.Count == 3 && uniqueCandidatesFound.Count() == 3)
-                            {
-                                List<Note> candidateNotes = new List<Note>();
-
-                                // put cells involved into the single results object
-                                foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
-                                {
-                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectNakeds, CellHighlightType.Special));
-
-                                    // just collect all the notes since all are a part of the triplet (deduped later)
-                                    candidateNotes.AddRange(cellWithCorrectNakeds.GetNotesWithAnyCandidate());
-                                }
-
-                                // remember which notes were the candidates in the cell (dedupe what got built out when learning which cells had the triplets)
-                                result.CandidateNotes.AddRange(candidateNotes.Distinct());
-
-                                // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
-                                var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Column == c && cellsWithCorrectNakeds.IndexOf(cell) < 0).ToList<Cell>();
-
-                                // cell with eliminations (is the same cell as the hidden single already found above)
-                                result.EliminationCells.AddRange(cellsWithEliminations);
-
-                                // remember which remaining notes were needing elimination
-                                result.EliminationNotes.AddRange(candidateNotes.Distinct());
-
-                                results.Add(result);
-                            }
-                        }
-
-                        // check each column
-                        for (int b = 1; b <= 9; b++)
-                        {
-                            FindResult result = new FindResult();
-                            result.HouseType = HouseType.Block;
-
-                            // how to find three cells notes like ((1,2)(1,3)(1,2,3) or (1,3)(2,2)(1,2) or (1,2,3)(1,2,3)(1,2,3) or (1)(2)(1,2,3)) etc.  any combo of three cells using any combination of the three notes being searched
-
-                            // look for cells with correct triplet usage
-                            var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Block == b && CellContainsSuitableNotes(cell, currentTriplets, searchForNaked: true)).ToList<Cell>();
-
-                            // get a distinct list of candidates from every note from every cell that has our triple
-                            var uniqueCandidatesFound = cellsWithCorrectNakeds.SelectMany(cell => cell.Notes).Where(note => note.IsNoted).Select(note => note.Candidate).Distinct();
-
-                            // if found three cells for the triple AND found all three of the triplet candidates within any combination of notes within those cells 
-                            if (cellsWithCorrectNakeds.Count == 3 && uniqueCandidatesFound.Count() == 3)
-                            {
-                                List<Note> candidateNotes = new List<Note>();
-
-                                // put cells involved into the single results object
-                                foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
-                                {
-                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectNakeds, CellHighlightType.Special));
-
-                                    // just collect all the notes since all are a part of the triplet (deduped later)
-                                    candidateNotes.AddRange(cellWithCorrectNakeds.GetNotesWithAnyCandidate());
-                                }
-
-                                // remember which notes were the candidates in the cell (dedupe what got built out when learning which cells had the triplets)
-                                result.CandidateNotes.AddRange(candidateNotes.Distinct());
-
-                                // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
-                                var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Block == b && cellsWithCorrectNakeds.IndexOf(cell) < 0).ToList<Cell>();
-
-                                // cell with eliminations (is the same cell as the hidden single already found above)
-                                result.EliminationCells.AddRange(cellsWithEliminations);
-
-                                // remember which remaining notes were needing elimination
-                                result.EliminationNotes.AddRange(candidateNotes.Distinct());
-
-                                results.Add(result);
-                            }
-                        }
-                    }
-                }
-            }
-
-            return DedupeResults(results);
+            return FindNakeds(board, 3);
         }
 
         /// <summary>
@@ -470,89 +195,168 @@ namespace Sudoku
         /// <returns>List of Naked Quad locations found</returns>
         private List<FindResult> FindNakedQuads(Board board)
         {
+            return FindNakeds(board, 4);
+        }
+
+        /// <summary>
+        /// Find Naked Quint occurrences 
+        /// </summary>
+        /// <param name="board">Board to search</param>
+        /// <returns>List of Naked Quint locations found</returns>
+        private List<FindResult> FindNakedQuints(Board board)
+        {
+            return FindNakeds(board, 5);
+        }
+
+        /// <summary>
+        /// Common Find Nakeds method
+        /// </summary>
+        /// <param name="board">Board to search</param>
+        /// <param name="subsetWidth">Width of the subset (2=pairs, 3=triples, etc.)</param>
+        /// <returns>List of Naked subset locations found</returns>
+        private List<FindResult> FindNakeds(Board board, int subsetWidth)
+        {
             List<FindResult> results = new List<FindResult>();
             IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
-            List<string> reverseCheckList = new List<string>();
-            int[] currentQuads = new int[4];
+            int[] currentSubset = new int[subsetWidth];
 
-            // pick one number at a time for the first part of the triple
-            for (int n1 = 1; n1 <= 9; n1++)
+            // Build out a list of all combinations of digits in a subset based on the subsets max amount of digits
+            int position = 0;
+            List<string> subsetCandidates = new List<string>();
+            BuildSetDigitCombinations(subsetWidth, position, currentSubset, subsetCandidates);
+
+            // now go use all these collections of subset digits to see what subset patterns can be found
+            foreach (string subset in subsetCandidates)
             {
-                currentQuads[0] = n1;
+                currentSubset = subset.Select(s => Int32.Parse(s.ToString())).ToArray();
 
-                // pick one number at a time for the second part of the triple
-                for (int n2 = 1; n2 <= 9; n2++)
+                // check each row
+                for (int r = 1; r <= 9; r++)
                 {
-                    currentQuads[1] = n2;
+                    FindResult result = new FindResult();
+                    result.HouseType = HouseType.Row;
 
-                    // pick one number at a time for the third part of the triple
-                    for (int n3 = 1; n3 <= 9; n3++)
+                    // look for cells with correct subset usage
+                    var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && CellContainsSuitableNotes(cell, currentSubset, subsetWidth, searchForNaked: true)).ToList<Cell>();
+
+                    // get a distinct list of candidates from every note from every cell that has our subset
+                    var uniqueCandidatesFound = cellsWithCorrectNakeds.SelectMany(cell => cell.Notes).Where(note => note.IsNoted).Select(note => note.Candidate).Distinct();
+
+                    // if found correct number of cells for the subset size AND found all of the subset candidates within any combination of notes within those cells 
+                    if (cellsWithCorrectNakeds.Count == subsetWidth && uniqueCandidatesFound.Count() == subsetWidth)
                     {
-                        currentQuads[2] = n3;
+                        List<Note> candidateNotes = new List<Note>();
 
-                        for (int n4 = 1; n4 <= 9; n4++)
+                        // put cells involved into the single results object
+                        foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
                         {
+                            result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectNakeds, CellHighlightType.Special));
 
-                            // if about to search for the same notes more than once in a cell, skip it (there should never be two or more of the same notes in a cell)
-                            if (n1 == n2 && n1 == n3 && n2 == n3 && n3 == n4)
-                                continue;
-
-                            currentQuads[3] = n4;
-
-                            // if the triplets about to check have more than one of a candidate, skip it (looking for unique like 1,2,3 or 4,7,9 but not 1,1,3 or 4,4,6)
-                            if ((currentQuads.Where(num => num == n1).Count() > 1) || (currentQuads.Where(num => num == n2).Count() > 1) || (currentQuads.Where(num => num == n3).Count() > 1) || (currentQuads.Where(num => num == n4).Count() > 1))
-                                continue;
-
-                            // sort triplets for easier checking if seen this combo in prior pass
-                            string sortedQuads = string.Join("", currentQuads.OrderBy(i => i));
-
-                            // if not already seen these triplets
-                            if (reverseCheckList.Where(str => str == sortedQuads).Count() == 0)
-                            {
-                                // remember having seen them for next time
-                                reverseCheckList.Add(sortedQuads);
-                            }
-                            else
-                                continue;
-
-                            // check each row
-                            //  for (int r = 1; r <= 9; r++)
-                            {
-                                //FindResult result = new FindResult();
-                                //result.HouseType = HouseType.Row;
-
-                                //// how to find three cells notes like ((1,2)(1,3)(1,2,3) or (1,3)(2,2)(1,2) or (1,2,3)(1,2,3)(1,2,3) or (1)(2)(1,2,3)) etc.  any combo of three cells using any combination of the three notes being searched
-
-                                //// look for cells with correct triplet usage
-                                //var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && CellContainsSuitableNotes(cell, currentQuads, searchForNaked: true)).ToList<Cell>();
-
-                                //if (cellsWithCorrectNakeds.Count == 3)
-                                //{
-                                //    // put cells involved into the single results object
-                                //    foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
-                                //        result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectNakeds, CellHighlightType.Special));
-
-                                //    // remember which notes were the candidates in the cell
-                                //    //  result.CandidateNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
-
-                                //    //    // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
-                                //    //    var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && !(cell.NumberOfNotes() == 2 && cell.HasNoteOf(n1) && cell.HasNoteOf(n2))).ToList<Cell>();
-
-                                //    //    // cell with eliminations (is the same cell as the hidden single already found above)
-                                //    //    result.EliminationCells.AddRange(cellsWithEliminations);
-
-                                //    //    // remember which remaining notes were needing elimination
-                                //    //    result.EliminationNotes.AddRange(cellsWithCorrectNakeds[0].GetNotesWithAnyCandidate());
-
-                                //    results.Add(result);
-                                //}
-                            }
+                            // just collect all the notes since all are a part of the subset (deduped later)
+                            candidateNotes.AddRange(cellWithCorrectNakeds.GetNotesWithAnyCandidate());
                         }
+
+                        // remember which notes were the candidates in the cell (dedupe what got built out when learning which cells had the subsets)
+                        result.CandidateNotes.AddRange(candidateNotes.Distinct());
+
+                        // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
+                        var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && cellsWithCorrectNakeds.IndexOf(cell) < 0).ToList<Cell>();
+
+                        // cell with eliminations (is the same cell as the hidden single already found above)
+                        result.EliminationCells.AddRange(cellsWithEliminations);
+
+                        // remember which remaining notes were needing elimination
+                        result.EliminationNotes.AddRange(candidateNotes.Distinct());
+
+                        results.Add(result);
+                    }
+                }
+
+                // check each column
+                for (int c = 1; c <= 9; c++)
+                {
+                    FindResult result = new FindResult();
+                    result.HouseType = HouseType.Column;
+
+                    // look for cells with correct subset usage
+                    var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Column == c && CellContainsSuitableNotes(cell, currentSubset, subsetWidth, searchForNaked: true)).ToList<Cell>();
+
+                    // get a distinct list of candidates from every note from every cell that has our subset
+                    var uniqueCandidatesFound = cellsWithCorrectNakeds.SelectMany(cell => cell.Notes).Where(note => note.IsNoted).Select(note => note.Candidate).Distinct();
+
+                    // if found correct number of cells for the subset size AND found all of the subset candidates within any combination of notes within those cells 
+                    if (cellsWithCorrectNakeds.Count == subsetWidth && uniqueCandidatesFound.Count() == subsetWidth)
+                    {
+                        List<Note> candidateNotes = new List<Note>();
+
+                        // put cells involved into the single results object
+                        foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
+                        {
+                            result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectNakeds, CellHighlightType.Special));
+
+                            // just collect all the notes since all are a part of the subset (deduped later)
+                            candidateNotes.AddRange(cellWithCorrectNakeds.GetNotesWithAnyCandidate());
+                        }
+
+                        // remember which notes were the candidates in the cell (dedupe what got built out when learning which cells had the subsets)
+                        result.CandidateNotes.AddRange(candidateNotes.Distinct());
+
+                        // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
+                        var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Column == c && cellsWithCorrectNakeds.IndexOf(cell) < 0).ToList<Cell>();
+
+                        // cell with eliminations (is the same cell as the hidden single already found above)
+                        result.EliminationCells.AddRange(cellsWithEliminations);
+
+                        // remember which remaining notes were needing elimination
+                        result.EliminationNotes.AddRange(candidateNotes.Distinct());
+
+                        results.Add(result);
+                    }
+                }
+
+                // check each block
+                for (int b = 1; b <= 9; b++)
+                {
+                    FindResult result = new FindResult();
+                    result.HouseType = HouseType.Block;
+
+                    // look for cells with correct subset usage
+                    var cellsWithCorrectNakeds = allCells.Where(cell => !cell.HasAnswer && cell.Block == b && CellContainsSuitableNotes(cell, currentSubset, subsetWidth, searchForNaked: true)).ToList<Cell>();
+
+                    // get a distinct list of candidates from every note from every cell that has our subset
+                    var uniqueCandidatesFound = cellsWithCorrectNakeds.SelectMany(cell => cell.Notes).Where(note => note.IsNoted).Select(note => note.Candidate).Distinct();
+
+                    // if found correct number of cells for the subset size AND found all of the subset candidates within any combination of notes within those cells 
+                    if (cellsWithCorrectNakeds.Count == subsetWidth && uniqueCandidatesFound.Count() == subsetWidth)
+                    {
+                        List<Note> candidateNotes = new List<Note>();
+
+                        // put cells involved into the single results object
+                        foreach (Cell cellWithCorrectNakeds in cellsWithCorrectNakeds)
+                        {
+                            result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectNakeds, CellHighlightType.Special));
+
+                            // just collect all the notes since all are a part of the subset (deduped later)
+                            candidateNotes.AddRange(cellWithCorrectNakeds.GetNotesWithAnyCandidate());
+                        }
+
+                        // remember which notes were the candidates in the cell (dedupe what got built out when learning which cells had the subsets)
+                        result.CandidateNotes.AddRange(candidateNotes.Distinct());
+
+                        // look for cells that DON'T have only those (sort of opposite of the cellsWithCorrectNakeds)
+                        var cellsWithEliminations = allCells.Where(cell => !cell.HasAnswer && cell.Block == b && cellsWithCorrectNakeds.IndexOf(cell) < 0).ToList<Cell>();
+
+                        // cell with eliminations (is the same cell as the hidden single already found above)
+                        result.EliminationCells.AddRange(cellsWithEliminations);
+
+                        // remember which remaining notes were needing elimination
+                        result.EliminationNotes.AddRange(candidateNotes.Distinct());
+
+                        results.Add(result);
                     }
                 }
             }
 
-            reverseCheckList.Add("");
             return DedupeResults(results);
         }
 

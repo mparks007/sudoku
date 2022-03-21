@@ -110,7 +110,7 @@ namespace Sudoku
                 if (searchForNaked)
                     return (notesMatchingSetCandidates.Count() == cell.NumberOfNotes());
                 else // mismatch, so the set notes found must be buried in extra notes (a hidden match) OR there was only note so it must have the needed subset candidate
-                    return (notesMatchingSetCandidates.Count() < cell.NumberOfNotes() || cell.NumberOfNotes() == 1);
+                    return (notesMatchingSetCandidates.Count() < cell.NumberOfNotes() || cell.NumberOfNotes() > 0);
             }
             return false;
         }
@@ -282,7 +282,10 @@ namespace Sudoku
             {
                 currentSubset = subset.Select(s => Int32.Parse(s.ToString())).ToArray();
 
-                hiddens are still broken
+                //hiddens are still broken
+                //hiddens are still broken
+                //hiddens are still broken
+                //hiddens are still broken
 
                 // check each row
                 for (int r = 1; r <= 9; r++)
@@ -297,9 +300,16 @@ namespace Sudoku
                     var uniqueCandidatesFound = cellsWithCorrectSubset.SelectMany(cell => cell.Notes).Where(note => note.IsNoted).Select(note => note.Candidate).Distinct();
 
                     List<Cell> invalidatingCells = new List<Cell>();
-                    // if looking for hiddens, find all the cells that are not in the found subset sets but do have any of the notes in the subset (which would invalidate the hidden aspect)
+                    // if looking for hiddens, 
                     if (!doSearchForNaked)
+                    {
+                        // if cells found didn't cover all the notes in the subset being searched for
+                        if (cellsWithCorrectSubset.SelectMany(cell => cell.Notes.Where(note => currentSubset.Contains(note.Candidate))).Count() != subsetWidth)
+                            continue;
+
+                        // find all the cells that are not in the found subset sets but do have any of the notes of the subset (which would invalidate the hidden aspect)
                         invalidatingCells = allCells.Where(cell => !cell.HasAnswer && cell.Row == r && cellsWithCorrectSubset.IndexOf(cell) < 0 && cell.HasAnyNotesOf(currentSubset)).ToList<Cell>();
+                    }
 
                     // if found correct number of cells for the subset size AND no other cells ruin the find AND either hidden search or found all of the subset candidates within any combination of notes within those cells 
                     if (cellsWithCorrectSubset.Count == subsetWidth && invalidatingCells.Count() == 0 && (!doSearchForNaked || uniqueCandidatesFound.Count() == subsetWidth))

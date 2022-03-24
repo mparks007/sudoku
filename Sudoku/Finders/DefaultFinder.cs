@@ -27,6 +27,7 @@ namespace Sudoku
             _methods[Pattern.HiddenQuad] = FindHiddenQuads;
             _methods[Pattern.HiddenQuint] = FindHiddenQuints;
             _methods[Pattern.XWing] = FindXWings;
+            _methods[Pattern.Swordfish] = FindSwordfishes;
             _methods[Pattern.Skyscraper] = FindSkyscrapers;
         }
 
@@ -188,7 +189,7 @@ namespace Sudoku
         /// <returns>List of Naked Single locations found</returns>
         private List<FindResult> FindNakedSingles(Board board)
         {
-            return FindNakedSubsets(board, 1);
+            return FindNakedSubsets(board, subsetWidth:1);
         }
 
         /// <summary>
@@ -198,7 +199,7 @@ namespace Sudoku
         /// <returns>List of Naked Pair locations found</returns>
         private List<FindResult> FindNakedPairs(Board board)
         {
-            return FindNakedSubsets(board, 2);
+            return FindNakedSubsets(board, subsetWidth:2);
         }
 
         /// <summary>
@@ -208,7 +209,7 @@ namespace Sudoku
         /// <returns>List of Naked Triple locations found</returns>
         private List<FindResult> FindNakedTriples(Board board)
         {
-            return FindNakedSubsets(board, 3);
+            return FindNakedSubsets(board, subsetWidth:3);
         }
 
         /// <summary>
@@ -218,7 +219,7 @@ namespace Sudoku
         /// <returns>List of Naked Quad locations found</returns>
         private List<FindResult> FindNakedQuads(Board board)
         {
-            return FindNakedSubsets(board, 4);
+            return FindNakedSubsets(board, subsetWidth:4);
         }
 
         /// <summary>
@@ -228,7 +229,7 @@ namespace Sudoku
         /// <returns>List of Naked Quint locations found</returns>
         private List<FindResult> FindNakedQuints(Board board)
         {
-            return FindNakedSubsets(board, 5);
+            return FindNakedSubsets(board, subsetWidth:5);
         }
 
         /// <summary>
@@ -272,7 +273,7 @@ namespace Sudoku
         private void SearchHousesForNakeds(IEnumerable<Cell> allCells, int[] currentSubset, HouseType houseType, List<FindResult> results)
         {
             // check each row, column, or block (depends on houseType)
-            for (int houseElementNum = 1; houseElementNum <= 9; houseElementNum++)
+            for (int houseIndex = 1; houseIndex <= 9; houseIndex++)
             {
                 FindResult result = new FindResult
                 {
@@ -280,7 +281,7 @@ namespace Sudoku
                 };
 
                 // look for cells with correct subset usage
-                var cellsWithCorrectSubset = allCells.Where(cell => !cell.HasAnswer && GetHouseElementNumForCell(cell, houseType) == houseElementNum && CellContainsSuitableNotes(cell, currentSubset, currentSubset.Length, doSearchForNaked: true)).ToList<Cell>();
+                var cellsWithCorrectSubset = allCells.Where(cell => !cell.HasAnswer && GetHouseElementNumForCell(cell, houseType) == houseIndex && CellContainsSuitableNotes(cell, currentSubset, currentSubset.Length, doSearchForNaked: true)).ToList<Cell>();
 
                 // get a distinct list of candidates from every cell that has our subset 
                 var uniqueCandidatesFound = cellsWithCorrectSubset.SelectMany(cell => cell.Notes).Where(note => note.IsNoted).Select(note => note.Candidate).Distinct();
@@ -303,7 +304,7 @@ namespace Sudoku
                     result.CandidateNotes.AddRange(candidateNotes.Distinct());
 
                     // gather cells that are not a part of the found cells (these will have notes that need eliminations within them)
-                    result.EliminationCells.AddRange(allCells.Where(cell => !cell.HasAnswer && GetHouseElementNumForCell(cell, houseType) == houseElementNum && cellsWithCorrectSubset.IndexOf(cell) < 0));
+                    result.EliminationCells.AddRange(allCells.Where(cell => !cell.HasAnswer && GetHouseElementNumForCell(cell, houseType) == houseIndex && cellsWithCorrectSubset.IndexOf(cell) < 0));
 
                     // remember which remaining notes were needing elimination (would be those notes of the found subset itself since the nakeds had all of them in some way)
                     result.EliminationNotes.AddRange(result.CandidateNotes);
@@ -321,7 +322,7 @@ namespace Sudoku
         /// <returns>List of Hidden Singles locations found</returns>
         private List<FindResult> FindHiddenSingles(Board board)
         {
-            return FindHiddenSubsets(board, 1);
+            return FindHiddenSubsets(board, subsetWidth:1);
         }
 
         /// <summary>
@@ -331,7 +332,7 @@ namespace Sudoku
         /// <returns>List of Hidden Pairs locations found</returns>
         private List<FindResult> FindHiddenPairs(Board board)
         {
-            return FindHiddenSubsets(board, 2);
+            return FindHiddenSubsets(board, subsetWidth:2);
         }
 
         /// <summary>
@@ -341,7 +342,7 @@ namespace Sudoku
         /// <returns>List of Hidden Triples locations found</returns>
         private List<FindResult> FindHiddenTriples(Board board)
         {
-            return FindHiddenSubsets(board, 3);
+            return FindHiddenSubsets(board, subsetWidth:3);
         }
 
         /// <summary>
@@ -351,7 +352,7 @@ namespace Sudoku
         /// <returns>List of Hidden Quads locations found</returns>
         private List<FindResult> FindHiddenQuads(Board board)
         {
-            return FindHiddenSubsets(board, 4);
+            return FindHiddenSubsets(board, subsetWidth:4);
         }
 
         /// <summary>
@@ -361,7 +362,7 @@ namespace Sudoku
         /// <returns>List of Hidden Quints locations found</returns>
         private List<FindResult> FindHiddenQuints(Board board)
         {
-            return FindHiddenSubsets(board, 5);
+            return FindHiddenSubsets(board, subsetWidth:5);
         }
 
         /// <summary>
@@ -405,7 +406,7 @@ namespace Sudoku
         private void SearchHousesForHiddens(IEnumerable<Cell> allCells, int[] currentSubset, HouseType houseType, List<FindResult> results)
         {
             // check each row, column, or block (depends on houseType)
-            for (int houseElementNum = 1; houseElementNum <= 9; houseElementNum++)
+            for (int houseIndex = 1; houseIndex <= 9; houseIndex++)
             {
                 FindResult result = new FindResult
                 {
@@ -413,7 +414,7 @@ namespace Sudoku
                 };
 
                 // look for cells with correct subset usage
-                var cellsWithCorrectSubset = allCells.Where(cell => !cell.HasAnswer && GetHouseElementNumForCell(cell, houseType) == houseElementNum && CellContainsSuitableNotes(cell, currentSubset, currentSubset.Length, doSearchForNaked:false)).ToList<Cell>();
+                var cellsWithCorrectSubset = allCells.Where(cell => !cell.HasAnswer && GetHouseElementNumForCell(cell, houseType) == houseIndex && CellContainsSuitableNotes(cell, currentSubset, currentSubset.Length, doSearchForNaked:false)).ToList<Cell>();
 
                 // get a distinct list of candidates from every note from every cell that has our subset THEN skip this pass if we don't have enough notes to be actually have a hiddens situation
                 var uniqueCandidatesFound = cellsWithCorrectSubset.SelectMany(cell => cell.Notes).Where(note => note.IsNoted).Select(note => note.Candidate).Distinct();
@@ -426,7 +427,7 @@ namespace Sudoku
                     continue;
 
                 // find all the cells that are NOT in the found subset sets but do have any of the notes of the subset (which would invalidate the max subset cell count aspect)
-                List<Cell> invalidatingCells = new List<Cell>(allCells.Where(cell => !cell.HasAnswer && GetHouseElementNumForCell(cell, houseType) == houseElementNum && cellsWithCorrectSubset.IndexOf(cell) < 0 && cell.HasAnyNotesOf(currentSubset)).ToList<Cell>());
+                List<Cell> invalidatingCells = new List<Cell>(allCells.Where(cell => !cell.HasAnswer && GetHouseElementNumForCell(cell, houseType) == houseIndex && cellsWithCorrectSubset.IndexOf(cell) < 0 && cell.HasAnyNotesOf(currentSubset)).ToList<Cell>());
 
                 // if found correct number of cells for the subset size AND no other cells ruin the find
                 if (cellsWithCorrectSubset.Count == currentSubset.Length && invalidatingCells.Count() == 0)
@@ -457,40 +458,92 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Find XWing patterns
+        /// Find X-Wing patterns
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns>Results containing the X-Wing discoveries</returns>
+        private List<FindResult> FindXWings(Board board)
+        {
+            // search with rows as base then columns as base
+            List<FindResult> results = new List<FindResult>(FindFishes(board, HouseType.Row, baseCount:2));
+            results.AddRange(FindFishes(board, HouseType.Column, baseCount:2));
+            return results;
+        }
+
+        /// <summary>
+        /// Find Swordfish patterns
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns>Results containing the Swordfish discoveries</returns>
+        private List<FindResult> FindSwordfishes(Board board)
+        {
+            // search with rows as base then columns as base
+            List<FindResult> results = new List<FindResult>(FindFishes(board, HouseType.Row, baseCount:3));
+            results.AddRange(FindFishes(board, HouseType.Column, baseCount:3));
+            return results;
+        }
+
+        /// <summary>
+        /// Find Fish pattern based on base size (which is also cover size)
         /// </summary>
         /// <param name="board">Board to search</param>
+        /// <param name="baseCount">Type of fish (2:xwing, 3:swordfish, 4:jellyfish, etc.</param>
         /// <returns>List of patterns found</returns>
-        private List<FindResult> FindXWings(Board board)
+        private List<FindResult> FindFishes(Board board, HouseType houseType, int baseCount)
         {
             List<FindResult> results = new List<FindResult>();
             IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
 
-            // row-based xwings
+            // 1 plan to search for y number of base rows (like 2 for xwing, 3 for swordfish, 4 for jellyfish, etc.)
+            // 2 pick a candidate number (start with 1)
+            // 3 pick initial row (start from 1)
+            // 4 on that row, find exactly y number of columns (if xwing) or from 2 to y number (for above xwing) which contain the target candidate (this is the first base row)
+            // 5 if number of base rows found is less than y (need to find another base row)
+            //   5a scoot down a row (to start search for another base row)
+            //   5b on that row, find exactly y number of columns (if xwing) or from 2 to y number (for above xwing) which contain the target candidate (this is another base row)
+            //   5c loop back to step 5
+            // 6 verify that the number columns found for each candidate found in the bases are the same columns in every base involved (these are the cover columns)
+            // 7 verify that each cover column has the target candidate in y number of base rows (if xwing) or from 2 two y number (for above xwing)
+            // 8 build/return result
+            //   8a candidate cell is each base/cover intersection
+            //   8b candidate note is the number in the search (from step 2)
+            //   8c elimination cells are all cells in the cover column that are not in the base rows
+            //   8d elimnation note is the number in the search (from step 2)
+            // loop back to 4 to re-search but starting at one row below the prior search each time, do this repeat until on out or rows to have bases below it (i.e. row 9 - y - 1) (i.e. xwing could be in row 8 and 9)
+            // loop back to 2 to pick the next candidate (candidate++) and do this all over again
 
-            // pick one number at a time
-            for (int n = 1; n <=9; n++)
+            // pick one target candidate at a time
+            for (int n = 1; n <= 9; n++)
             {
-                // scan rows from top to bottom
-                for (int r1 = 1; r1 <= 9; r1++)
+                // check each row or column (depends on houseType)
+                for (int houseIndex = 1; houseIndex <= 9; houseIndex++)
                 {
-                    FindResult result = new FindResult();
-                    result.HouseType = HouseType.Row;
-
-                    // look for notes of n
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Row == r1) && cell.HasNoteOf(n));
-                    // if found two
-                    if (firstPair.Count() == 2)
+                    FindResult result = new FindResult()
                     {
+                        HouseType = houseType
+                    };
+
+                    // look for any cells with the target candidate
+                    var baseHouse = allCells.Where(cell => GetHouseElementNumForCell(cell, houseType) == houseIndex && cell.HasNoteOf(n));
+
+                    // if found right candidate cell counts based on fish type (aka baseCount) (must be two for xwing, but can be from two to baseCount for larger fish)
+                    if ((baseCount == 2 && baseHouse.Count() == 2) || (baseCount > 2 && baseHouse.Count() >= 2 && baseHouse.Count() <= baseCount))
+                    {
+                        //start here to figure out the rest
+                        //start here to figure out the rest
+                        //start here to figure out the rest
+                        //start here to figure out the rest
+                        //start here to figure out the rest
+
                         // now scoot down a row and try to find another pair from there to bottom
-                        for (int r2 = r1 + 1; r2 <= 9; r2++)
+                        for (int r2 = houseIndex + 1; r2 <= 9; r2++)
                         {
                             // again, look for notes of n
                             IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && cell.HasNoteOf(n));
                             // again, if found two
                             if (secondPair.Count() == 2)
                             {
-                                var firstPairAsList = firstPair.OfType<Cell>().ToList();
+                                var firstPairAsList = baseHouse.OfType<Cell>().ToList();
                                 var secondPairAsList = secondPair.OfType<Cell>().ToList();
 
                                 // if the sets of pairs found are of the same column, but not in the same block, we have an xwing
@@ -506,73 +559,15 @@ namespace Sudoku
                                     result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
 
                                     // remember which note was the candidate in the cell
-                                    result.CandidateNotes.Add(firstPair.First().GetNoteForCandidate(n));
+                                    result.CandidateNotes.Add(baseHouse.First().GetNoteForCandidate(n));
 
                                     // find all the cells with notes that should be eliminated (same columns but not in same rows as the candidate cells above)
-                                    var eliminationCells = allCells.Where(cell => ((cell.Column == firstPairAsList[0].Column) || (cell.Column == firstPairAsList[1].Column)) && (cell.Row != r1) && (cell.Row != r2) && cell.HasNoteOf(n));
+                                    var eliminationCells = allCells.Where(cell => ((cell.Column == firstPairAsList[0].Column) || (cell.Column == firstPairAsList[1].Column)) && (cell.Row != houseIndex) && (cell.Row != r2) && cell.HasNoteOf(n));
                                     result.EliminationCells.AddRange(eliminationCells);
 
                                     // remember which note was needing elimination
-                                    result.EliminationNotes.Add(firstPair.First().GetNoteForCandidate(n));
+                                    result.EliminationNotes.Add(baseHouse.First().GetNoteForCandidate(n));
 
-                                    results.Add(result);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // column-based xwings
-
-            // pick one number at a time
-            for (int n = 1; n <= 9; n++)
-            {
-                // scan columns left to right
-                for (int c1 = 1; c1 <= 9; c1++)
-                {
-                    FindResult result = new FindResult();
-                    result.HouseType = HouseType.Column;
-
-                    // look for notes of n
-                    IEnumerable<Cell> firstPair = allCells.Where(cell => (cell.Column == c1) && cell.HasNoteOf(n));
-                    // if found two
-                    if (firstPair.Count() == 2)
-                    {
-                        // now scoot over a column and try to find another pair from there to the right
-                        for (int c2 = c1 + 1; c2 <= 9; c2++)
-                        {
-                            // again, look for notes of n
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Column == c2) && cell.HasNoteOf(n));
-                            // again, if found two
-                            if (secondPair.Count() == 2)
-                            {
-                                var firstPairAsList = firstPair.OfType<Cell>().ToList();
-                                var secondPairAsList = secondPair.OfType<Cell>().ToList();
-
-                                // if the sets of pairs found are of the same row, but not in the same block, we have an xwing
-                                if (((firstPairAsList[0].Row == secondPairAsList[0].Row) &&
-                                    (firstPairAsList[1].Row == secondPairAsList[1].Row)) &&
-                                    ((firstPairAsList[0].Block != firstPairAsList[1].Block) ||
-                                     (firstPairAsList[0].Block != secondPairAsList[0].Block)))
-                                {
-                                    // put all four cells involved in the single results object
-                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
-                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
-                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
-                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
-
-                                    // remember which note was the candidate in the cell
-                                    result.CandidateNotes.Add(firstPair.First().GetNoteForCandidate(n));
-
-                                    // find all the cells with notes that should be eliminated (same rows but not in same columns as the candidate cells above)
-                                    var eliminationCells = allCells.Where(cell => ((cell.Row == firstPairAsList[0].Row) || (cell.Row == firstPairAsList[1].Row)) && (cell.Column != c1) && (cell.Column != c2) && cell.HasNoteOf(n));
-                                    result.EliminationCells.AddRange(eliminationCells);
-
-                                    // remember which note was needing elimination
-                                    result.EliminationNotes.Add(firstPair.First().GetNoteForCandidate(n));
-                                    
                                     results.Add(result);
                                     break;
                                 }

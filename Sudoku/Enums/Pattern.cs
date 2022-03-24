@@ -41,8 +41,10 @@ namespace Sudoku
         ClaimingPair,
         [Description("Claiming Triple")]
         ClaimingTriple,
-        [Description("X-Wing")]
+        [Description("X-Wing (fish)")]
         XWing,
+        [Description("Swordfish")]
+        Swordfish,
         [Description("Finned X-Wing")]
         FinnedXWing,
         [Description("Sashimi X-Wing")]
@@ -64,8 +66,6 @@ namespace Sudoku
         [Description("Unique Rectangle Type 1")]
         UniqueRectangleType1,
         [Description("BugPlusOne")]
-        BugPlusOne,
-        [Description("Swordfish")]
-        Swordfish
+        BugPlusOne
     }
 }

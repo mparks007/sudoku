@@ -147,10 +147,10 @@ namespace Sudoku
             cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.HiddenQuad.Description(), Pattern.HiddenQuad));
             cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.HiddenQuint.Description(), Pattern.HiddenQuint));
             cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.XWing.Description(), Pattern.XWing));
+            cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.Swordfish.Description(), Pattern.Swordfish));
             //cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.FinnedXWing.Description(), Pattern.FinnedXWing));
             cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.Skyscraper.Description(), Pattern.Skyscraper));
             //cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.TwoStringKite.Description(), Pattern.TwoStringKite));
-            //cbxPatterns.Items.Add(new KeyValuePair<string, Pattern>(Pattern.XYWing.Description(), Pattern.XYWing));
 
             cbxPatterns.SelectedIndex = 0;
 

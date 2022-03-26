@@ -47,8 +47,12 @@ namespace Sudoku
         Swordfish,
         [Description("Finned X-Wing")]
         FinnedXWing,
+        [Description("Finned Swordfish")]
+        FinnedSwordfish,
         [Description("Sashimi X-Wing")]
         SashimiXWing,
+        [Description("Sashimi Swordfish")]
+        SashimiSwordfish,
         [Description("Skyscraper")]
         Skyscraper,
         [Description("Two-String Kite")]

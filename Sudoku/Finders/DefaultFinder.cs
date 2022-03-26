@@ -104,7 +104,7 @@ namespace Sudoku
             // gather the notes that are matching the set needed
             var notesMatchingSetCandidates = cell.Notes.Where(note => setCandidates.Contains(note.Candidate));
 
-            // singles have to have one note, but two or more set notes required for triples and above
+            // singles have to have one note, but two is minimum number of notes required for pairs and above (the max is not considered here)
             if ((subsetWidth == 1 && notesMatchingSetCandidates.Count() == 1) || (subsetWidth > 1 && notesMatchingSetCandidates.Count() >= 2))
             {
                 // if naked search, the set notes found must be all the available notes
@@ -458,6 +458,25 @@ namespace Sudoku
         }
 
         /// <summary>
+        /// Return Column for a cell if housetype is Row, and vice versa
+        /// </summary>
+        /// <param name="cell">Cell in use</param>
+        /// <param name="houseType">Housetype in a search to determine the OTHER housetype to return data for</param>
+        /// <returns>Number of a cell's Row or Column, using the oposite of the housetype (row/column)</returns>
+        private int GetCoverPointForHouseType(Cell cell, HouseType houseType)
+        {
+            switch (houseType)
+            {
+                case HouseType.Row:
+                    return cell.Column;
+                case HouseType.Column:
+                    return cell.Row;
+                default:
+                    throw new ArgumentException(String.Format("Invalid HouseType: {0}", houseType));
+            }
+        }
+
+        /// <summary>
         /// Find X-Wing patterns
         /// </summary>
         /// <param name="board"></param>
@@ -465,8 +484,8 @@ namespace Sudoku
         private List<FindResult> FindXWings(Board board)
         {
             // search with rows as base then columns as base
-            List<FindResult> results = new List<FindResult>(FindFishes(board, HouseType.Row, baseCount:2));
-            results.AddRange(FindFishes(board, HouseType.Column, baseCount:2));
+            List<FindResult> results = new List<FindResult>(FindFishes(board, HouseType.Row, baseCountTarget:2));
+            results.AddRange(FindFishes(board, HouseType.Column, baseCountTarget:2));
             return results;
         }
 
@@ -478,18 +497,54 @@ namespace Sudoku
         private List<FindResult> FindSwordfishes(Board board)
         {
             // search with rows as base then columns as base
-            List<FindResult> results = new List<FindResult>(FindFishes(board, HouseType.Row, baseCount:3));
-            results.AddRange(FindFishes(board, HouseType.Column, baseCount:3));
+            List<FindResult> results = new List<FindResult>(FindFishes(board, HouseType.Row, baseCountTarget:3));
+            results.AddRange(FindFishes(board, HouseType.Column, baseCountTarget:3));
             return results;
+        }
+
+        private bool FindAnotherBase(IEnumerable<Cell> allCells, HouseType houseType, int candidate, ref int houseIndex1, int baseCountTarget, List<List<Cell>> basesWithMatchedCells, List<List<int>> coverLocations)
+        {
+            // if there is no more room to fit a fish after this point (like if searching for xwings (baseCountTarget of 2) in rows and you are starting search on row nine, makes no sense)
+            if (houseIndex1 > 9 - baseCountTarget + 1)
+                return false;
+
+            // check each row or column (which axis depends on houseType)
+            for (int i = houseIndex1; i <= 9; i++)
+            {
+                // look for any cells with the target candidate (this could be a base)
+                List<Cell> baseCells = new List<Cell>(allCells.Where(cell => GetHouseElementNumForCell(cell, houseType) == i && cell.HasNoteOf(candidate)));
+
+                // if found right candidate cell counts based on fish type (aka baseCountTarget) (must be two for xwing, but can be from two to baseCountTarget for larger fish) 
+                if (((baseCountTarget == 2 && baseCells.Count() == 2) || (baseCountTarget > 2 && baseCells.Count() >= 2 && baseCells.Count() <= baseCountTarget)))
+                {
+                    // remember all the cells involved that were in that base
+                    basesWithMatchedCells.Add(baseCells.ToList<Cell>());
+
+                    // keep a list of the list of cover points (row or column number) that were found in the base cells
+                    coverLocations.Add(new List<int>(baseCells.Select(cell => GetCoverPointForHouseType(cell, houseType))));
+
+                    // if find a base beyond the first one
+                    if (coverLocations.Count() > 1)
+                    {
+                        // see this subsequent base connects to the prior base in at least one cover
+
+                    }
+
+                    houseIndex1++;
+                    FindAnotherBase(allCells, houseType, candidate, ref houseIndex1, baseCountTarget, basesWithMatchedCells, coverLocations);
+                }
+            }
+            // any point in returning true/false at all yet?  will see
+            return true;
         }
 
         /// <summary>
         /// Find Fish pattern based on base size (which is also cover size)
         /// </summary>
         /// <param name="board">Board to search</param>
-        /// <param name="baseCount">Type of fish (2:xwing, 3:swordfish, 4:jellyfish, etc.</param>
+        /// <param name="baseCountTarget">Type of fish (2:xwing, 3:swordfish, 4:jellyfish, etc.</param>
         /// <returns>List of patterns found</returns>
-        private List<FindResult> FindFishes(Board board, HouseType houseType, int baseCount)
+        private List<FindResult> FindFishes(Board board, HouseType houseType, int baseCountTarget)
         {
             List<FindResult> results = new List<FindResult>();
             IEnumerable<Cell> allCells = board.Cells.SelectMany(list => list);
@@ -509,71 +564,100 @@ namespace Sudoku
             //   8b candidate note is the number in the search (from step 2)
             //   8c elimination cells are all cells in the cover column that are not in the base rows
             //   8d elimnation note is the number in the search (from step 2)
-            // loop back to 4 to re-search but starting at one row below the prior search each time, do this repeat until on out or rows to have bases below it (i.e. row 9 - y - 1) (i.e. xwing could be in row 8 and 9)
+            // loop back to 4 to re-search but starting at one row below the prior search each time, do this repeat until on out or rows to have bases below it (i.e. row 9 - y + 1) (i.e. xwing could be in row 8 and 9)
             // loop back to 2 to pick the next candidate (candidate++) and do this all over again
 
             // pick one target candidate at a time
             for (int n = 1; n <= 9; n++)
             {
-                // check each row or column (depends on houseType)
-                for (int houseIndex = 1; houseIndex <= 9; houseIndex++)
+                List<List<Cell>> basesWithMatchedCells = new List<List<Cell>>();
+                List<List<int>> coverLocations = new List<List<int>>();
+                int houseIndex1 = 1;
+
+                if (!FindAnotherBase(allCells, houseType, n, ref houseIndex1, baseCountTarget, basesWithMatchedCells, coverLocations))
+                    continue;
+
+                // check each row or column (which axis depends on houseType)
+             //   for (int houseIndex1 = 1; houseIndex1 <= 9; houseIndex1++)
                 {
+                    //// if there is no more room to fit a fish after this point (like if searching for xwings (baseCountTarget of 2) in rows and you are starting search on row nine, makes no sense)
+                    //if (houseIndex1 > 9 - baseCountTarget + 1)
+                    //    break;
+
                     FindResult result = new FindResult()
                     {
                         HouseType = houseType
                     };
 
-                    // look for any cells with the target candidate
-                    var baseHouse = allCells.Where(cell => GetHouseElementNumForCell(cell, houseType) == houseIndex && cell.HasNoteOf(n));
+                    //// look for any cells with the target candidate (this could be a base)
+                    //List<Cell> baseCells = new List<Cell>(allCells.Where(cell => GetHouseElementNumForCell(cell, houseType) == houseIndex1 && cell.HasNoteOf(n)));
 
-                    // if found right candidate cell counts based on fish type (aka baseCount) (must be two for xwing, but can be from two to baseCount for larger fish)
-                    if ((baseCount == 2 && baseHouse.Count() == 2) || (baseCount > 2 && baseHouse.Count() >= 2 && baseHouse.Count() <= baseCount))
-                    {
-                        //start here to figure out the rest
-                        //start here to figure out the rest
-                        //start here to figure out the rest
-                        //start here to figure out the rest
-                        //start here to figure out the rest
+                    //// if found right candidate cell counts based on fish type (aka baseCountTarget) (must be two for xwing, but can be from two to baseCountTarget for larger fish) 
+                    //if (((baseCountTarget == 2 && baseCells.Count() == 2) || (baseCountTarget > 2 && baseCells.Count() >= 2 && baseCells.Count() <= baseCountTarget)))
+                    //{
+                    //    // remember all the cells involved that were in that base
+                    //    basesWithMatchedCells.Add(baseCells.ToList<Cell>());
 
-                        // now scoot down a row and try to find another pair from there to bottom
-                        for (int r2 = houseIndex + 1; r2 <= 9; r2++)
-                        {
-                            // again, look for notes of n
-                            IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == r2) && cell.HasNoteOf(n));
-                            // again, if found two
-                            if (secondPair.Count() == 2)
-                            {
-                                var firstPairAsList = baseHouse.OfType<Cell>().ToList();
-                                var secondPairAsList = secondPair.OfType<Cell>().ToList();
+                    //    // keep a list of the list of cover points (row or column number) that were found in the base cells
+                    //    coverLocations.Add(new List<int>(baseCells.Select(cell => GetCoverPointForHouseType(cell, houseType))));
 
-                                // if the sets of pairs found are of the same column, but not in the same block, we have an xwing
-                                if (((firstPairAsList[0].Column == secondPairAsList[0].Column) &&
-                                     (firstPairAsList[1].Column == secondPairAsList[1].Column)) &&
-                                    ((firstPairAsList[0].Block != firstPairAsList[1].Block) ||
-                                     (firstPairAsList[0].Block != secondPairAsList[0].Block)))
-                                {
-                                    // put all four cells involved in the single results object
-                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
-                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
-                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
-                                    result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
+                    //    if (coverLocations.Count() > 1)
+                    //    {
 
-                                    // remember which note was the candidate in the cell
-                                    result.CandidateNotes.Add(baseHouse.First().GetNoteForCandidate(n));
+                    //    }
+                        
+                    //    // check if cover houses cover correctly enough to be a fish of size baseCountTarget
 
-                                    // find all the cells with notes that should be eliminated (same columns but not in same rows as the candidate cells above)
-                                    var eliminationCells = allCells.Where(cell => ((cell.Column == firstPairAsList[0].Column) || (cell.Column == firstPairAsList[1].Column)) && (cell.Row != houseIndex) && (cell.Row != r2) && cell.HasNoteOf(n));
-                                    result.EliminationCells.AddRange(eliminationCells);
 
-                                    // remember which note was needing elimination
-                                    result.EliminationNotes.Add(baseHouse.First().GetNoteForCandidate(n));
+                    //    //// if found enough matching bases to be a full fish of size baseCountTarget
+                    //    //if (basesWithMatchedCells.Count() == baseCount)
+                    //    //    break;
 
-                                    results.Add(result);
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    //    //start here to figure out the rest
+                    //    //start here to figure out the rest
+                    //    //start here to figure out the rest
+                    //    //start here to figure out the rest
+                    //    //start here to figure out the rest
+
+                    //    //// now scoot down a row (or over a column if doing column mode) and try to find another base from there down/over
+                    //    //for (int houseIndex2 = houseIndex1 + 1; houseIndex2 <= 9; houseIndex2++)
+                    //    //{
+                    //    //    // again, look for notes of n
+                    //    //    IEnumerable<Cell> secondPair = allCells.Where(cell => (cell.Row == houseIndex2) && cell.HasNoteOf(n));
+                        //    // again, if found two
+                        //    if (secondPair.Count() == 2)
+                        //    {
+                        //        var firstPairAsList = basesWithMatchedCells.First().ToList();
+                        //        var secondPairAsList = secondPair.OfType<Cell>().ToList();
+
+                        //        // if the sets of pairs found are of the same column, but not in the same block, we have an xwing
+                        //        if (((firstPairAsList[0].Column == secondPairAsList[0].Column) &&
+                        //             (firstPairAsList[1].Column == secondPairAsList[1].Column)) &&
+                        //            ((firstPairAsList[0].Block != firstPairAsList[1].Block) ||
+                        //             (firstPairAsList[0].Block != secondPairAsList[0].Block)))
+                        //        {
+                        //            // put all four cells involved in the single results object
+                        //            result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[0].Row, firstPairAsList[0].Column), CellHighlightType.Special));
+                        //            result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(firstPairAsList[1].Row, firstPairAsList[1].Column), CellHighlightType.Special));
+                        //            result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[0].Row, secondPairAsList[0].Column), CellHighlightType.Special));
+                        //            result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(board.CellAt(secondPairAsList[1].Row, secondPairAsList[1].Column), CellHighlightType.Special));
+
+                        //            // remember which note was the candidate in the cell
+                        //            result.CandidateNotes.Add(basesWithMatchedCells.First().First().GetNoteForCandidate(n));
+
+                        //            // find all the cells with notes that should be eliminated (same columns but not in same rows as the candidate cells above)
+                        //            var eliminationCells = allCells.Where(cell => ((cell.Column == firstPairAsList[0].Column) || (cell.Column == firstPairAsList[1].Column)) && (cell.Row != houseIndex1) && (cell.Row != houseIndex2) && cell.HasNoteOf(n));
+                        //            result.EliminationCells.AddRange(eliminationCells);
+
+                        //            // remember which note was needing elimination
+                        //            result.EliminationNotes.Add(basesWithMatchedCells.First().First().GetNoteForCandidate(n));
+
+                        //            results.Add(result);
+                        //            break;
+                        //        }
+                        //    }
+                        //}
+                    //}
                 }
             }
 

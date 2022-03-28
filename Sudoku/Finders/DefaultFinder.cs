@@ -502,15 +502,24 @@ namespace Sudoku
             return results;
         }
 
-        private bool FindAnotherBase(IEnumerable<Cell> allCells, HouseType houseType, int candidate, ref int houseIndex1, int baseCountTarget, List<List<Cell>> basesWithMatchedCells, List<List<int>> coverLocations)
+        private bool FindFishForCandidate(IEnumerable<Cell> allCells, HouseType houseType, int candidate, ref int houseIndex1, int baseCountTarget, List<List<Cell>> basesWithMatchedCells, int[] coverLocations)
         {
-            // if there is no more room to fit a fish after this point (like if searching for xwings (baseCountTarget of 2) in rows and you are starting search on row nine, makes no sense)
-            if (houseIndex1 > 9 - baseCountTarget + 1)
-                return false;
+            //// if there is no more room to fit a fish after this point (like if searching for xwings (baseCountTarget of 2) in rows and you are starting search on row nine, makes no sense)
+            //if (houseIndex1 > 9 - baseCountTarget + 1)
+            //    return false;
+            
+            //// if found enough matching bases to be a full fish of size baseCountTarget
+            //if (basesWithMatchedCells.Count() == baseCountTarget)
+            //    return true;
+            //int[] coverTrack = new int[baseCountTarget]
 
             // check each row or column (which axis depends on houseType)
             for (int i = houseIndex1; i <= 9; i++)
             {
+                // if there is no more room to fit a fish after this point (like if searching for xwings (baseCountTarget of 2) in rows and you are starting search on row nine, makes no sense)
+                if (i > 9 - baseCountTarget + 1)
+                    return false;
+
                 // look for any cells with the target candidate (this could be a base)
                 List<Cell> baseCells = new List<Cell>(allCells.Where(cell => GetHouseElementNumForCell(cell, houseType) == i && cell.HasNoteOf(candidate)));
 
@@ -520,22 +529,25 @@ namespace Sudoku
                     // remember all the cells involved that were in that base
                     basesWithMatchedCells.Add(baseCells.ToList<Cell>());
 
-                    // keep a list of the list of cover points (row or column number) that were found in the base cells
-                    coverLocations.Add(new List<int>(baseCells.Select(cell => GetCoverPointForHouseType(cell, houseType))));
-
-                    // if find a base beyond the first one
-                    if (coverLocations.Count() > 1)
+                    foreach (Cell cell in baseCells)
                     {
-                        // see this subsequent base connects to the prior base in at least one cover
-
+                        coverLocations[GetCoverPointForHouseType(cell, houseType) - 1]++;
                     }
+                    // keep a list of the list of cover points (row or column number) that were found in the base cells
+                    //coverLocations.Add(new List<int>(baseCells.Select(cell => )));
 
-                    houseIndex1++;
-                    FindAnotherBase(allCells, houseType, candidate, ref houseIndex1, baseCountTarget, basesWithMatchedCells, coverLocations);
+                    if (coverLocations.Where(c => c != 0).Count() == baseCountTarget && coverLocations.All(c => c == 0 || (c >= 2 && c <= baseCountTarget)))
+                        return true;
+
+
+//                    houseIndex1++;
+
+
+  //                  FindFishForCandidate(allCells, houseType, candidate, ref houseIndex1, baseCountTarget, basesWithMatchedCells, coverLocations);
                 }
             }
             // any point in returning true/false at all yet?  will see
-            return true;
+            return false;
         }
 
         /// <summary>
@@ -568,26 +580,59 @@ namespace Sudoku
             // loop back to 2 to pick the next candidate (candidate++) and do this all over again
 
             // pick one target candidate at a time
-            for (int n = 1; n <= 9; n++)
+            for (int candidate = 1; candidate <= 9; candidate++)
             {
-                List<List<Cell>> basesWithMatchedCells = new List<List<Cell>>();
-                List<List<int>> coverLocations = new List<List<int>>();
-                int houseIndex1 = 1;
+                //int houseIndex1 = 1;
 
-                if (!FindAnotherBase(allCells, houseType, n, ref houseIndex1, baseCountTarget, basesWithMatchedCells, coverLocations))
-                    continue;
+                for (int houseIndex1 = 1; houseIndex1 <= 9; houseIndex1++)
+                {
+                    List<List<Cell>> basesWithMatchedCells = new List<List<Cell>>();
+                    int[] coverLocations = new int[9];
+
+                    // if found a fish for a patricular candidate (recursive to keep looking for the appropriate number of bases/covers, BUT will not find multiple fishes for the same candidate atm)
+                    if (FindFishForCandidate(allCells, houseType, candidate, ref houseIndex1, baseCountTarget, basesWithMatchedCells, coverLocations))
+                    {
+                        FindResult result = new FindResult()
+                        {
+                            HouseType = houseType
+                        };
+
+                        // build out results 
+                        List<Note> candidateNotes = new List<Note>();
+
+                        foreach (Cell cellWithCorrectSubset in basesWithMatchedCells.SelectMany(cell => cell))
+                        {
+                            // put matching cells into the single results object
+                            result.CandidateCells.Add(new KeyValuePair<Cell, CellHighlightType>(cellWithCorrectSubset, CellHighlightType.Special));
+
+                            // since nakeds, just collect all the notes since all are a part of the subset (deduped below this loop)
+                            candidateNotes.Add(cellWithCorrectSubset.GetNoteForCandidate(candidate));
+                        }
+
+                        // remember which notes were the candidates in the cell (dedupe what got built out when learning which cells had the subsets)
+                        result.CandidateNotes.AddRange(candidateNotes.Distinct());
+
+                        // for hiddens, the cells with the subset found are also where the eliminations would be necessary
+                        result.EliminationCells.AddRange(allCells.Where(cell => cell.Row == houseIndex1));//  GetHouseElementNumForCell(cell, houseType) == );
+
+                        // notes to eliminate are those in the found subset cells but that are also not in the subset notes being searched for
+                        result.EliminationNotes.Add(basesWithMatchedCells.First().First().GetNoteForCandidate(candidate));
+
+                        results.Add(result);
+                    }
+                }
 
                 // check each row or column (which axis depends on houseType)
-             //   for (int houseIndex1 = 1; houseIndex1 <= 9; houseIndex1++)
+                //   for (int houseIndex1 = 1; houseIndex1 <= 9; houseIndex1++)
                 {
                     //// if there is no more room to fit a fish after this point (like if searching for xwings (baseCountTarget of 2) in rows and you are starting search on row nine, makes no sense)
                     //if (houseIndex1 > 9 - baseCountTarget + 1)
                     //    break;
 
-                    FindResult result = new FindResult()
-                    {
-                        HouseType = houseType
-                    };
+                    //FindResult result = new FindResult()
+                    //{
+                    //    HouseType = houseType
+                    //};
 
                     //// look for any cells with the target candidate (this could be a base)
                     //List<Cell> baseCells = new List<Cell>(allCells.Where(cell => GetHouseElementNumForCell(cell, houseType) == houseIndex1 && cell.HasNoteOf(n)));
